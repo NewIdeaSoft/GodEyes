@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.db;
+package com.nisoft.inspectortools.db.inspect;
 
 /**
  * Created by Administrator on 2017/5/22.

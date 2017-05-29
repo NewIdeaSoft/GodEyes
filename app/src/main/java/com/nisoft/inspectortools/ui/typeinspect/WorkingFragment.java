@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui;
+package com.nisoft.inspectortools.ui.typeinspect;
 
 import android.Manifest;
 import android.app.Activity;
@@ -24,15 +24,16 @@ import android.widget.Toast;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.PicsAdapter;
-import com.nisoft.inspectortools.bean.InspectRecodePics;
-import com.nisoft.inspectortools.bean.PicsLab;
-import com.nisoft.inspectortools.db.PicsDbSchema;
+import com.nisoft.inspectortools.bean.inspect.InspectRecodePics;
+import com.nisoft.inspectortools.bean.inspect.PicsLab;
+import com.nisoft.inspectortools.db.inspect.PicsDbSchema;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import utils.FileUtil;
+import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
+import com.nisoft.inspectortools.utils.FileUtil;
 
 
 /**
@@ -49,12 +50,13 @@ public class WorkingFragment extends Fragment {
     private ImageButton mJobNumSaveButton;
     private String oldJobNum;
 
-    public static WorkingFragment newInstance(String jobNum) {
+    public static WorkingFragment newInstance(String jobNum,String inspectType) {
         WorkingFragment fragment = new WorkingFragment();
         Bundle args = new Bundle();
         if (jobNum != null) {
             args.putString("job_num", jobNum);
         }
+        args.putString(ChooseRecodeTypeFragment.INSPECT_TYPE,inspectType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,7 +79,7 @@ public class WorkingFragment extends Fragment {
         if (mPicsPath == null) {
             mPicsPath = new ArrayList<>();
         }
-        mAdapter = new PicsAdapter(WorkingFragment.this);
+        mAdapter = new PicsAdapter(WorkingFragment.this,mPicsPath);
     }
 
     @Nullable
@@ -100,7 +102,13 @@ public class WorkingFragment extends Fragment {
             mJobNumber.setText(oldJobNum);
             setEditable(false);
         } else {
-            String s = mDatePickerButton.getText().toString().substring(0, 5);
+            String s = null;
+            String inspectType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
+            if (inspectType.equals("原材料检验")){
+                s = mDatePickerButton.getText().toString().substring(0, 5);
+            } else if (inspectType.equals("外购件检验")){
+                s = mDatePickerButton.getText().toString().substring(0, 8);
+            }
             mJobNumber.setText(s);
             mJobNumber.setSelection(s.length());
         }
@@ -219,16 +227,19 @@ public class WorkingFragment extends Fragment {
                     }else {
                         mPicsPath.add(path);
                     }
-                    Snackbar.make(mPicsView,"已移动照片至"+path+",点击撤销",Snackbar.LENGTH_LONG)
-                            .setAction("撤销", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    FileUtil.moveFile(path,resourcePhotoPath);
-                                    mPicsPath.remove(position);
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            })
-                            .show();
+                    if(resourcePhotoPath!=null){
+                        Snackbar.make(mPicsView,"已移动照片至"+path+",点击撤销",Snackbar.LENGTH_LONG)
+                                .setAction("撤销", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        FileUtil.moveFile(path,resourcePhotoPath);
+                                        mPicsPath.remove(position);
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                })
+                                .show();
+                    }
+
 
                 }else if(path==null){
                     Toast.makeText(getActivity(),"照片已存在，请重新选择！",Toast.LENGTH_LONG).show();

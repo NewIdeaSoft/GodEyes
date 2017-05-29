@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.bean;
+package com.nisoft.inspectortools.bean.inspect;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,9 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.nisoft.inspectortools.db.PicsCursorWrapper;
-import com.nisoft.inspectortools.db.PicsDbHelper;
-import com.nisoft.inspectortools.db.PicsDbSchema.PicTable;
+import com.nisoft.inspectortools.db.inspect.PicsCursorWrapper;
+import com.nisoft.inspectortools.db.inspect.PicsDbHelper;
+import com.nisoft.inspectortools.db.inspect.PicsDbSchema.PicTable;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui;
+package com.nisoft.inspectortools.ui.typeinspect;
 
 import android.app.Activity;
 import android.app.AlertDialog;

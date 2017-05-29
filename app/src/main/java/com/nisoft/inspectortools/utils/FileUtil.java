@@ -1,4 +1,4 @@
-package utils;
+package com.nisoft.inspectortools.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

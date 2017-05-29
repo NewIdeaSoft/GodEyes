@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.bean;
+package com.nisoft.inspectortools.bean.inspect;
 
 import java.util.ArrayList;
 import java.util.Date;

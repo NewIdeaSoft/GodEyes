@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui;
+package com.nisoft.inspectortools.ui.typeinspect;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -15,8 +15,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.bean.InspectRecodePics;
-import com.nisoft.inspectortools.bean.PicsLab;
+import com.nisoft.inspectortools.bean.inspect.InspectRecodePics;
+import com.nisoft.inspectortools.bean.inspect.PicsLab;
+import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 
 import java.util.ArrayList;
 
@@ -30,6 +31,14 @@ public class JobListFragment extends Fragment {
     private JobListAdapter mAdapter;
     private FloatingActionButton mFloatButton;
     private ArrayList<InspectRecodePics> mPics;
+
+    public static JobListFragment newInstance(String inspectType){
+        JobListFragment fragment = new JobListFragment();
+        Bundle args  = new Bundle();
+        args.putString(ChooseRecodeTypeFragment.INSPECT_TYPE,inspectType);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +69,7 @@ public class JobListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(),WorkingActivity.class);
                 intent.putExtra("job_num",mJobNumList.get(position));
+                intent.putExtra(ChooseRecodeTypeFragment.INSPECT_TYPE,getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE));
                 startActivity(intent);
             }
         });
@@ -68,6 +78,7 @@ public class JobListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),WorkingActivity.class);
+                intent.putExtra(ChooseRecodeTypeFragment.INSPECT_TYPE,getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE));
                 startActivity(intent);
             }
         });

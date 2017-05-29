@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui;
+package com.nisoft.inspectortools.ui.typeinspect;
 
 import android.app.Fragment;
 import android.support.design.widget.Snackbar;
@@ -7,17 +7,20 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.ui.base.SingleFragmentActivity;
+import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 
 /**
  * Created by Administrator on 2017/5/22.
  */
 
-public class WorkingActivity extends SingleFragmentActivity{
+public class WorkingActivity extends SingleFragmentActivity {
     private String mJobNum;
     @Override
     protected Fragment createFragment() {
         mJobNum = getIntent().getStringExtra("job_num");
-        return WorkingFragment.newInstance(mJobNum);
+        String inpectType = getIntent().getStringExtra(ChooseRecodeTypeFragment.INSPECT_TYPE);
+        return WorkingFragment.newInstance(mJobNum,inpectType);
     }
 
     @Override

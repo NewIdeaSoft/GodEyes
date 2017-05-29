@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui;
+package com.nisoft.inspectortools.ui.typeinspect;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -24,7 +24,7 @@ import com.nisoft.inspectortools.R;
 import java.io.File;
 import java.io.IOException;
 
-import utils.FileUtil;
+import com.nisoft.inspectortools.utils.FileUtil;
 
 /**
  * Created by NewIdeaSoft on 2017/5/3.
@@ -128,7 +128,7 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
         String targetPhotoPath = null;
         switch (requestCode) {
             case TAKE_PHOTO:
-                photoPath = path;
+                targetPhotoPath = path;
                 break;
             case CHOOSE_PHOTO:
                 Uri uri = data.getData();

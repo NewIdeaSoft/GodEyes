@@ -9,13 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.ui.LargePhotoFragment;
-import com.nisoft.inspectortools.ui.UpdatePhotoMenuFragment;
-import com.nisoft.inspectortools.ui.WorkingFragment;
+import com.nisoft.inspectortools.ui.typeinspect.LargePhotoFragment;
+import com.nisoft.inspectortools.ui.typeinspect.UpdatePhotoMenuFragment;
 
 import java.util.ArrayList;
 
@@ -28,12 +26,13 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
     private Context mContext;
     private ArrayList<String> mPicsPath;
 
-    public PicsAdapter(Fragment fragment) {
+    public PicsAdapter(Fragment fragment, ArrayList<String> picsPath) {
         mFragment = fragment;
         mContext = mFragment.getActivity();
-        mPicsPath = WorkingFragment.getsRecodePics().getPicPath();
-        if (mPicsPath == null) {
+        if (picsPath == null) {
             mPicsPath = new ArrayList<>();
+        } else {
+            mPicsPath = picsPath;
         }
     }
 
@@ -51,21 +50,18 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
                 int position = holder.getAdapterPosition();
                 if (position == getItemCount() - 1) {
                     //启动添加图片对话框（拍照或从相册选择）
-                    if (WorkingFragment.getsRecodePics().getJobNum() == null || WorkingFragment.getsRecodePics().getJobNum().length() < 6) {
-                        Toast.makeText(mContext, "请输入检验编号", Toast.LENGTH_SHORT).show();
-                    } else {
-                        FragmentManager manager = ((Activity) mContext).getFragmentManager();
-                        UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position);
-                        fragment.setTargetFragment(mFragment, 1);
-                        fragment.show(manager, "update_menu");
-                    }
+
+                    FragmentManager manager = ((Activity) mContext).getFragmentManager();
+                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position);
+                    fragment.setTargetFragment(mFragment, 1);
+                    fragment.show(manager, "update_menu");
 
 
                 } else {
                     //查看大图，仿朋友圈查看大图
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
                     LargePhotoFragment imageFragment = LargePhotoFragment.newInstance(position);
-                    imageFragment.setTargetFragment(((Activity) mContext).getFragmentManager().findFragmentById(R.id.fragment_content),2);
+                    imageFragment.setTargetFragment(((Activity) mContext).getFragmentManager().findFragmentById(R.id.fragment_content), 2);
                     imageFragment.show(manager, "image");
                 }
             }

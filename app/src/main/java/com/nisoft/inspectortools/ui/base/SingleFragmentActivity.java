@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui;
+package com.nisoft.inspectortools.ui.base;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
