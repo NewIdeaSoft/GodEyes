@@ -47,14 +47,7 @@ public class JobListFragment extends Fragment {
     }
 
     private void init() {
-        mPics = PicsLab.getPicsLab(getActivity()).getAllPics();
-        Log.e("TAG",mPics.size()+"");
-        mJobNumList = new ArrayList<>();
-        for (InspectRecodePics pic : mPics){
-            mJobNumList.add(pic.getJobNum());
-
-        }
-        Log.e("TAG",mJobNumList.size()+"");
+        setJobNumList();
         mAdapter = new JobListAdapter();
     }
 
@@ -126,11 +119,28 @@ public class JobListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mPics = PicsLab.getPicsLab(getActivity()).getAllPics();
-        mJobNumList = new ArrayList<>();
-        for (InspectRecodePics pic : mPics){
-            mJobNumList.add(pic.getJobNum());
-        }
+        setJobNumList();
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void setJobNumList(){
+        mPics = PicsLab.getPicsLab(getActivity()).getAllPics();
+        Log.e("TAG",mPics.size()+"");
+        mJobNumList = new ArrayList<>();
+        String jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
+        for (InspectRecodePics pic : mPics){
+            if(pic.getType()==null) {
+                if(pic.getJobNum().split("-").length==2) {
+                    pic.setType("原材料检验");
+                }else {
+                    pic.setType("外购件检验");
+                }
+                PicsLab.getPicsLab(getActivity()).updatePics(pic,pic.getJobNum());
+            }
+            if(pic.getType().equals(jobType)) {
+                mJobNumList.add(pic.getJobNum());
+            }
+        }
+        Log.e("TAG",mJobNumList.size()+"");
     }
 }

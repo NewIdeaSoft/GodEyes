@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui.typeinspect;
+package com.nisoft.inspectortools.ui.base;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -18,7 +18,6 @@ import com.nisoft.inspectortools.R;
 
 public class PhotoFragment extends Fragment{
     private static final String PHOTO_PATH = "photo_path";
-    private static final String PHOTO_POSITION = "PHOTO_POSITION";
 
     public static Fragment newInstance(String s) {
         Fragment fragment = new PhotoFragment();

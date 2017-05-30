@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,7 +39,6 @@ public class ProblemListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mProblems = ProblemLab.getProblemLab(getActivity()).getProblems();
         Log.e("length1:",mProblems.size()+"");
-//        mAdapter = new ProblemsListAdapter(this,mProblems);
         mAdapter = new AnotherListAdapter(getActivity(),mProblems);
     }
 
@@ -49,8 +46,7 @@ public class ProblemListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_problems_list,container,false);
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.problem_list_toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
         setHasOptionsMenu(true);
         mProblemsRecyclerView = (RecyclerView) view.findViewById(R.id.problems_list_recyclerView);
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
@@ -92,7 +88,6 @@ public class ProblemListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(mAdapter == null) {
-//            mAdapter = new ProblemsListAdapter(this,mProblems);
             mAdapter = new AnotherListAdapter(getActivity(),mProblems);
             mProblemsRecyclerView.setAdapter(mAdapter);
         }else{

@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui.typeinspect;
+package com.nisoft.inspectortools.ui.base;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -70,6 +70,7 @@ public class DatePickerDialog extends DialogFragment {
         }
         Intent i = new Intent();
         i.putExtra(DATE_INITIALIZE, mDate);
+        i.putExtra(REQUEST_TITLE,getArguments().getString(REQUEST_TITLE));
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
     }
 }

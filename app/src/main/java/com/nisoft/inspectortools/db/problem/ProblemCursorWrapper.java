@@ -3,9 +3,9 @@ package com.nisoft.inspectortools.db.problem;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
-import com.nisoft.inspectortools.db.problem.ProblemDbSchema.ProblemTable;
 import com.nisoft.inspectortools.bean.problem.Problem;
-import com.nisoft.inspectortools.bean.problem.ProblemLab;
+import com.nisoft.inspectortools.db.problem.ProblemDbSchema.ProblemTable;
+import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,11 +36,11 @@ public class ProblemCursorWrapper extends CursorWrapper {
         p.setDiscover(discover);
         String position = getString(getColumnIndex(ProblemTable.Cols.POSITION));
         p.setPosition(position);
-        ArrayList<String> suspects  = ProblemLab.getStrings(getString(getColumnIndex(ProblemTable.Cols.SUSPECTS)));
+        ArrayList<String> suspects  = StringFormatUtil.getStrings(getString(getColumnIndex(ProblemTable.Cols.SUSPECTS)));
         p.setSuspects(suspects);
         String detailed_text = getString(getColumnIndex(ProblemTable.Cols.DETAILED_TEXT));
         p.setDetailedText(detailed_text);
-        ArrayList<String> photo_path = ProblemLab.getStrings(getString(getColumnIndex(ProblemTable.Cols.PHOTO_PATH)));
+        ArrayList<String> photo_path = StringFormatUtil.getStrings(getString(getColumnIndex(ProblemTable.Cols.PHOTO_PATH)));
         p.setPhotoPath(photo_path);
         String reason_text = getString(getColumnIndex(ProblemTable.Cols.REASON_TEXT));
         p.setReasonText(reason_text);

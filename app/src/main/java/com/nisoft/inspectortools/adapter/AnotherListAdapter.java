@@ -36,7 +36,6 @@ public class AnotherListAdapter extends RecyclerView.Adapter<AnotherListAdapter.
         holder.mRecyclerView.setLayoutManager(layoutManager);
         SwipeLeftDeleteAdapter adapter = new SwipeLeftDeleteAdapter(mContext,mProblems.get(position));
         holder.mRecyclerView.setAdapter(adapter);
-
     }
 
     @Override

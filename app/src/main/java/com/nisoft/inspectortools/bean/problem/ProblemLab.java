@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.nisoft.inspectortools.db.problem.ProblemCursorWrapper;
 import com.nisoft.inspectortools.db.problem.ProblemDbSchema.ProblemTable;
 import com.nisoft.inspectortools.db.problem.ProblemsSQLiteOpenHelper;
+import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -35,13 +36,13 @@ public class ProblemLab {
             values.put(ProblemTable.Cols.DISCOVER, problem.getDiscover());
         }
         if (problem.getSuspects() != null) {
-            values.put(ProblemTable.Cols.SUSPECTS, arrayListToString(problem.getSuspects()));
+            values.put(ProblemTable.Cols.SUSPECTS, StringFormatUtil.arrayListToString(problem.getSuspects()));
         }
         if (problem.getDetailedText() != null) {
             values.put(ProblemTable.Cols.DETAILED_TEXT, problem.getDetailedText());
         }
         if (problem.getPhotoPath() != null) {
-            values.put(ProblemTable.Cols.PHOTO_PATH, arrayListToString(problem.getPhotoPath()));
+            values.put(ProblemTable.Cols.PHOTO_PATH, StringFormatUtil.arrayListToString(problem.getPhotoPath()));
         }
         if (problem.getReasonText() != null) {
             values.put(ProblemTable.Cols.REASON_TEXT, problem.getReasonText());
@@ -69,25 +70,6 @@ public class ProblemLab {
         return new ProblemCursorWrapper(cursor);
     }
 
-    public static ArrayList<String> getStrings(String s) {
-        ArrayList<String> strings = new ArrayList<>();
-        if (s != null) {
-            String[] ss = s.split(",");
-            for (String s1 : ss) {
-                s1 = s1.trim();
-                strings.add(s1);
-            }
-        }
-        return strings;
-    }
-
-    public static String arrayListToString(ArrayList<String> strings) {
-        if (strings == null || strings.size() == 0) {
-            return null;
-        }
-        String s = strings.toString();
-        return s.substring(1, s.length() - 1);
-    }
 
     private ProblemLab(Context context) {
         mContext = context.getApplicationContext();

@@ -9,6 +9,7 @@ import android.util.Log;
 import com.nisoft.inspectortools.db.inspect.PicsCursorWrapper;
 import com.nisoft.inspectortools.db.inspect.PicsDbHelper;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema.PicTable;
+import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class PicsLab {
     private SQLiteDatabase mDatabase;
     private PicsLab(Context context){
         mContext = context.getApplicationContext();
-        mDatabase = (new PicsDbHelper(mContext)).getWritableDatabase();
+        mDatabase = (new PicsDbHelper(mContext,2)).getWritableDatabase();
     }
     public static PicsLab getPicsLab(Context context){
         if (sPicsLab==null){
@@ -36,26 +37,6 @@ public class PicsLab {
 //        if (cursor==null){return null;}
         return new PicsCursorWrapper(cursor);
     }
-    public static ArrayList<String> getStrings(String s) {
-        ArrayList<String> strings = new ArrayList<>();
-        if (s != null) {
-            String[] ss = s.split(",");
-            for (String s1 : ss) {
-                s1 = s1.trim();
-                strings.add(s1);
-            }
-        }
-        return strings;
-    }
-
-    public static String arrayListToString(ArrayList<String> strings) {
-        if (strings == null || strings.size() == 0) {
-            return null;
-        }
-        String s = strings.toString();
-        return s.substring(1, s.length() - 1);
-    }
-
     public ArrayList<InspectRecodePics> getAllPics(){
         PicsCursorWrapper cursorWrapper = queryPics(null,null);
         ArrayList<InspectRecodePics> pics = new ArrayList<>();
@@ -78,7 +59,10 @@ public class PicsLab {
         }
         contentValues.put(PicTable.Cols.PIC_JOB_DATE,pics.getDate().getTime());
         if (pics.getPicPath()!=null&&pics.getPicPath().size()>0){
-            contentValues.put(PicTable.Cols.PICS,arrayListToString(pics.getPicPath()));
+            contentValues.put(PicTable.Cols.PICS, StringFormatUtil.arrayListToString(pics.getPicPath()));
+        }
+        if(pics.getType()!=null) {
+            contentValues.put(PicTable.Cols.TYPE,pics.getType());
         }
         return contentValues;
     }

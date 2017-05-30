@@ -11,6 +11,7 @@ public class InspectRecodePics {
     private String mJobNum;
     private ArrayList<String> mPicPath;
     private Date mDate;
+    private String mType;
 
     public String getJobNum() {
         return mJobNum;
@@ -34,5 +35,13 @@ public class InspectRecodePics {
 
     public void setDate(Date date) {
         mDate = date;
+    }
+
+    public String getType() {
+        return mType;
+    }
+
+    public void setType(String type) {
+        mType = type;
     }
 }

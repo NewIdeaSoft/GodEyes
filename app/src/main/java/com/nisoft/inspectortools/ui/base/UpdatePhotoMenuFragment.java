@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui.typeinspect;
+package com.nisoft.inspectortools.ui.base;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -20,11 +20,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.ui.typeinspect.WorkingFragment;
+import com.nisoft.inspectortools.utils.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
-
-import com.nisoft.inspectortools.utils.FileUtil;
 
 /**
  * Created by NewIdeaSoft on 2017/5/3.
@@ -35,10 +35,13 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
     public static final int CHOOSE_PHOTO = 3;
     public static String IMAGE_PATH = "/原材料检验/";
     public static String IMAGE_POSITION = "image_position";
+    public static String IMAGE_ROOTPATH = "iamhe_rootpath";
 
-    public static UpdatePhotoMenuFragment newInstance(int position) {
+
+    public static UpdatePhotoMenuFragment newInstance(int position,String rootPath) {
         Bundle args = new Bundle();
         args.putInt(IMAGE_POSITION, position);
+        args.putString(IMAGE_ROOTPATH,rootPath);
         UpdatePhotoMenuFragment fragment = new UpdatePhotoMenuFragment();
         fragment.setArguments(args);
         fragment.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
@@ -80,7 +83,7 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
         //调用系统相机拍摄照片
         //照片文件存储路径
         Uri uri = null;
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + IMAGE_PATH + jobNum + "/");
+        File dir = new File(getArguments().getString(IMAGE_ROOTPATH));
         if (!dir.exists()) {
             dir.mkdirs();
         }

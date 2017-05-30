@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -27,13 +28,13 @@ import com.nisoft.inspectortools.adapter.PicsAdapter;
 import com.nisoft.inspectortools.bean.inspect.InspectRecodePics;
 import com.nisoft.inspectortools.bean.inspect.PicsLab;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
+import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 import com.nisoft.inspectortools.utils.FileUtil;
+import com.nisoft.inspectortools.utils.StringFormatUtil;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -49,6 +50,8 @@ public class WorkingFragment extends Fragment {
     private PicsAdapter mAdapter;
     private ImageButton mJobNumSaveButton;
     private String oldJobNum;
+    private String jobType;
+    private static final String PATH = Environment.getExternalStorageState()+"/";
 
     public static WorkingFragment newInstance(String jobNum,String inspectType) {
         WorkingFragment fragment = new WorkingFragment();
@@ -79,7 +82,9 @@ public class WorkingFragment extends Fragment {
         if (mPicsPath == null) {
             mPicsPath = new ArrayList<>();
         }
-        mAdapter = new PicsAdapter(WorkingFragment.this,mPicsPath);
+        jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
+        String path = PATH+jobType+"/";
+        mAdapter = new PicsAdapter(WorkingFragment.this,mPicsPath,R.layout.inspect_image_item,path);
     }
 
     @Nullable
@@ -97,16 +102,15 @@ public class WorkingFragment extends Fragment {
             date = new Date();
             sRecodePics.setDate(date);
         }
-        mDatePickerButton.setText(dateFormat(date));
+        mDatePickerButton.setText(StringFormatUtil.dateFormat(date));
         if (oldJobNum != null) {
             mJobNumber.setText(oldJobNum);
             setEditable(false);
         } else {
             String s = null;
-            String inspectType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
-            if (inspectType.equals("原材料检验")){
+            if (jobType.equals("原材料检验")){
                 s = mDatePickerButton.getText().toString().substring(0, 5);
-            } else if (inspectType.equals("外购件检验")){
+            } else if (jobType.equals("外购件检验")){
                 s = mDatePickerButton.getText().toString().substring(0, 8);
             }
             mJobNumber.setText(s);
@@ -195,13 +199,14 @@ public class WorkingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mDatePickerButton.setText(dateFormat(sRecodePics.getDate()));
+        mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        sRecodePics.setType(jobType);
         PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics,sRecodePics.getJobNum());
     }
 
@@ -215,7 +220,7 @@ public class WorkingFragment extends Fragment {
             case 0:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
                 sRecodePics.setDate(date);
-                mDatePickerButton.setText(dateFormat(sRecodePics.getDate()));
+                mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
                 break;
             case 1:
                 final String path = data.getStringExtra("PhotoPath");
@@ -271,11 +276,6 @@ public class WorkingFragment extends Fragment {
         return sRecodePics;
     }
 
-    private String dateFormat(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        String dateString = format.format(date);
-        return dateString;
-    }
 
     private void showDatePickerDialog(int requestCode, String title) {
         FragmentManager fm = getFragmentManager();

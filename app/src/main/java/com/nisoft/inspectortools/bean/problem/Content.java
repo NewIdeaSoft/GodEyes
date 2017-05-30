@@ -12,7 +12,7 @@ public class Content {
     private String mText;
     private Date mDate;
     private String mAuthor;
-
+    public static final String[] CONTENT_TITLES = {"问题详情","原因分析","处理方案"};
     public Content(String mTitle, String mText, Date mDate, String mAuthor) {
         this.mTitle = mTitle;
         this.mText = mText;
@@ -53,9 +53,32 @@ public class Content {
     }
     public static ArrayList<Content> getContentsFromProblem(Problem problem){
         ArrayList<Content> contents = new ArrayList<>();
-        contents.add(new Content("问题详情",problem.getDetailedText(),problem.getDate(),problem.getDiscover()));
-        contents.add(new Content("问题分析",problem.getReasonText(),problem.getAnalyzedDate(),problem.getAnalyst()));
-        contents.add(new Content("处理方案",problem.getSolvedText(),problem.getSolvedDate(),problem.getSolver()));
+        contents.add(new Content(CONTENT_TITLES[0],problem.getDetailedText(),problem.getDate(),problem.getDiscover()));
+        contents.add(new Content(CONTENT_TITLES[1],problem.getReasonText(),problem.getAnalyzedDate(),problem.getAnalyst()));
+        contents.add(new Content(CONTENT_TITLES[2],problem.getSolvedText(),problem.getSolvedDate(),problem.getSolver()));
         return contents;
+    }
+    public static void getProblem(ArrayList<Content> contents,Problem problem){
+        for (int i=0;i<3;i++){
+            Content content = contents.get(i);
+            switch (i){
+                case 0:
+                    problem.setDiscover(content.getmAuthor());
+                    problem.setDate(content.getmDate());
+                    problem.setDetailedText(content.getmText());
+                    break;
+                case 1:
+                    problem.setAnalyst(content.getmAuthor());
+                    problem.setReasonText(content.getmText());
+                    problem.setAnalyzedDate(content.getmDate());
+                    break;
+                case 2:
+                    problem.setSolver(content.getmAuthor());
+                    problem.setSolvedDate(content.getmDate());
+                    problem.setSolvedText(content.getmText());
+                    break;
+            }
+        }
+
     }
 }

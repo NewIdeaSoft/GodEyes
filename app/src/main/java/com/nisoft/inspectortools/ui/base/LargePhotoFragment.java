@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui.typeinspect;
+package com.nisoft.inspectortools.ui.base;
 
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.inspect.InspectRecodePics;
+import com.nisoft.inspectortools.ui.typeinspect.WorkingFragment;
 
 import java.util.ArrayList;
 

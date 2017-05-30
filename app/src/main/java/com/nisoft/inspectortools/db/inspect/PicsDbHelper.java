@@ -4,20 +4,23 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.nisoft.inspectortools.db.inspect.PicsDbSchema.PicTable;
+
 /**
  * Created by Administrator on 2017/5/22.
  */
 
 public class PicsDbHelper extends SQLiteOpenHelper {
     private static final String NAME = "inspector_tools.db";
-    private static final int VERSION = 1;
     private static final String CREATE_TABLE = "create table "
-            + PicsDbSchema.PicTable.NAME +"( _id integer primary key autoincrement,"
-            + PicsDbSchema.PicTable.Cols.PIC_JOB_NUM +","
-            + PicsDbSchema.PicTable.Cols.PICS + ","
-            + PicsDbSchema.PicTable.Cols.PIC_JOB_DATE+")";
-    public PicsDbHelper(Context context) {
-        super(context, NAME, null, VERSION);
+            + PicTable.NAME + "( _id integer primary key autoincrement,"
+            + PicTable.Cols.PIC_JOB_NUM + ","
+            + PicTable.Cols.PICS + ","
+            + PicTable.Cols.PIC_JOB_DATE + ")" + ","
+            + PicTable.Cols.TYPE;
+
+    public PicsDbHelper(Context context,int version) {
+        super(context, NAME, null, version);
     }
 
     @Override
@@ -27,6 +30,6 @@ public class PicsDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("alter table " + PicTable.NAME + " add column " + PicTable.Cols.TYPE + " text");
     }
 }

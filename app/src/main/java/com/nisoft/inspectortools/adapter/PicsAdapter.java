@@ -12,8 +12,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.ui.typeinspect.LargePhotoFragment;
-import com.nisoft.inspectortools.ui.typeinspect.UpdatePhotoMenuFragment;
+import com.nisoft.inspectortools.ui.base.LargePhotoFragment;
+import com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment;
 
 import java.util.ArrayList;
 
@@ -25,8 +25,10 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
     private Fragment mFragment;
     private Context mContext;
     private ArrayList<String> mPicsPath;
+    private int mImageLayoutId;
+    private String mRootPath;
 
-    public PicsAdapter(Fragment fragment, ArrayList<String> picsPath) {
+    public PicsAdapter(Fragment fragment, ArrayList<String> picsPath, int imageLayoutId, String rootPath) {
         mFragment = fragment;
         mContext = mFragment.getActivity();
         if (picsPath == null) {
@@ -34,6 +36,8 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
         } else {
             mPicsPath = picsPath;
         }
+        mImageLayoutId = imageLayoutId;
+        mRootPath = rootPath;
     }
 
     public void setPicsPath(ArrayList<String> picsPath) {
@@ -42,7 +46,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.poto_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(mImageLayoutId, parent, false);
         final ViewHolder holder = new ViewHolder(view);
         holder.mPicImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +56,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
                     //启动添加图片对话框（拍照或从相册选择）
 
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
-                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position);
+                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position,mRootPath);
                     fragment.setTargetFragment(mFragment, 1);
                     fragment.show(manager, "update_menu");
 
@@ -73,7 +77,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
                 if (position != getItemCount() - 1) {
                     //启动添加图片对话框（拍照或从相册选择）
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
-                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position);
+                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position,mRootPath);
                     fragment.setTargetFragment(mFragment, 1);
                     fragment.show(manager, "update_menu");
                 }
@@ -102,7 +106,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mPicImage = (ImageView) itemView.findViewById(R.id.problem_photo_item);
+            mPicImage = (ImageView) itemView;
         }
     }
 }
