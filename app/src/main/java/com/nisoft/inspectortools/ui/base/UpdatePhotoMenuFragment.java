@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -33,9 +32,8 @@ import java.io.IOException;
 public class UpdatePhotoMenuFragment extends DialogFragment {
     public static final int TAKE_PHOTO = 2;
     public static final int CHOOSE_PHOTO = 3;
-    public static String IMAGE_PATH = "/原材料检验/";
     public static String IMAGE_POSITION = "image_position";
-    public static String IMAGE_ROOTPATH = "iamhe_rootpath";
+    public static String IMAGE_ROOTPATH = "image_rootpath";
 
 
     public static UpdatePhotoMenuFragment newInstance(int position,String rootPath) {
@@ -150,11 +148,11 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
                 } else if ("file".equalsIgnoreCase(uri.getScheme())) {
                     photoPath = uri.getPath();
                 }
-                File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + IMAGE_PATH +  jobNum + "/");
+                File dir = new File(getArguments().getString(IMAGE_ROOTPATH));
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                targetPhotoPath = Environment.getExternalStorageDirectory().getAbsolutePath() + IMAGE_PATH + jobNum + "/" + position + ".jpg";
+                targetPhotoPath = getArguments().getString(IMAGE_ROOTPATH) + position + ".jpg";
                 FileUtil.moveFile(photoPath, targetPhotoPath);
                 photoPath = targetPhotoPath;
         }

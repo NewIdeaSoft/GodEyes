@@ -107,7 +107,7 @@ public class ProblemRecodeFragment extends Fragment {
         UUID uuid = (UUID) getArguments().getSerializable(ProblemTable.Cols.UUID);
         mProblem = ProblemLab.getProblemLab(getActivity()).getProblem(uuid);
         mPicsPath = mProblem.getPhotoPath();
-        String path = Environment.getExternalStorageState()+"/质量问题/"+uuid.toString()+"/";
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/质量问题/"+uuid.toString()+"/";
         mPicsAdapter = new PicsAdapter(this,mPicsPath,R.layout.problem_image_item,path);
         mProblemContents = getContentsFromProblem(mProblem);
         mInfoItemAdapter = new ProblemInfoItemAdapter(mProblemContents,getActivity());
