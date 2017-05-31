@@ -13,7 +13,8 @@
         <activity android:name=".ui.typeinspect.JobListActivity">
         </activity>
         <activity android:name=".ui.typeinspect.WorkingActivity"/>
-        <activity android:name=".ui.choosetype.ChooseRecodeTypeActivity"
+        <activity
+            android:name=".ui.choosetype.ChooseRecodeTypeActivity"
             android:label="选择记录类型">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -22,7 +23,10 @@
         </activity>
         <activity android:name=".ui.typeproblem.ProblemListActivity">
         </activity>
-        <activity android:name=".ui.typeproblem.ProblemRecodeActivity"></activity>
+        <activity
+            android:name=".ui.typeproblem.ProblemRecodeActivity"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
     </application>
 
 </manifest>

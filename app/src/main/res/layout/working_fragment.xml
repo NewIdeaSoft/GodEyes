@@ -24,9 +24,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"/>
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/btn_check_buttonless_on"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/btn_done"
             android:background="#fff"
             android:id="@+id/job_num_save"/>
     </LinearLayout>

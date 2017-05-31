@@ -172,11 +172,11 @@ public class WorkingFragment extends Fragment {
         mJobNumber.setFocusableInTouchMode(editable);
         mJobNumber.setEnabled(editable);
         if (editable) {
+            mJobNumSaveButton.setImageResource(R.drawable.btn_done);
             mJobNumber.setSelection(mJobNumber.getText().toString().length());
-            mJobNumSaveButton.setImageResource(R.drawable.btn_check_buttonless_on);
 
         }else{
-            mJobNumSaveButton.setImageResource(R.drawable.ic_menu_edit);
+            mJobNumSaveButton.setImageResource(R.drawable.btn_edit);
         }
 
     }
