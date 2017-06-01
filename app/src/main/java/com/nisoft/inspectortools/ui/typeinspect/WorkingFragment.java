@@ -83,7 +83,7 @@ public class WorkingFragment extends Fragment {
             mPicsPath = new ArrayList<>();
         }
         jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        String path = PATH+jobType+"/";
+        String path = PATH+"工作相册/"+jobType+"/";
         mAdapter = new PicsAdapter(WorkingFragment.this,mPicsPath,R.layout.inspect_image_item,path);
     }
 

@@ -107,7 +107,7 @@ public class ProblemRecodeFragment extends Fragment {
         UUID uuid = (UUID) getArguments().getSerializable(ProblemTable.Cols.UUID);
         mProblem = ProblemLab.getProblemLab(getActivity()).getProblem(uuid);
         mPicsPath = mProblem.getPhotoPath();
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/质量问题/"+uuid.toString()+"/";
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/工作相册/质量问题/"+uuid.toString()+"/";
         mPicsAdapter = new PicsAdapter(this,mPicsPath,R.layout.problem_image_item,path);
         mProblemContents = getContentsFromProblem(mProblem);
         mInfoItemAdapter = new ProblemInfoItemAdapter(mProblemContents,getActivity());
@@ -180,6 +180,22 @@ public class ProblemRecodeFragment extends Fragment {
                 mPicsAdapter.setPicsPath(mPicsPath);
                 mProblem.setPhotoPath(mPicsPath);
                 break;
+            case 4:
+//                Uri contactUri = data.getData();
+//                String[] queryFields = new String[]{
+//                        ContactsContract.Contacts.DISPLAY_NAME
+//                };
+//                Cursor cursor =getActivity().getContentResolver().query(contactUri,queryFields,null,null,null);
+//                if(cursor.getCount()==0) {
+//                    cursor.close();
+//                    return;
+//                }
+//                cursor.moveToFirst();
+//                String suspect = cursor.getString(0);
+//                button_choose_suspect.setText(suspect);
+//                mCrime.setSuspect(suspect);
+//                cursor.close();
+
         }
     }
 

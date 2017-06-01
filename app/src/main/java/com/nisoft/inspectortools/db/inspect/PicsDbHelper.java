@@ -16,8 +16,8 @@ public class PicsDbHelper extends SQLiteOpenHelper {
             + PicTable.NAME + "( _id integer primary key autoincrement,"
             + PicTable.Cols.PIC_JOB_NUM + ","
             + PicTable.Cols.PICS + ","
-            + PicTable.Cols.PIC_JOB_DATE + ")" + ","
-            + PicTable.Cols.TYPE;
+            + PicTable.Cols.PIC_JOB_DATE  + ","
+            + PicTable.Cols.TYPE+ ")";
 
     public PicsDbHelper(Context context,int version) {
         super(context, NAME, null, version);

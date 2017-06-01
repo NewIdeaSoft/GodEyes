@@ -14,8 +14,7 @@
         </activity>
         <activity android:name=".ui.typeinspect.WorkingActivity"/>
         <activity
-            android:name=".ui.choosetype.ChooseRecodeTypeActivity"
-            android:label="选择记录类型">
+            android:name=".ui.choosetype.ChooseRecodeTypeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

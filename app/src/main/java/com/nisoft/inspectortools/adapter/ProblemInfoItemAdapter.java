@@ -1,14 +1,16 @@
 package com.nisoft.inspectortools.adapter;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -93,6 +95,8 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
             @Override
             public boolean onLongClick(View v) {
                 //从联系人选择
+                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                ((Activity)mContext).getFragmentManager().findFragmentById(R.id.fragment_content).startActivityForResult(intent,4);
                 return true;
             }
         });
@@ -100,18 +104,18 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
 
     @Override
     public int getItemCount() {
-        return 3;
+        return mContents.size();
     }
     class ProblemInfoItemViewHolder extends RecyclerView.ViewHolder{
         TextView itemTitle;
         EditText itemContent;
-        Button itemDate;
+        TextView itemDate;
         EditText itemAuthor;
         public ProblemInfoItemViewHolder(View itemView) {
             super(itemView);
             itemTitle = (TextView) itemView.findViewById(R.id.problem_info_item_title);
             itemContent = (EditText) itemView.findViewById(R.id.problem_info_item_content);
-            itemDate = (Button) itemView.findViewById(R.id.problem_info_item_time);
+            itemDate = (TextView) itemView.findViewById(R.id.problem_info_item_time);
             itemAuthor = (EditText) itemView.findViewById(R.id.problem_info_item_author);
         }
     }
@@ -120,10 +124,4 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
         mContents = contents;
     }
 
-    public ArrayList<Content> getContents(){
-        for (int i = 0;i<mContents.size();i++){
-//            mContents.get(i).setmText();
-        }
-        return mContents;
-    }
 }
