@@ -5,12 +5,12 @@
               android:orientation="vertical">
 
     <Button
-        android:id="@+id/make_picture"
+        android:id="@+id/edit_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="编辑"/>
     <Button
-        android:id="@+id/choose_picture"
+        android:id="@+id/choose_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="从联系人选择"/>

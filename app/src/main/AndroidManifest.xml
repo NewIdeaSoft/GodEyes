@@ -13,10 +13,10 @@
         <activity android:name=".ui.typeinspect.JobListActivity">
         </activity>
         <activity android:name=".ui.typeinspect.WorkingActivity"/>
-        <activity
-            android:name=".ui.choosetype.ChooseRecodeTypeActivity">
+        <activity android:name=".ui.choosetype.ChooseRecodeTypeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -25,6 +25,8 @@
         <activity
             android:name=".ui.typeproblem.ProblemRecodeActivity"
             android:windowSoftInputMode="adjustPan">
+        </activity>
+        <activity android:name=".ui.typeproblem.EditTextActivity">
         </activity>
     </application>
 

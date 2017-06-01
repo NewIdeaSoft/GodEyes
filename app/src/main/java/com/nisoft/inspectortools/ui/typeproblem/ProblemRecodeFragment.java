@@ -180,21 +180,24 @@ public class ProblemRecodeFragment extends Fragment {
                 mPicsAdapter.setPicsPath(mPicsPath);
                 mProblem.setPhotoPath(mPicsPath);
                 break;
-            case 4:
-//                Uri contactUri = data.getData();
-//                String[] queryFields = new String[]{
-//                        ContactsContract.Contacts.DISPLAY_NAME
-//                };
-//                Cursor cursor =getActivity().getContentResolver().query(contactUri,queryFields,null,null,null);
-//                if(cursor.getCount()==0) {
-//                    cursor.close();
-//                    return;
-//                }
-//                cursor.moveToFirst();
-//                String suspect = cursor.getString(0);
-//                button_choose_suspect.setText(suspect);
-//                mCrime.setSuspect(suspect);
-//                cursor.close();
+            case 2:
+                String author = data.getStringExtra("AuthorName");
+                int authorPosition = data.getIntExtra("Content position",-1);
+                if (authorPosition>-1){
+                    mProblemContents.get(authorPosition).setmAuthor(author);
+                    mInfoItemAdapter.setContents(mProblemContents);
+                    mInfoItemAdapter.notifyDataSetChanged();
+                }
+                break;
+            case 3:
+                String content = data.getStringExtra("content_edit");
+                int contentPosition1 = data.getIntExtra("content_position",-1);
+                if (contentPosition1>-1){
+                    mProblemContents.get(contentPosition1).setmText(content);
+                    mInfoItemAdapter.setContents(mProblemContents);
+                    mInfoItemAdapter.notifyDataSetChanged();
+                }
+                break;
 
         }
     }
