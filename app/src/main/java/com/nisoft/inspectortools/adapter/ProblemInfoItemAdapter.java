@@ -91,13 +91,12 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
                 content.setmAuthor(s.toString());
             }
         });
-        holder.itemAuthor.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.itemAuthor.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 //从联系人选择
                 Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
                 ((Activity)mContext).getFragmentManager().findFragmentById(R.id.fragment_content).startActivityForResult(intent,4);
-                return true;
             }
         });
     }
@@ -110,13 +109,13 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
         TextView itemTitle;
         EditText itemContent;
         TextView itemDate;
-        EditText itemAuthor;
+        TextView itemAuthor;
         public ProblemInfoItemViewHolder(View itemView) {
             super(itemView);
             itemTitle = (TextView) itemView.findViewById(R.id.problem_info_item_title);
             itemContent = (EditText) itemView.findViewById(R.id.problem_info_item_content);
             itemDate = (TextView) itemView.findViewById(R.id.problem_info_item_time);
-            itemAuthor = (EditText) itemView.findViewById(R.id.problem_info_item_author);
+            itemAuthor = (TextView) itemView.findViewById(R.id.problem_info_item_author);
         }
     }
 
