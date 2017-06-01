@@ -47,7 +47,7 @@ public class AnotherListAdapter extends RecyclerView.Adapter<AnotherListAdapter.
         RecyclerView mRecyclerView;
         public ProblemViewHolder(View itemView) {
             super(itemView);
-            mRecyclerView = (RecyclerView) itemView;
+            mRecyclerView = (RecyclerView) itemView.findViewById(R.id.problem_list_item);
         }
     }
 

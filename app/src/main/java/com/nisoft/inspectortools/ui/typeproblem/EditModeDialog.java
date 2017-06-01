@@ -2,8 +2,6 @@ package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -25,10 +23,10 @@ import com.nisoft.inspectortools.R;
 public class EditModeDialog extends DialogFragment {
     private Button mEditButton;
     private Button mChooseButton;
-    public static EditModeDialog newInstance(int position){
+    public static EditModeDialog newInstance(int position,String author){
         Bundle args = new Bundle();
         args.putInt("Content position",position);
-        Log.e("Content position",position+"");
+        args.putString("init_author",author);
         EditModeDialog fragment = new EditModeDialog();
         fragment.setArguments(args);
         return fragment;
@@ -44,6 +42,7 @@ public class EditModeDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),EditTextActivity.class);
+                intent.putExtra("initText",getArguments().getString("init_author"));
                 startActivityForResult(intent,0);
             }
         });
@@ -68,8 +67,7 @@ public class EditModeDialog extends DialogFragment {
         String author = null;
         switch (requestCode){
             case 0:
-                author = data.getStringExtra("author_name");
-                Log.e("author_name1",author);
+                author = data.getStringExtra("content_edit");
                 break;
             case 1:
                 Uri contactUri = data.getData();

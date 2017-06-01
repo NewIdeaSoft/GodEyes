@@ -9,12 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nisoft.inspectortools.R;
@@ -40,7 +38,7 @@ import static com.nisoft.inspectortools.bean.problem.Content.getContentsFromProb
 
 public class ProblemRecodeFragment extends Fragment {
     private static Problem mProblem;
-    private EditText mTitleEdit;
+    private TextView mTitleEdit;
     private RecyclerView mProblemImageRecycler;
     private PicsAdapter mPicsAdapter;
     private ArrayList<String> mPicsPath;
@@ -69,26 +67,13 @@ public class ProblemRecodeFragment extends Fragment {
 
     private View initView(LayoutInflater inflater, @Nullable ViewGroup container) {
         View view = inflater.inflate(R.layout.fragment_problem_recode, container, false);
-        mTitleEdit = (EditText) view.findViewById(R.id.problem_title_edit);
+        mTitleEdit = (TextView) view.findViewById(R.id.problem_title_edit);
         mTitleEdit.setText(mProblem.getTitle());
-        if(mProblem.getTitle()!=null) {
-            mTitleEdit.setFocusable(false);
-            mTitleEdit.setFocusableInTouchMode(false);
-        }
-        mTitleEdit.addTextChangedListener(new TextWatcher() {
+        mTitleEdit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                mProblem.setTitle(s.toString());
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),EditTextActivity.class);
+                startActivityForResult(intent,4);
             }
         });
         mProblemImageRecycler = (RecyclerView) view.findViewById(R.id.problem_image_recycler);
@@ -198,7 +183,11 @@ public class ProblemRecodeFragment extends Fragment {
                     mInfoItemAdapter.notifyDataSetChanged();
                 }
                 break;
-
+            case 4:
+                String content1 = data.getStringExtra("content_edit");
+                mProblem.setTitle(content1);
+                mTitleEdit.setText(content1);
+                break;
         }
     }
 

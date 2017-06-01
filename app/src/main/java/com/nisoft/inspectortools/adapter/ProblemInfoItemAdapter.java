@@ -1,24 +1,17 @@
 package com.nisoft.inspectortools.adapter;
 
-import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.problem.Content;
-import com.nisoft.inspectortools.bean.problem.Problem;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.typeproblem.EditModeDialog;
 import com.nisoft.inspectortools.ui.typeproblem.EditTextActivity;
@@ -48,7 +41,7 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
     }
 
     @Override
-    public void onBindViewHolder(ProblemInfoItemViewHolder holder, final int position) {
+    public void onBindViewHolder(final ProblemInfoItemViewHolder holder, final int position) {
         final int witch = position;
         final Content content = mContents.get(position);
         holder.itemTitle.setText(content.getmTitle());
@@ -58,6 +51,7 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, EditTextActivity.class);
                 intent.putExtra("content_position",position);
+                intent.putExtra("initText",holder.itemContent.getText().toString());
                 (((ProblemRecodeActivity)mContext).getFragmentManager().findFragmentById(R.id.fragment_content))
                         .startActivityForResult(intent,3);
             }
@@ -79,7 +73,7 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
             public void onClick(View v) {
                 FragmentManager fm = ((ProblemRecodeActivity)mContext).getFragmentManager();
                 ProblemRecodeFragment targetFragment = (ProblemRecodeFragment) fm.findFragmentById(R.id.fragment_content);
-                DialogFragment dialogFragment = EditModeDialog.newInstance(position);
+                DialogFragment dialogFragment = EditModeDialog.newInstance(position,holder.itemAuthor.getText().toString());
                 dialogFragment.setTargetFragment(targetFragment,2);
                 dialogFragment.show(fm,"edit_mode");
             }
