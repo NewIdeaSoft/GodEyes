@@ -24,13 +24,13 @@ import com.nisoft.inspectortools.bean.problem.Problem;
 import com.nisoft.inspectortools.bean.problem.ProblemLab;
 import com.nisoft.inspectortools.db.problem.ProblemDbSchema.ProblemTable;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
+import com.nisoft.inspectortools.ui.base.TimePickerDialog;
 import com.nisoft.inspectortools.utils.FileUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-import static com.nisoft.inspectortools.bean.problem.Content.CONTENT_TITLES;
 import static com.nisoft.inspectortools.bean.problem.Content.getContentsFromProblem;
 
 /**
@@ -38,6 +38,8 @@ import static com.nisoft.inspectortools.bean.problem.Content.getContentsFromProb
  */
 
 public class ProblemRecodeFragment extends Fragment {
+    public static final String IMAGE_PATH="image_path";
+    public static final String REQUEST_POSITON = "request_position";
     private static Problem mProblem;
     private TextView mTitleEdit;
     private RecyclerView mProblemImageRecycler;
@@ -106,8 +108,12 @@ public class ProblemRecodeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Content.getProblem(mProblemContents,mProblem);
-        ProblemLab.getProblemLab(getActivity()).updateProblem(mProblem);
+        if(mProblem.getTitle()!=null) {
+            Content.getProblem(mProblemContents,mProblem);
+            ProblemLab.getProblemLab(getActivity()).updateProblem(mProblem);
+        }else {
+            ProblemLab.getProblemLab(getActivity()).delete(mProblem);
+        }
     }
 
     @Override
@@ -127,17 +133,11 @@ public class ProblemRecodeFragment extends Fragment {
         switch (requestCode) {
             case 0:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
-                String contentTitle = data.getStringExtra(DatePickerDialog.REQUEST_TITLE);
-                int contentPosition = -1;
-                if(contentTitle.equals(CONTENT_TITLES[0])) {
-                    contentPosition=0;
-                }else if(contentTitle.equals(CONTENT_TITLES[1])) {
-                    contentPosition=1;
-                }else if(contentTitle.equals(CONTENT_TITLES[2])) {
-                    contentPosition=2;
+                int contentPosition = data.getIntExtra(TimePickerDialog.CLICK_POSITION,-1);
+                if(contentPosition!=-1) {
+                    mProblemContents.get(contentPosition).setmDate(date);
+                    mInfoItemAdapter.setContents(mProblemContents);
                 }
-                mProblemContents.get(contentPosition).setmDate(date);
-                mInfoItemAdapter.setContents(mProblemContents);
                 mInfoItemAdapter.notifyDataSetChanged();
                 break;
             case 1:

@@ -14,7 +14,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -158,7 +157,7 @@ public class WorkingFragment extends Fragment {
         mDatePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog(0, "选择检验时间");
+                showDatePickerDialog(0, sRecodePics.getDate());
             }
         });
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -263,9 +262,9 @@ public class WorkingFragment extends Fragment {
     }
 
 
-    private void showDatePickerDialog(int requestCode, String title) {
+    private void showDatePickerDialog(int requestCode, Date date) {
         FragmentManager fm = getFragmentManager();
-        DatePickerDialog dialog = DatePickerDialog.newInstance(title);
+        DatePickerDialog dialog = DatePickerDialog.newInstance(-1,date);
         dialog.setTargetFragment(WorkingFragment.this, requestCode);
         dialog.show(fm, "date");
     }

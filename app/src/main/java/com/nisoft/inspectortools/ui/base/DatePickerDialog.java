@@ -1,12 +1,10 @@
 package com.nisoft.inspectortools.ui.base;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,13 +21,14 @@ import java.util.GregorianCalendar;
  */
 
 public class DatePickerDialog extends DialogFragment {
-    public static final String REQUEST_TITLE = "request_title";
+    public static final String REQUEST_POSITION = "request_position";
     public static final String DATE_INITIALIZE = "date_initialize";
     private Date mDate;
 
-    public static DatePickerDialog newInstance(String title) {
+    public static DatePickerDialog newInstance(int position,Date date) {
         Bundle args = new Bundle();
-        args.putString(REQUEST_TITLE, title);
+        args.putInt(REQUEST_POSITION, position);
+        args.putSerializable(DATE_INITIALIZE,date);
         DatePickerDialog datePickerDialog = new DatePickerDialog();
         datePickerDialog.setArguments(args);
         return datePickerDialog;
@@ -39,8 +38,8 @@ public class DatePickerDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.date_picker_dialog, null);
-        String title = getArguments().getString(REQUEST_TITLE);
-        mDate = new Date();
+        mDate = (Date) getArguments().getSerializable(DATE_INITIALIZE);
+        final int position=getArguments().getInt(REQUEST_POSITION);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(mDate);
         int year = calendar.get(Calendar.YEAR);
@@ -55,28 +54,18 @@ public class DatePickerDialog extends DialogFragment {
         });
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
-                .setTitle(title)
+                .setTitle("选择日期")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sendResult(Activity.RESULT_OK);
+//                        sendResult(Activity.RESULT_OK);
                         FragmentManager fm = getFragmentManager();
-                        int position=0;
+
                         TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(mDate,position);
                         timePickerDialog.setTargetFragment(getTargetFragment(),getTargetRequestCode());
                         timePickerDialog.show(fm,"time_picker");
                     }
                 })
                 .create();
-    }
-
-    private void sendResult(int resultCode) {
-        if (getTargetFragment() == null) {
-            return;
-        }
-        Intent i = new Intent();
-        i.putExtra(DATE_INITIALIZE, mDate);
-        i.putExtra(REQUEST_TITLE,getArguments().getString(REQUEST_TITLE));
-        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
     }
 }

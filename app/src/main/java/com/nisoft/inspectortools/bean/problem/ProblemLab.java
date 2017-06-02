@@ -83,7 +83,11 @@ public class ProblemLab {
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                problems.add(cursor.getProblem());
+                if(cursor.getProblem().getTitle()!=null) {
+                    problems.add(cursor.getProblem());
+                }else{
+                    delete(cursor.getProblem());
+                }
                 cursor.moveToNext();
             }
         } finally {

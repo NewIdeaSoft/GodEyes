@@ -56,7 +56,7 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
                         .startActivityForResult(intent,3);
             }
         });
-        Date date = content.getmDate();
+        final Date date = content.getmDate();
         if(date.getTime()!=0L) {
             holder.itemDate.setText(StringFormatUtil.dateFormat(date));
         }
@@ -65,7 +65,13 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
             public void onClick(View v) {
                 //启动选择日期对话框
                 FragmentManager fm =  ((ProblemRecodeActivity)mContext).getFragmentManager();
-                DatePickerDialog dialog = DatePickerDialog.newInstance(content.getmTitle());
+                DatePickerDialog dialog;
+                if(date.getTime()!=0L) {
+                    dialog = DatePickerDialog.newInstance(position,date);
+                }else {
+                    dialog = DatePickerDialog.newInstance(position,new Date());
+                }
+
                 dialog.setTargetFragment(fm.findFragmentById(R.id.fragment_content), 0);
                 dialog.show(fm, "date");
             }

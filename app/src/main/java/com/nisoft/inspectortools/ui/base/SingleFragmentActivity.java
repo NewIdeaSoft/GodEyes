@@ -2,6 +2,7 @@ package com.nisoft.inspectortools.ui.base;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -22,6 +23,15 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
             fragment = createFragment();
             fm.beginTransaction().add(R.id.fragment_content,fragment).commit();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        if(getRequestedOrientation()!= ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
+        super.onResume();
     }
 
     protected abstract Fragment createFragment();

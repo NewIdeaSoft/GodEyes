@@ -29,7 +29,7 @@ public class StringFormatUtil {
         return s.substring(1, s.length() - 1);
     }
     public static String dateFormat(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String dateString = format.format(date);
         return dateString;
     }
