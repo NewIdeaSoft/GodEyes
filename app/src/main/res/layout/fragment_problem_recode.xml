@@ -5,52 +5,55 @@
     android:layout_height="match_parent"
     android:paddingEnd="16dp"
     android:paddingStart="16dp">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="32dp"
         android:descendantFocusability="blocksDescendants">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <LinearLayout
+
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="主题"
-                    android:textColor="#000000"
-                    android:textSize="20sp"/>
-                <TextView
-                    android:id="@+id/problem_title_edit"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
-                    android:layout_weight="3"
-                    android:gravity="center_vertical"
-                    android:hint="点击编辑主题"
-                    android:maxLines="1"
-                    android:textColor="#000000"
-                    android:textSize="20sp"/>
-            </LinearLayout>
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorAccent"
+                android:gravity="center_vertical"
+                android:text="主题"
+                android:textColor="#000000"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/problem_title_edit"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:hint="点击编辑主题"
+                android:maxLines="1"
+                android:textColor="#000000"
+                android:textSize="16sp"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="32dp"
                     android:layout_marginBottom="16dp"
                     android:layout_marginTop="16dp"
+                    android:background="@color/colorAccent"
                     android:gravity="center_vertical"
                     android:text="照片"
                     android:textColor="#000000"
-                    android:textSize="20sp"/>
+                    android:textSize="16sp"/>
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/problem_image_recycler"
                     android:layout_width="match_parent"
@@ -58,6 +61,7 @@
                     android:layout_marginBottom="16dp">
                 </android.support.v7.widget.RecyclerView>
             </LinearLayout>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/problem_content_recycler"
                 android:layout_width="match_parent"

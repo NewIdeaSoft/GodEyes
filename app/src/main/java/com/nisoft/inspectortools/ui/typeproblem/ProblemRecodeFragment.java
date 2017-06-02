@@ -72,6 +72,8 @@ public class ProblemRecodeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_problem_recode, container, false);
         if (mProblem.getTitle()!=null){
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mProblem.getTitle());
+        }else{
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("新增记录");
         }
 
         mTitleEdit = (TextView) view.findViewById(R.id.problem_title_edit);
@@ -111,8 +113,6 @@ public class ProblemRecodeFragment extends Fragment {
         if(mProblem.getTitle()!=null) {
             Content.getProblem(mProblemContents,mProblem);
             ProblemLab.getProblemLab(getActivity()).updateProblem(mProblem);
-        }else {
-            ProblemLab.getProblemLab(getActivity()).delete(mProblem);
         }
     }
 
@@ -192,6 +192,7 @@ public class ProblemRecodeFragment extends Fragment {
                 String content1 = data.getStringExtra("content_edit");
                 mProblem.setTitle(content1);
                 mTitleEdit.setText(content1);
+                ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mProblem.getTitle());
                 break;
         }
     }

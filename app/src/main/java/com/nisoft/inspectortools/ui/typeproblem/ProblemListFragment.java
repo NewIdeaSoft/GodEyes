@@ -29,7 +29,6 @@ import java.util.ArrayList;
 
 public class ProblemListFragment extends Fragment {
     private ArrayList<Problem> mProblems;
-//    private ProblemsListAdapter mAdapter;
     private AnotherListAdapter mAdapter;
     private RecyclerView mProblemsRecyclerView;
     private FloatingActionButton mNewProblemRecodeFAB;
