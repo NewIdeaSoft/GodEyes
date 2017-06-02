@@ -10,5 +10,6 @@
         android:id="@+id/job_num_text"
         android:textSize="25sp"
         android:layout_margin="8dp"
-        android:gravity="center"/>
+        android:gravity="start|center_vertical"
+        android:textColor="#000000"/>
 </LinearLayout>

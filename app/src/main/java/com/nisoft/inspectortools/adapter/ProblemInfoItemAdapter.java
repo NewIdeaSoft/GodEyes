@@ -20,6 +20,7 @@ import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeFragment;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Administrator on 2017/5/19.
@@ -42,7 +43,6 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
 
     @Override
     public void onBindViewHolder(final ProblemInfoItemViewHolder holder, final int position) {
-        final int witch = position;
         final Content content = mContents.get(position);
         holder.itemTitle.setText(content.getmTitle());
         holder.itemContent.setText(content.getmText());
@@ -56,7 +56,10 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
                         .startActivityForResult(intent,3);
             }
         });
-        holder.itemDate.setText(StringFormatUtil.dateFormat(content.getmDate()));
+        Date date = content.getmDate();
+        if(date.getTime()!=0L) {
+            holder.itemDate.setText(StringFormatUtil.dateFormat(date));
+        }
         holder.itemDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +100,6 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
             itemAuthor = (TextView) itemView.findViewById(R.id.problem_info_item_author);
         }
     }
-
     public void setContents(ArrayList<Content> contents) {
         mContents = contents;
     }

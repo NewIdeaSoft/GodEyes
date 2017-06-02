@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -59,6 +60,11 @@ public class DatePickerDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         sendResult(Activity.RESULT_OK);
+                        FragmentManager fm = getFragmentManager();
+                        int position=0;
+                        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(mDate,position);
+                        timePickerDialog.setTargetFragment(getTargetFragment(),getTargetRequestCode());
+                        timePickerDialog.show(fm,"time_picker");
                     }
                 })
                 .create();

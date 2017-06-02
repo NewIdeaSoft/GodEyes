@@ -21,7 +21,8 @@
                 android:layout_height="match_parent"
                 android:textSize="16dp"
                 android:gravity="center_vertical"
-                android:background="@color/colorAccent"/>
+                android:background="@color/colorAccent"
+                android:textColor="#000000"/>
         </LinearLayout>
         <TextView
             android:id="@+id/problem_info_item_content"
@@ -30,7 +31,8 @@
             android:hint="点击编辑具体描述"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
-            android:textSize="16dp"/>
+            android:textSize="16dp"
+            android:textColor="#000000"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,8 +45,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="作者:"
-                android:textSize="16dp"/>
+                android:text="姓名:"
+                android:textSize="16dp"
+                android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/problem_info_item_author"
@@ -53,16 +56,19 @@
                 android:layout_weight="3"
                 android:textSize="16dp"
                 android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"/>
+                android:gravity="center_vertical"
+                android:textColor="#000000"
+                android:hint="点击添加姓名"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="日期:"
+                android:text="时间:"
                 android:textSize="16dp"
-                android:gravity="center_vertical"/>
+                android:gravity="center_vertical"
+                android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/problem_info_item_time"
@@ -71,7 +77,9 @@
                 android:layout_weight="3"
                 android:textSize="16dp"
                 android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"/>
+                android:gravity="center_vertical"
+                android:textColor="#000000"
+                android:hint="点击选择时间"/>
 
         </LinearLayout>
     </LinearLayout>

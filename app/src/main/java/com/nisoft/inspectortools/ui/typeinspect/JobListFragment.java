@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,10 @@ public class JobListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.job_list_fragment, container, false);
+        String jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
+        if (jobType!=null){
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(jobType);
+        }
         jobListView = (ListView) view.findViewById(R.id.job_list);
         jobListView.setAdapter(mAdapter);
         jobListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -125,7 +130,6 @@ public class JobListFragment extends Fragment {
 
     private void setJobNumList(){
         mPics = PicsLab.getPicsLab(getActivity()).getAllPics();
-        Log.e("TAG",mPics.size()+"");
         mJobNumList = new ArrayList<>();
         String jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
         for (InspectRecodePics pic : mPics){
@@ -141,6 +145,5 @@ public class JobListFragment extends Fragment {
                 mJobNumList.add(pic.getJobNum());
             }
         }
-        Log.e("TAG",mJobNumList.size()+"");
     }
 }

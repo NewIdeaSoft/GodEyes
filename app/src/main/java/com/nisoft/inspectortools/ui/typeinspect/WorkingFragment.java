@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nisoft.inspectortools.R;
@@ -37,7 +39,7 @@ import java.util.Date;
  */
 
 public class WorkingFragment extends Fragment {
-    private Button mDatePickerButton;
+    private TextView mDatePickerButton;
     private EditText mJobNumber;
     private RecyclerView mPicsView;
     private static InspectRecodePics sRecodePics;
@@ -86,9 +88,15 @@ public class WorkingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.working_fragment, container, false);
+        if (oldJobNum!=null){
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(oldJobNum);
+        }else {
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("New Job");
+        }
+
         mPicsView = (RecyclerView) view.findViewById(R.id.pics_list);
         mJobNumber = (EditText) view.findViewById(R.id.job_num_edit);
-        mDatePickerButton = (Button) view.findViewById(R.id.date_picker_button);
+        mDatePickerButton = (TextView) view.findViewById(R.id.date_picker_button);
         mJobNumSaveButton = (ImageButton) view.findViewById(R.id.job_num_save);
         Date date;
         if (sRecodePics.getDate() != null) {

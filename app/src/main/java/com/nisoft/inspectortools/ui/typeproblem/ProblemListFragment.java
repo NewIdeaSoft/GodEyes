@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -46,8 +47,8 @@ public class ProblemListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_problems_list,container,false);
-
         setHasOptionsMenu(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("质量问题");
         mProblemsRecyclerView = (RecyclerView) view.findViewById(R.id.problems_list_recyclerView);
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
         mProblemsRecyclerView.setLayoutManager(manager);
