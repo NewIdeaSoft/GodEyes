@@ -17,9 +17,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.typeinspect.WorkingFragment;
+import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeFragment;
 import com.nisoft.inspectortools.utils.FileUtil;
 
 import java.io.File;
@@ -34,12 +36,14 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
     public static final int CHOOSE_PHOTO = 3;
     public static String IMAGE_POSITION = "image_position";
     public static String IMAGE_ROOTPATH = "image_rootpath";
+    public static String DELETE_BUTTON_VARIABLE = "delete_button_variable";
 
 
-    public static UpdatePhotoMenuFragment newInstance(int position,String rootPath) {
+    public static UpdatePhotoMenuFragment newInstance(int position,String rootPath,boolean deleteButtonVariable) {
         Bundle args = new Bundle();
         args.putInt(IMAGE_POSITION, position);
         args.putString(IMAGE_ROOTPATH,rootPath);
+        args.putBoolean(DELETE_BUTTON_VARIABLE,deleteButtonVariable);
         UpdatePhotoMenuFragment fragment = new UpdatePhotoMenuFragment();
         fragment.setArguments(args);
         fragment.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
@@ -48,19 +52,34 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
 
     private Button mMakePhoto;
     private Button mChoosePhoto;
+    private Button mDeleteButton;
     private String path;
     private int position;
-    private String jobNum;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dialog, container);
         position = getArguments().getInt(IMAGE_POSITION);
-        jobNum = WorkingFragment.getsRecodePics().getJobNum();
+        boolean canDelete = getArguments().getBoolean(DELETE_BUTTON_VARIABLE);
         mMakePhoto = (Button) view.findViewById(R.id.make_picture);
         mChoosePhoto = (Button) view.findViewById(R.id.choose_picture);
-
+        if (canDelete){
+            mDeleteButton = new Button(getActivity());
+            mDeleteButton.setText("删除照片");
+            mDeleteButton.setLayoutParams(
+                            new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            mDeleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deletePicture();
+                    UpdatePhotoMenuFragment.this.dismiss();
+                }
+            });
+            ((LinearLayout)view).addView(mDeleteButton);
+        }
         mMakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +93,16 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
                 openAlbum();
             }
         });
+
         return view;
+    }
+
+    private void deletePicture() {
+        if (getTargetFragment()instanceof ProblemRecodeFragment){
+            ((ProblemRecodeFragment)getTargetFragment()).removeSelectedPic(position);
+        }else if (getTargetFragment()instanceof WorkingFragment){
+            ((WorkingFragment)getTargetFragment()).removeSelectedPic(position);
+        }
     }
 
     private void openCamera() {

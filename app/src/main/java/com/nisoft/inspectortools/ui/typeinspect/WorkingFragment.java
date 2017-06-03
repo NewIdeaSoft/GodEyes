@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -29,6 +32,7 @@ import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 import com.nisoft.inspectortools.utils.FileUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -92,7 +96,7 @@ public class WorkingFragment extends Fragment {
         }else {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("New Job");
         }
-
+        setHasOptionsMenu(true);
         mPicsView = (RecyclerView) view.findViewById(R.id.pics_list);
         mJobNumber = (EditText) view.findViewById(R.id.job_num_edit);
         mDatePickerButton = (TextView) view.findViewById(R.id.date_picker_button);
@@ -196,6 +200,23 @@ public class WorkingFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.recode_toolbar,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.data_push:
+                //将实体 格式化为字符串
+                //在分线程写入字符串到指定目录的文件下
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
@@ -270,6 +291,14 @@ public class WorkingFragment extends Fragment {
     }
     public EditText getJobNumber(){
         return mJobNumber;
+    }
+    public void removeSelectedPic(int position){
+        File file = new File(mPicsPath.get(position));
+        file.delete();
+        mPicsPath.remove(position);
+        mAdapter.setPicsPath(mPicsPath);
+        sRecodePics.setPicPath(mPicsPath);
+        mAdapter.notifyDataSetChanged();
     }
 }
 

@@ -23,14 +23,16 @@ import java.util.ArrayList;
 
 public class LargePhotoFragment extends DialogFragment {
     private static final String SELECTED_POSITION = "selected_position";
+    private static final String IMAGE_PATH_LIST = "image_path_list";
     private InspectRecodePics mRecodePics;
     private ArrayList<Fragment> mFragments;
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
 
-    public static LargePhotoFragment newInstance(int position){
+    public static LargePhotoFragment newInstance(int position,ArrayList<String> pathList){
         Bundle args = new Bundle();
         args.putInt(SELECTED_POSITION,position);
+        args.putStringArrayList(IMAGE_PATH_LIST,pathList);
         LargePhotoFragment fragment = new LargePhotoFragment();
         fragment.setArguments(args);
         fragment.setStyle(DialogFragment.STYLE_NO_TITLE,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
@@ -43,8 +45,7 @@ public class LargePhotoFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_large_photo,container);
-        mRecodePics = WorkingFragment.getsRecodePics();
-        ArrayList<String> photosPath = mRecodePics.getPicPath();
+        ArrayList<String> photosPath = getArguments().getStringArrayList(IMAGE_PATH_LIST);
         mFragments = new ArrayList<>();
         for(int i = 0; i < photosPath.size(); i++) {
             mFragments.add(PhotoFragment.newInstance(photosPath.get(i)));

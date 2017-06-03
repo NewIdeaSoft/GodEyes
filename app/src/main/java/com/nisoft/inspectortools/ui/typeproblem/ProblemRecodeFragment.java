@@ -11,6 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -27,6 +30,7 @@ import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.base.TimePickerDialog;
 import com.nisoft.inspectortools.utils.FileUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -38,8 +42,6 @@ import static com.nisoft.inspectortools.bean.problem.Content.getContentsFromProb
  */
 
 public class ProblemRecodeFragment extends Fragment {
-    public static final String IMAGE_PATH="image_path";
-    public static final String REQUEST_POSITON = "request_position";
     private static Problem mProblem;
     private TextView mTitleEdit;
     private RecyclerView mProblemImageRecycler;
@@ -75,7 +77,7 @@ public class ProblemRecodeFragment extends Fragment {
         }else{
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("新增记录");
         }
-
+        setHasOptionsMenu(true);
         mTitleEdit = (TextView) view.findViewById(R.id.problem_title_edit);
         mTitleEdit.setText(mProblem.getTitle());
         mTitleEdit.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +124,20 @@ public class ProblemRecodeFragment extends Fragment {
         mPicsAdapter.notifyDataSetChanged();
         mInfoItemAdapter.notifyDataSetChanged();
     }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.recode_toolbar,menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.data_push:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -164,7 +179,7 @@ public class ProblemRecodeFragment extends Fragment {
                     }
 
 
-                }else if(path==null){
+                }else if(path==null&&resourcePhotoPath!=null){
                     Toast.makeText(getActivity(),"照片已存在，请重新选择！",Toast.LENGTH_LONG).show();
                 }
                 mPicsAdapter.setPicsPath(mPicsPath);
@@ -176,7 +191,7 @@ public class ProblemRecodeFragment extends Fragment {
                 if (authorPosition>-1){
                     mProblemContents.get(authorPosition).setmAuthor(author);
                     mInfoItemAdapter.setContents(mProblemContents);
-                    mInfoItemAdapter.notifyDataSetChanged();
+//                    mInfoItemAdapter.notifyDataSetChanged();
                 }
                 break;
             case 3:
@@ -185,7 +200,7 @@ public class ProblemRecodeFragment extends Fragment {
                 if (contentPosition1>-1){
                     mProblemContents.get(contentPosition1).setmText(content);
                     mInfoItemAdapter.setContents(mProblemContents);
-                    mInfoItemAdapter.notifyDataSetChanged();
+//                    mInfoItemAdapter.notifyDataSetChanged();
                 }
                 break;
             case 4:
@@ -203,5 +218,12 @@ public class ProblemRecodeFragment extends Fragment {
         }
         return mProblem;
     }
-
+    public void removeSelectedPic(int position){
+        File file = new File(mPicsPath.get(position));
+        file.delete();
+        mPicsPath.remove(position);
+        mProblem.setPhotoPath(mPicsPath);
+        mPicsAdapter.setPicsPath(mPicsPath);
+        mPicsAdapter.notifyDataSetChanged();
+    }
 }

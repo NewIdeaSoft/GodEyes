@@ -56,7 +56,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
                     //启动添加图片对话框（拍照或从相册选择）
 
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
-                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position,mRootPath);
+                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position,mRootPath,false);
                     fragment.setTargetFragment(mFragment, 1);
                     fragment.show(manager, "update_menu");
 
@@ -64,7 +64,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
                 } else {
                     //查看大图，仿朋友圈查看大图
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
-                    LargePhotoFragment imageFragment = LargePhotoFragment.newInstance(position);
+                    LargePhotoFragment imageFragment = LargePhotoFragment.newInstance(position,mPicsPath);
                     imageFragment.setTargetFragment(((Activity) mContext).getFragmentManager().findFragmentById(R.id.fragment_content), 2);
                     imageFragment.show(manager, "image");
                 }
@@ -77,7 +77,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
                 if (position != getItemCount() - 1) {
                     //启动添加图片对话框（拍照或从相册选择）
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
-                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position,mRootPath);
+                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position,mRootPath,true);
                     fragment.setTargetFragment(mFragment, 1);
                     fragment.show(manager, "update_menu");
                 }
