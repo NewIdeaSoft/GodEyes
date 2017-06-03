@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">产品相册</string>
+    <string name="app_name">工作记录</string>
     <string name="make_picture">拍摄照片</string>
     <string name="choose_picture">从相册选择照片</string>
 </resources>

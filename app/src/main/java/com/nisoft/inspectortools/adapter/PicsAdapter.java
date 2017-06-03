@@ -90,7 +90,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (position == mPicsPath.size()) {
-            holder.mPicImage.setImageResource(R.drawable.ic_menu_add);
+            holder.mPicImage.setImageResource(R.drawable.ic_btn_add_photo);
         } else {
             Glide.with(mContext).load(mPicsPath.get(position)).into(holder.mPicImage);
         }
