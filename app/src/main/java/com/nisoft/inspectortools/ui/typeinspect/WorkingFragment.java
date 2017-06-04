@@ -53,7 +53,7 @@ public class WorkingFragment extends Fragment {
     private ImageButton mJobNumSaveButton;
     private String oldJobNum;
     private String jobType;
-    private static final String PATH = Environment.getExternalStorageState()+"/工作相册/";
+    private static final String PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+"/工作相册/";
 
     public static WorkingFragment newInstance(String jobNum,String inspectType) {
         WorkingFragment fragment = new WorkingFragment();
