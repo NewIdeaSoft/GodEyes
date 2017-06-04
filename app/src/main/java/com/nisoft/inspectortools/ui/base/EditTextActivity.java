@@ -1,4 +1,4 @@
-package com.nisoft.inspectortools.ui.typeproblem;
+package com.nisoft.inspectortools.ui.base;
 
 import android.app.Activity;
 import android.content.Intent;

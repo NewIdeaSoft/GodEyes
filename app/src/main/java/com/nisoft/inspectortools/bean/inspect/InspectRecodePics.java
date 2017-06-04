@@ -1,5 +1,7 @@
 package com.nisoft.inspectortools.bean.inspect;
 
+import com.nisoft.inspectortools.utils.StringFormatUtil;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -12,6 +14,7 @@ public class InspectRecodePics {
     private ArrayList<String> mPicPath;
     private Date mDate;
     private String mType;
+    private String mDescription;
 
     public String getJobNum() {
         return mJobNum;
@@ -43,5 +46,23 @@ public class InspectRecodePics {
 
     public void setType(String type) {
         mType = type;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
+    }
+
+    @Override
+    public String toString() {
+        String separator = System.getProperty("line.separator");
+        String data = "";
+        data = "检验编号：" + mJobNum + separator;
+        data = data + "检验时间：" + StringFormatUtil.dateFormat(mDate) + separator;
+        data = data + "工作描述：" + mDescription + separator;
+        return data;
     }
 }

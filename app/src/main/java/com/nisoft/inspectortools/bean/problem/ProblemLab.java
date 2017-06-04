@@ -65,7 +65,7 @@ public class ProblemLab {
         return values;
     }
 
-    private ProblemCursorWrapper queryProblem(String whereClause, String[] selectionArgs) {
+    public ProblemCursorWrapper queryProblem(String whereClause, String[] selectionArgs) {
         Cursor cursor = mDatabase.query(ProblemTable.NAME, null, whereClause, selectionArgs, null, null, null);
         return new ProblemCursorWrapper(cursor);
     }
@@ -130,5 +130,23 @@ public class ProblemLab {
     public void delete(Problem problem) {
         UUID uuid = problem.getUUID();
         mDatabase.delete(ProblemTable.NAME,ProblemTable.Cols.UUID+"=?",new String[]{uuid.toString()});
+    }
+
+    public ArrayList<Problem> getProblems(ProblemCursorWrapper cursor){
+        ArrayList<Problem> problems = new ArrayList<>();
+        try {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                if(cursor.getProblem().getTitle()!=null) {
+                    problems.add(cursor.getProblem());
+                }else{
+                    delete(cursor.getProblem());
+                }
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
+        return problems;
     }
 }

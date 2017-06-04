@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -22,7 +21,8 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.AnotherListAdapter;
 import com.nisoft.inspectortools.bean.problem.Problem;
 import com.nisoft.inspectortools.bean.problem.ProblemLab;
-import com.nisoft.inspectortools.db.problem.ProblemDbSchema;
+import com.nisoft.inspectortools.db.problem.ProblemCursorWrapper;
+import com.nisoft.inspectortools.db.problem.ProblemDbSchema.ProblemTable;
 
 import java.util.ArrayList;
 
@@ -35,6 +35,8 @@ public class ProblemListFragment extends Fragment {
     private AnotherListAdapter mAdapter;
     private RecyclerView mProblemsRecyclerView;
     private FloatingActionButton mNewProblemRecodeFAB;
+    private SearchView mSearchView;
+    private SearchView.SearchAutoComplete mSearchAutoComplete;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,21 +70,46 @@ public class ProblemListFragment extends Fragment {
         super.onCreateOptionsMenu(menu,inflater);
         inflater.inflate(R.menu.toolbar,menu);
         MenuItem menuItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setQueryHint("搜索质量问题");
-        SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(R.id.search_src_text);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        mSearchView.setQueryHint("搜索质量问题");
+        mSearchAutoComplete
+                = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
+        mSearchAutoComplete.setThreshold(1);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ProblemCursorWrapper cursor = ProblemLab.getProblemLab(getActivity())
+                        .queryProblem(ProblemTable.Cols.TITLE+" like ?",new String[]{"%"+newText+"%"});
+//                if(mSearchView.getSuggestionsAdapter()==null) {
+//                    mSearchView.setSuggestionsAdapter(
+//                            new SimpleCursorAdapter(
+//                                    getActivity()
+//                                    ,android.R.layout.simple_list_item_1
+//                                    ,cursor
+//                                    ,new String[]{ProblemTable.Cols.TITLE}
+//                                    ,new int[]{android.R.id.text1}
+//                                    , CursorAdapter.FLAG_AUTO_REQUERY)
+//                    );
+//                }else {
+//                    mSearchView.getSuggestionsAdapter().changeCursor(cursor);
+//                }
+                changeAdapterData(cursor);
+                return false;
+            }
+        });
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                return false;
+            }
+        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.search :
-
-                break;
-        }
-        return true;
-    }
 
     @Override
     public void onResume() {
@@ -91,6 +118,9 @@ public class ProblemListFragment extends Fragment {
             mAdapter = new AnotherListAdapter(getActivity(),mProblems);
             mProblemsRecyclerView.setAdapter(mAdapter);
         }else{
+            if(mSearchAutoComplete!=null&&mSearchAutoComplete.isShown()) {
+                mSearchAutoComplete.setText("");
+            }
             ArrayList<Problem> problems = ProblemLab.getProblemLab(getActivity()).getProblems();
             mAdapter.setProblems(problems);
             mAdapter.notifyDataSetChanged();
@@ -100,7 +130,13 @@ public class ProblemListFragment extends Fragment {
         Problem problem = new Problem();
         Intent intent = new Intent(getActivity(), ProblemRecodeActivity.class);
         ProblemLab.getProblemLab(getActivity()).addProblem(problem);
-        intent.putExtra(ProblemDbSchema.ProblemTable.Cols.UUID,problem.getUUID());
+        intent.putExtra(ProblemTable.Cols.UUID,problem.getUUID());
         startActivity(intent);
+    }
+
+    private void changeAdapterData(ProblemCursorWrapper cursor){
+        ArrayList<Problem> problems = ProblemLab.getProblemLab(getActivity()).getProblems(cursor);
+        mAdapter.setProblems(problems);
+        mAdapter.notifyDataSetChanged();
     }
 }

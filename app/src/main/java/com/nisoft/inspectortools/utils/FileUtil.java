@@ -3,6 +3,8 @@ package com.nisoft.inspectortools.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -38,6 +40,22 @@ public class FileUtil {
                 file.delete();
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void writeStringToFile(String data,String filePath){
+        File file = new File(filePath);
+        if(file.exists()) {
+            file.delete();
+        }
+        FileWriter writer;
+        try {
+            file.createNewFile();
+            writer = new FileWriter(file);
+            writer.write(data);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -1,5 +1,7 @@
 package com.nisoft.inspectortools.bean.problem;
 
+import com.nisoft.inspectortools.utils.StringFormatUtil;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -80,5 +82,14 @@ public class Content {
             }
         }
 
+    }
+
+    @Override
+    public String toString() {
+        String s = mTitle + System.getProperty("line.separator");
+        s = s + ("详情:" + mText + System.getProperty("line.separator"));
+        s = s + ("姓名："+mAuthor+System.getProperty("line.separator"));
+        s= s+("时间："+ StringFormatUtil.dateFormat(mDate)+System.getProperty("line.separator"));
+        return s;
     }
 }

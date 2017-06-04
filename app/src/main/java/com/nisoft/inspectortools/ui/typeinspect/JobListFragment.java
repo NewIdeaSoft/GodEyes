@@ -5,9 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,6 +22,7 @@ import android.widget.TextView;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.inspect.InspectRecodePics;
 import com.nisoft.inspectortools.bean.inspect.PicsLab;
+import com.nisoft.inspectortools.db.inspect.PicsCursorWrapper;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 
 import java.util.ArrayList;
@@ -32,6 +37,9 @@ public class JobListFragment extends Fragment {
     private JobListAdapter mAdapter;
     private FloatingActionButton mFloatButton;
     private ArrayList<InspectRecodePics> mPics;
+    private SearchView mSearchView;
+    private SearchView.SearchAutoComplete mSearchAutoComplete;
+    private String mJobType;
 
     public static JobListFragment newInstance(String inspectType){
         JobListFragment fragment = new JobListFragment();
@@ -56,10 +64,11 @@ public class JobListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.job_list_fragment, container, false);
-        String jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        if (jobType!=null){
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(jobType);
+        mJobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
+        if (mJobType!=null){
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mJobType);
         }
+        setHasOptionsMenu(true);
         jobListView = (ListView) view.findViewById(R.id.job_list);
         jobListView.setAdapter(mAdapter);
         jobListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -119,6 +128,38 @@ public class JobListFragment extends Fragment {
         class ViewHolder {
             TextView mJobNumText;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.toolbar,menu);
+        MenuItem menuItem = menu.findItem(R.id.search);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        mSearchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
+        mSearchView.setQueryHint("搜索"+mJobType);
+        mSearchAutoComplete.setThreshold(1);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                PicsCursorWrapper cursor = PicsLab.getPicsLab(getActivity())
+                        .queryPicsByTwo(mJobType,newText);
+                ArrayList<InspectRecodePics> pics = PicsLab.getPicsLab(getActivity()).getAllPics(cursor);
+                ArrayList<String> jobsNum = new ArrayList<String>();
+                for (InspectRecodePics pic : pics){
+                    jobsNum.add(pic.getJobNum());
+                }
+                mJobNumList = jobsNum;
+                mAdapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+
     }
 
     @Override

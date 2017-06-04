@@ -52,6 +52,20 @@ public class PicsLab {
 
         return pics;
     }
+    public ArrayList<InspectRecodePics> getAllPics(PicsCursorWrapper cursorWrapper){
+        ArrayList<InspectRecodePics> pics = new ArrayList<>();
+        try{
+            cursorWrapper.moveToFirst();
+            while (!cursorWrapper.isAfterLast()){
+                pics.add(cursorWrapper.getPics());
+                cursorWrapper.moveToNext();
+            }
+        }finally {
+            cursorWrapper.close();
+        }
+
+        return pics;
+    }
     public static ContentValues getPicsContentValues(InspectRecodePics pics){
         ContentValues contentValues = new ContentValues();
         if (pics.getJobNum()!=null){
@@ -63,6 +77,9 @@ public class PicsLab {
         }
         if(pics.getType()!=null) {
             contentValues.put(PicTable.Cols.TYPE,pics.getType());
+        }
+        if(pics.getDescription()!=null) {
+            contentValues.put(PicTable.Cols.DESCRIPTION,pics.getDescription());
         }
         return contentValues;
     }
@@ -99,5 +116,13 @@ public class PicsLab {
             cursorWrapper.close();
         }
         return pics;
+    }
+
+    public PicsCursorWrapper queryPicsByTwo(String jobType,String jobNum){
+        String sql = "select * from "+ PicTable.NAME +" where("
+                + PicTable.Cols.TYPE + " like '" + jobType
+                +"')and("+ PicTable.Cols.PIC_JOB_NUM + " like '%"+jobNum+"%')";
+        Cursor cursor = mDatabase.rawQuery(sql,null);
+        return new PicsCursorWrapper(cursor);
     }
 }

@@ -10,6 +10,7 @@ import java.util.UUID;
  */
 
 public class Problem implements Serializable {
+    private int _id;
     private UUID mUUID;
     private String mTitle;
     private Date mDate;
@@ -25,16 +26,24 @@ public class Problem implements Serializable {
     private String mSolver;
     private Date mSolvedDate;
 
-    public Problem(){
+    public Problem() {
         mUUID = UUID.randomUUID();
     }
 
-    public Problem(UUID uuid){
+    public Problem(UUID uuid) {
         mUUID = uuid;
     }
 
     public UUID getUUID() {
         return mUUID;
+    }
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
     }
 
     public Date getSolvedDate() {
@@ -122,8 +131,8 @@ public class Problem implements Serializable {
         return mDetailedText;
     }
 
-    public void setDetailedText(String detailedtext) {
-        mDetailedText = detailedtext;
+    public void setDetailedText(String detailedText) {
+        mDetailedText = detailedText;
     }
 
     public ArrayList<String> getPhotoPath() {

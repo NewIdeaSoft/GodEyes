@@ -21,7 +21,7 @@ public class ProblemDbSchema {
             public static final String SOLUTION = "solution";
             public static final String HANDLER = "handler";
             public static final String SOLVED_DATE = "solved_date";
-            public static final String ID = "id";
+            public static final String ID = "_id";
             public static final String ANALYZED_DATE = "analyzed_date";
         }
     }

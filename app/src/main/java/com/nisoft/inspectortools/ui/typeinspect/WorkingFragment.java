@@ -29,6 +29,7 @@ import com.nisoft.inspectortools.bean.inspect.PicsLab;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
+import com.nisoft.inspectortools.ui.base.EditTextActivity;
 import com.nisoft.inspectortools.utils.FileUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
@@ -44,6 +45,7 @@ import java.util.Date;
 public class WorkingFragment extends Fragment {
     private TextView mDatePickerButton;
     private EditText mJobNumber;
+    private TextView mDescriptionText;
     private RecyclerView mPicsView;
     private static InspectRecodePics sRecodePics;
     private ArrayList<String> mPicsPath;
@@ -51,7 +53,7 @@ public class WorkingFragment extends Fragment {
     private ImageButton mJobNumSaveButton;
     private String oldJobNum;
     private String jobType;
-    private static final String PATH = Environment.getExternalStorageState()+"/";
+    private static final String PATH = Environment.getExternalStorageState()+"/工作相册/";
 
     public static WorkingFragment newInstance(String jobNum,String inspectType) {
         WorkingFragment fragment = new WorkingFragment();
@@ -83,7 +85,7 @@ public class WorkingFragment extends Fragment {
             mPicsPath = new ArrayList<>();
         }
         jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        String path = PATH+"工作相册/"+jobType+"/";
+        String path = PATH+jobType+"/";
         mAdapter = new PicsAdapter(WorkingFragment.this,mPicsPath,R.layout.inspect_image_item,path);
     }
 
@@ -101,6 +103,7 @@ public class WorkingFragment extends Fragment {
         mJobNumber = (EditText) view.findViewById(R.id.job_num_edit);
         mDatePickerButton = (TextView) view.findViewById(R.id.date_picker_button);
         mJobNumSaveButton = (ImageButton) view.findViewById(R.id.job_num_save);
+        mDescriptionText = (TextView) view.findViewById(R.id.job_description);
         Date date;
         if (sRecodePics.getDate() != null) {
             date = sRecodePics.getDate();
@@ -164,6 +167,14 @@ public class WorkingFragment extends Fragment {
                 showDatePickerDialog(0, sRecodePics.getDate());
             }
         });
+        mDescriptionText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EditTextActivity.class);
+                intent.putExtra("initText",mDescriptionText.getText());
+                startActivityForResult(intent,2);
+            }
+        });
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mPicsView.setLayoutManager(manager);
         mPicsView.setAdapter(mAdapter);
@@ -210,7 +221,15 @@ public class WorkingFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.data_push:
                 //将实体 格式化为字符串
+                String data = sRecodePics.toString();
                 //在分线程写入字符串到指定目录的文件下
+                String path = PATH+jobType+"/"+sRecodePics.getJobNum()+"/";
+                File file = new File(path);
+                if(!file.exists()) {
+                    file.mkdirs();
+                }
+                FileUtil.writeStringToFile(data,path+sRecodePics.getJobNum()+".txt");
+                Toast.makeText(getActivity(), "导出数据完成！", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -271,6 +290,11 @@ public class WorkingFragment extends Fragment {
                 }
                 mAdapter.setPicsPath(mPicsPath);
                 sRecodePics.setPicPath(mPicsPath);
+                break;
+            case 2:
+                String text = data.getStringExtra("content_edit");
+                sRecodePics.setDescription(text);
+                mDescriptionText.setText(text);
                 break;
         }
     }

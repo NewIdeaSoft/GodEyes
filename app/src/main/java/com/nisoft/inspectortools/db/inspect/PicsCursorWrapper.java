@@ -30,6 +30,7 @@ public class PicsCursorWrapper extends CursorWrapper {
 
         pics.setPicPath(StringFormatUtil.getStrings(getString(getColumnIndex(PicTable.Cols.PICS))));
         pics.setType(getString(getColumnIndex(PicTable.Cols.TYPE)));
+        pics.setDescription(getString(getColumnIndex(PicTable.Cols.DESCRIPTION)));
 
         return pics;
     }

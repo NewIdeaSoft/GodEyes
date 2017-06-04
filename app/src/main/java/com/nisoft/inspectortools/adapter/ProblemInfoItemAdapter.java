@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.problem.Content;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.typeproblem.EditModeDialog;
-import com.nisoft.inspectortools.ui.typeproblem.EditTextActivity;
+import com.nisoft.inspectortools.ui.base.EditTextActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeFragment;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
@@ -44,6 +45,7 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
     @Override
     public void onBindViewHolder(final ProblemInfoItemViewHolder holder, final int position) {
         final Content content = mContents.get(position);
+        Log.e("Content",content.toString());
         holder.itemTitle.setText(content.getmTitle());
         holder.itemContent.setText(content.getmText());
         holder.itemContent.setOnClickListener(new View.OnClickListener() {

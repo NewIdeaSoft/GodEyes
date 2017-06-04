@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.ui.base.EditTextActivity;
 
 /**
  * Created by Administrator on 2017/6/1.

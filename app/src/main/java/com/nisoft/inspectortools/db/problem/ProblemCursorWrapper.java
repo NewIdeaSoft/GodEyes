@@ -28,6 +28,8 @@ public class ProblemCursorWrapper extends CursorWrapper {
     public Problem getProblem(){
         UUID uuid = UUID.fromString(getString(getColumnIndex(ProblemTable.Cols.UUID)));
         Problem p = new Problem(uuid);
+        int _id = getInt(getColumnIndex(ProblemTable.Cols.ID));
+        p.set_id(_id);
         String title = getString(getColumnIndex(ProblemTable.Cols.TITLE));
         p.setTitle(title);
         Date date =  new Date(getLong(getColumnIndex(ProblemTable.Cols.DATE)));

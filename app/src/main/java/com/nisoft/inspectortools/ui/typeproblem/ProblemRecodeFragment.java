@@ -27,6 +27,7 @@ import com.nisoft.inspectortools.bean.problem.Problem;
 import com.nisoft.inspectortools.bean.problem.ProblemLab;
 import com.nisoft.inspectortools.db.problem.ProblemDbSchema.ProblemTable;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
+import com.nisoft.inspectortools.ui.base.EditTextActivity;
 import com.nisoft.inspectortools.ui.base.TimePickerDialog;
 import com.nisoft.inspectortools.utils.FileUtil;
 
@@ -50,6 +51,8 @@ public class ProblemRecodeFragment extends Fragment {
     private RecyclerView mProblemContentRecycler;
     private ProblemInfoItemAdapter mInfoItemAdapter;
     private ArrayList<Content> mProblemContents;
+    private String mRootPath;
+
     public static ProblemRecodeFragment newInstance(UUID uuid) {
         Bundle args = new Bundle();
         args.putSerializable(ProblemTable.Cols.UUID, uuid);
@@ -84,6 +87,7 @@ public class ProblemRecodeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),EditTextActivity.class);
+                intent.putExtra("initText",mTitleEdit.getText());
                 startActivityForResult(intent,4);
             }
         });
@@ -103,8 +107,8 @@ public class ProblemRecodeFragment extends Fragment {
         UUID uuid = (UUID) getArguments().getSerializable(ProblemTable.Cols.UUID);
         mProblem = ProblemLab.getProblemLab(getActivity()).getProblem(uuid);
         mPicsPath = mProblem.getPhotoPath();
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/工作相册/质量问题/"+uuid.toString()+"/";
-        mPicsAdapter = new PicsAdapter(this,mPicsPath,R.layout.problem_image_item,path);
+        mRootPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/工作相册/质量问题/"+mProblem.getTitle()+"_"+mProblem.get_id()+"/";
+        mPicsAdapter = new PicsAdapter(this,mPicsPath,R.layout.problem_image_item,mRootPath);
         mProblemContents = getContentsFromProblem(mProblem);
         mInfoItemAdapter = new ProblemInfoItemAdapter(mProblemContents,getActivity());
     }
@@ -134,6 +138,17 @@ public class ProblemRecodeFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.data_push:
+                String data = "";
+                for (Content content: mProblemContents){
+                    data+=content.toString();
+                }
+                //需在分线程执行，显示进度条
+                File file = new File(mRootPath);
+                if(!file.exists()) {
+                    file.mkdir();
+                }
+                FileUtil.writeStringToFile(data,mRootPath+mProblem.getTitle()+".txt");
+                Toast.makeText(getActivity(),"数据导出",Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
