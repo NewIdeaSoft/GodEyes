@@ -8,33 +8,30 @@ import android.content.Intent;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.ui.base.LargePhotoFragment;
 import com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment;
-import com.nisoft.inspectortools.utils.FileUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2017/5/22.
  */
 
-public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> implements MediaScannerConnection.MediaScannerConnectionClient{
+public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
     private Fragment mFragment;
     private Context mContext;
     private ArrayList<String> mPicsPath;
     private int mImageLayoutId;
     private String mRootPath;
     private MediaScannerConnection conn;
-    private static final String FILE_TYPE="image/*";
+    private static final String FILE_TYPE= MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpg");
     private String scanPath;
 
     public PicsAdapter(Fragment fragment, ArrayList<String> picsPath, int imageLayoutId, String rootPath) {
@@ -113,29 +110,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> im
         return mPicsPath.size() + 1;
     }
 
-    @Override
-    public void onMediaScannerConnected() {
-        Log.d("onMediaScannerConnected","success"+conn);
-        conn.scanFile(scanPath, FILE_TYPE);
-    }
 
-    @Override
-    public void onScanCompleted(String path, Uri uri) {
-        try {
-//            Log.d("onScanCompleted",uri + "success"+conn);
-//            System.out.println("URI " + uri);
-            if (uri != null)
-            {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(uri);
-                mContext.startActivity(intent);
-            }
-        } finally
-        {
-            conn.disconnect();
-            conn = null;
-        }
-    }
     private void startScan()
     {
 //        Log.d("Connected","success"+conn);
@@ -143,7 +118,27 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> im
         {
             conn.disconnect();
         }
-        conn = new MediaScannerConnection(mContext,this);
+        conn = new MediaScannerConnection(mContext, new MediaScannerConnection.MediaScannerConnectionClient() {
+            @Override
+            public void onMediaScannerConnected() {
+                conn.scanFile(scanPath,FILE_TYPE);
+            }
+
+            @Override
+            public void onScanCompleted(String path, Uri uri) {
+                try {
+                    if (uri != null)
+                    {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(uri);
+                        mContext.startActivity(intent);
+                    }
+                } finally {
+                    conn.disconnect();
+                    conn = null;
+                }
+            }
+        });
         conn.connect();
     }
 

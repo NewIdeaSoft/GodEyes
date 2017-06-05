@@ -157,7 +157,7 @@ public class ProblemRecodeFragment extends Fragment {
                 }
                 Intent i  = new Intent(Intent.ACTION_SEND);
                 i.setType("text/plain");
-                i.putExtra(Intent.EXTRA_SUBJECT,data1);
+                i.putExtra(Intent.EXTRA_TEXT,data1);
                 startActivity(i);
                 break;
         }

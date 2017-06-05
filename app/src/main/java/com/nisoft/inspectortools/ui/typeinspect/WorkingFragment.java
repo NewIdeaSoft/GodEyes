@@ -234,7 +234,7 @@ public class WorkingFragment extends Fragment {
             case R.id.data_share:
                 Intent i  = new Intent(Intent.ACTION_SEND);
                 i.setType("text/plain");
-                i.putExtra(Intent.EXTRA_SUBJECT,sRecodePics.toString());
+                i.putExtra(Intent.EXTRA_TEXT,sRecodePics.toString());
                 startActivity(i);
                 break;
         }
