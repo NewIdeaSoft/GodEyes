@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/InspectorTools.iml" filepath="$PROJECT_DIR$/InspectorTools.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/testopenimagesactivity/testopenimagesactivity.iml" filepath="$PROJECT_DIR$/testopenimagesactivity/testopenimagesactivity.iml" />
     </modules>
   </component>
 </project>

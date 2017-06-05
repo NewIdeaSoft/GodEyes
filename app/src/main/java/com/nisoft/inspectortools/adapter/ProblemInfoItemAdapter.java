@@ -45,7 +45,6 @@ public class ProblemInfoItemAdapter extends RecyclerView.Adapter<ProblemInfoItem
     @Override
     public void onBindViewHolder(final ProblemInfoItemViewHolder holder, final int position) {
         final Content content = mContents.get(position);
-        Log.e("Content",content.toString());
         holder.itemTitle.setText(content.getmTitle());
         holder.itemContent.setText(content.getmText());
         holder.itemContent.setOnClickListener(new View.OnClickListener() {
