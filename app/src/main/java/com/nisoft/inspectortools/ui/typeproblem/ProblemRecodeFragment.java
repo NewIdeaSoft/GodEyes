@@ -150,6 +150,16 @@ public class ProblemRecodeFragment extends Fragment {
                 FileUtil.writeStringToFile(data,mRootPath+mProblem.getTitle()+".txt");
                 Toast.makeText(getActivity(),"数据导出",Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.data_share:
+                String data1 = "";
+                for (Content content: mProblemContents){
+                    data1+=content.toString();
+                }
+                Intent i  = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_SUBJECT,data1);
+                startActivity(i);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

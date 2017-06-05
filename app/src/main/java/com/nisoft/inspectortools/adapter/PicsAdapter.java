@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,19 +18,24 @@ import com.bumptech.glide.Glide;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.base.LargePhotoFragment;
 import com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment;
+import com.nisoft.inspectortools.utils.FileUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2017/5/22.
  */
 
-public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
+public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> implements MediaScannerConnection.MediaScannerConnectionClient{
     private Fragment mFragment;
     private Context mContext;
     private ArrayList<String> mPicsPath;
     private int mImageLayoutId;
     private String mRootPath;
+    private MediaScannerConnection conn;
+    private static final String FILE_TYPE="image/*";
+    private String scanPath;
 
     public PicsAdapter(Fragment fragment, ArrayList<String> picsPath, int imageLayoutId, String rootPath) {
         mFragment = fragment;
@@ -63,10 +72,13 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
 
                 } else {
                     //查看大图，仿朋友圈查看大图
-                    FragmentManager manager = ((Activity) mContext).getFragmentManager();
-                    LargePhotoFragment imageFragment = LargePhotoFragment.newInstance(position,mPicsPath);
-                    imageFragment.setTargetFragment(((Activity) mContext).getFragmentManager().findFragmentById(R.id.fragment_content), 2);
-                    imageFragment.show(manager, "image");
+//                    FragmentManager manager = ((Activity) mContext).getFragmentManager();
+//                    LargePhotoFragment imageFragment = LargePhotoFragment.newInstance(position,mPicsPath);
+//                    imageFragment.setTargetFragment(((Activity) mContext).getFragmentManager().findFragmentById(R.id.fragment_content), 2);
+//                    imageFragment.show(manager, "image");
+//                    FileUtil.openImageFile(mPicsPath.get(position),mContext);
+                    scanPath = mPicsPath.get(position);
+                    startScan();
                 }
             }
         });
@@ -99,6 +111,40 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return mPicsPath.size() + 1;
+    }
+
+    @Override
+    public void onMediaScannerConnected() {
+        Log.d("onMediaScannerConnected","success"+conn);
+        conn.scanFile(scanPath, FILE_TYPE);
+    }
+
+    @Override
+    public void onScanCompleted(String path, Uri uri) {
+        try {
+//            Log.d("onScanCompleted",uri + "success"+conn);
+//            System.out.println("URI " + uri);
+            if (uri != null)
+            {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(uri);
+                mContext.startActivity(intent);
+            }
+        } finally
+        {
+            conn.disconnect();
+            conn = null;
+        }
+    }
+    private void startScan()
+    {
+//        Log.d("Connected","success"+conn);
+        if(conn!=null)
+        {
+            conn.disconnect();
+        }
+        conn = new MediaScannerConnection(mContext,this);
+        conn.connect();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

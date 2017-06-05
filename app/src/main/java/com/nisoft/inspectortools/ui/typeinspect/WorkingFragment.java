@@ -231,6 +231,12 @@ public class WorkingFragment extends Fragment {
                 FileUtil.writeStringToFile(data,path+sRecodePics.getJobNum()+".txt");
                 Toast.makeText(getActivity(), "导出数据完成！", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.data_share:
+                Intent i  = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_SUBJECT,sRecodePics.toString());
+                startActivity(i);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

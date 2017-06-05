@@ -1,5 +1,11 @@
 package com.nisoft.inspectortools.utils;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.webkit.MimeTypeMap;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -58,5 +64,28 @@ public class FileUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void openImageFile(String path, Context context){
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(Intent.ACTION_VIEW);
+        // 获取文件的MimeType
+        File file = new File(path);
+        String fileExpandedName = getFileExpandedName(file.getName());
+        String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExpandedName);
+        if (type != null) {
+            intent.setDataAndType(Uri.fromFile(file), type);
+            context.startActivity(intent);
+        }
+    }
+    public static String getFileExpandedName(String name) {
+        String expandedName = "";
+        int index = -1;
+        index = name.lastIndexOf(".");
+        if (index != -1) {
+            expandedName = name.substring(index + 1, name.length()).toLowerCase();
+        }
+        return expandedName;
     }
 }
