@@ -24,14 +24,14 @@ import java.util.ArrayList;
  * Created by Administrator on 2017/5/22.
  */
 
-public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
+public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder> {
     private Fragment mFragment;
     private Context mContext;
     private ArrayList<String> mPicsPath;
     private int mImageLayoutId;
     private String mRootPath;
     private MediaScannerConnection conn;
-    private static final String FILE_TYPE= MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpg");
+    private static final String FILE_TYPE = MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpg");
     private String scanPath;
 
     public PicsAdapter(Fragment fragment, ArrayList<String> picsPath, int imageLayoutId, String rootPath) {
@@ -62,7 +62,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
                     //启动添加图片对话框（拍照或从相册选择）
 
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
-                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position,mRootPath,false);
+                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position, mRootPath, false);
                     fragment.setTargetFragment(mFragment, 1);
                     fragment.show(manager, "update_menu");
 
@@ -86,7 +86,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
                 if (position != getItemCount() - 1) {
                     //启动添加图片对话框（拍照或从相册选择）
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
-                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position,mRootPath,true);
+                    UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position, mRootPath, true);
                     fragment.setTargetFragment(mFragment, 1);
                     fragment.show(manager, "update_menu");
                 }
@@ -111,24 +111,20 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
     }
 
 
-    private void startScan()
-    {
-//        Log.d("Connected","success"+conn);
-        if(conn!=null)
-        {
+    private void startScan() {
+        if (conn != null) {
             conn.disconnect();
         }
         conn = new MediaScannerConnection(mContext, new MediaScannerConnection.MediaScannerConnectionClient() {
             @Override
             public void onMediaScannerConnected() {
-                conn.scanFile(scanPath,FILE_TYPE);
+                conn.scanFile(scanPath, FILE_TYPE);
             }
 
             @Override
             public void onScanCompleted(String path, Uri uri) {
                 try {
-                    if (uri != null)
-                    {
+                    if (uri != null) {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setData(uri);
                         mContext.startActivity(intent);

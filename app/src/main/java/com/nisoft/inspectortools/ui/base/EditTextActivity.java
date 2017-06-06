@@ -5,18 +5,25 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.nisoft.inspectortools.R;
 
 public class EditTextActivity extends AppCompatActivity {
     private EditText mAuthorEdit;
+    private ImageButton mSpeechButton;
+    private ImageButton mCameraButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_text);
         mAuthorEdit = (EditText) findViewById(R.id.edit_text_author);
+        mSpeechButton = (ImageButton) findViewById(R.id.input_speech);
+        mCameraButton = (ImageButton) findViewById(R.id.input_camera);
+
         String initText = getIntent().getStringExtra("initText");
         mAuthorEdit.setText(initText);
         if(initText!=null) {
@@ -24,6 +31,18 @@ public class EditTextActivity extends AppCompatActivity {
         }else {
             mAuthorEdit.setSelection(0);
         }
+        mSpeechButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        mCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
     }
 
