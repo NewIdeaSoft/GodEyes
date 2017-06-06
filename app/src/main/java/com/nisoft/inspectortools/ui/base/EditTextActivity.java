@@ -91,7 +91,7 @@ public class EditTextActivity extends AppCompatActivity {
             case 12:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 } else {
-                    Toast.makeText(this, "未获得权限，应用无法正常使用", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "未获得权限，无法进行语音输入！", Toast.LENGTH_LONG).show();
                 }
                 break;
             default:
