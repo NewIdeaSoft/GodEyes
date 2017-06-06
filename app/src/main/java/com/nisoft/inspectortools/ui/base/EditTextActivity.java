@@ -2,19 +2,26 @@ package com.nisoft.inspectortools.ui.base;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechRecognizer;
+import com.iflytek.cloud.SpeechUtility;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.nisoft.inspectortools.R;
 
 public class EditTextActivity extends AppCompatActivity {
     private EditText mAuthorEdit;
     private ImageButton mSpeechButton;
     private ImageButton mCameraButton;
+    private SpeechRecognizer mRecognizer;
+    private static final String APPID = "59363ca2";
+    private RecognizerDialogListener mRecognizerDialogListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +30,7 @@ public class EditTextActivity extends AppCompatActivity {
         mAuthorEdit = (EditText) findViewById(R.id.edit_text_author);
         mSpeechButton = (ImageButton) findViewById(R.id.input_speech);
         mCameraButton = (ImageButton) findViewById(R.id.input_camera);
+        SpeechUtility.createUtility(this, SpeechConstant.APPID +"="+APPID);
 
         String initText = getIntent().getStringExtra("initText");
         mAuthorEdit.setText(initText);
@@ -34,7 +42,6 @@ public class EditTextActivity extends AppCompatActivity {
         mSpeechButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
             }
         });
         mCameraButton.setOnClickListener(new View.OnClickListener() {
@@ -64,5 +71,16 @@ public class EditTextActivity extends AppCompatActivity {
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 1:
+
+                break;
+        }
+
     }
 }
