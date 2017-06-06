@@ -86,6 +86,7 @@ public class ChooseRecodeTypeFragment extends Fragment {
                 }
                 break;
             default:
+                break;
         }
     }
 }
