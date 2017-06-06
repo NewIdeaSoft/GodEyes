@@ -1,26 +1,28 @@
 package com.nisoft.inspectortools.ui.base;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.googlecode.tesseract.android.TessBaseAPI;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.RecognizerResult;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.SpeechRecognizer;
 import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
@@ -28,6 +30,7 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.utils.JsonParser;
 
 public class EditTextActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE = 13;
     private EditText mAuthorEdit;
     private ImageButton mSpeechButton;
     private ImageButton mCameraButton;
@@ -56,6 +59,8 @@ public class EditTextActivity extends AppCompatActivity {
                 RecognizerDialog recognizerDialog = new RecognizerDialog(EditTextActivity.this,initListener);
                 recognizerDialog.setParameter(SpeechConstant.DOMAIN,"iat");
                 recognizerDialog.setParameter(SpeechConstant.LANGUAGE,"zh_cn");
+                recognizerDialog.setParameter(SpeechConstant.SAMPLE_RATE,"8000");
+                recognizerDialog.setParameter(SpeechConstant.VAD_EOS,"1000");
                 recognizerDialog.setListener(mRecognizerDialogListener);
                 recognizerDialog.show();
                 mRecognizerDialogListener = new RecognizerDialogListener() {
@@ -68,6 +73,8 @@ public class EditTextActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(SpeechError speechError) {
+                        Toast.makeText(EditTextActivity.this,speechError.getErrorCode()+"",Toast.LENGTH_SHORT).show();
+                        Log.e("ErrorCode:",speechError.getErrorCode()+"");
 
                     }
                 };
@@ -82,10 +89,24 @@ public class EditTextActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 12);
         }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 14);
+        }
+        requestPermissionSettings();
 
+
+    }
+    @TargetApi(23)
+    private void requestPermissionSettings(){
+        if(!Settings.System.canWrite(this)){
+            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, REQUEST_CODE);
+        }
     }
 
     @Override
+    @TargetApi(23)
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case 12:
@@ -94,6 +115,14 @@ public class EditTextActivity extends AppCompatActivity {
                     Toast.makeText(this, "未获得权限，无法进行语音输入！", Toast.LENGTH_LONG).show();
                 }
                 break;
+            case REQUEST_CODE:
+                if (Settings.System.canWrite(this)) {
+                    //检查返回结果
+                    Toast.makeText(EditTextActivity.this, "WRITE_SETTINGS permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(EditTextActivity.this, "WRITE_SETTINGS permission not granted", Toast.LENGTH_SHORT).show();
+                }
+
             default:
                 break;
         }
