@@ -3,10 +3,14 @@ package com.nisoft.inspectortools.ui.base;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,7 +31,14 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.utils.FileUtil;
+import com.nisoft.inspectortools.utils.ImageToStringUtil;
 import com.nisoft.inspectortools.utils.JsonParser;
+
+import java.io.File;
+import java.io.IOException;
+
+import static com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment.CHOOSE_PHOTO;
 
 public class EditTextActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 13;
@@ -44,23 +55,23 @@ public class EditTextActivity extends AppCompatActivity {
         mAuthorEdit = (EditText) findViewById(R.id.edit_text_author);
         mSpeechButton = (ImageButton) findViewById(R.id.input_speech);
         mCameraButton = (ImageButton) findViewById(R.id.input_camera);
-        SpeechUtility.createUtility(EditTextActivity.this, SpeechConstant.APPID +"="+APPID);
+        SpeechUtility.createUtility(EditTextActivity.this, SpeechConstant.APPID + "=" + APPID);
         String initText = getIntent().getStringExtra("initText");
         mAuthorEdit.setText(initText);
-        if(initText!=null) {
+        if (initText != null) {
             mAuthorEdit.setSelection(initText.length());
-        }else {
+        } else {
             mAuthorEdit.setSelection(0);
         }
         mSpeechButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 InitListener initListener = null;
-                RecognizerDialog recognizerDialog = new RecognizerDialog(EditTextActivity.this,initListener);
-                recognizerDialog.setParameter(SpeechConstant.DOMAIN,"iat");
-                recognizerDialog.setParameter(SpeechConstant.LANGUAGE,"zh_cn");
-                recognizerDialog.setParameter(SpeechConstant.SAMPLE_RATE,"8000");
-                recognizerDialog.setParameter(SpeechConstant.VAD_EOS,"1000");
+                RecognizerDialog recognizerDialog = new RecognizerDialog(EditTextActivity.this, initListener);
+                recognizerDialog.setParameter(SpeechConstant.DOMAIN, "iat");
+                recognizerDialog.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+                recognizerDialog.setParameter(SpeechConstant.SAMPLE_RATE, "8000");
+                recognizerDialog.setParameter(SpeechConstant.VAD_EOS, "1000");
                 recognizerDialog.setListener(mRecognizerDialogListener);
                 recognizerDialog.show();
                 mRecognizerDialogListener = new RecognizerDialogListener() {
@@ -73,8 +84,8 @@ public class EditTextActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(SpeechError speechError) {
-                        Toast.makeText(EditTextActivity.this,speechError.getErrorCode()+"",Toast.LENGTH_SHORT).show();
-                        Log.e("ErrorCode:",speechError.getErrorCode()+"");
+                        Toast.makeText(EditTextActivity.this, speechError.getErrorCode() + "", Toast.LENGTH_SHORT).show();
+                        Log.e("ErrorCode:", speechError.getErrorCode() + "");
 
                     }
                 };
@@ -83,7 +94,10 @@ public class EditTextActivity extends AppCompatActivity {
         mCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //拍照，从相册选择图片，转换成文字显示在文本框
+                //拍照或从相册选择图片，转换成文字显示在文本框
+                ImageToStringUtil.resourseToFile(EditTextActivity.this);
+                openAlbum();
+
             }
         });
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -96,9 +110,10 @@ public class EditTextActivity extends AppCompatActivity {
 
 
     }
+
     @TargetApi(23)
-    private void requestPermissionSettings(){
-        if(!Settings.System.canWrite(this)){
+    private void requestPermissionSettings() {
+        if (!Settings.System.canWrite(this)) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
                     Uri.parse("package:" + getPackageName()));
             startActivityForResult(intent, REQUEST_CODE);
@@ -135,9 +150,9 @@ public class EditTextActivity extends AppCompatActivity {
             if (!contentEdit.equals("")) {
                 Intent intent = new Intent();
                 intent.putExtra("content_edit", contentEdit);
-                int content_position = getIntent().getIntExtra("content_position",-1);
-                if (content_position>-1){
-                    intent.putExtra("content_position",content_position);
+                int content_position = getIntent().getIntExtra("content_position", -1);
+                if (content_position > -1) {
+                    intent.putExtra("content_position", content_position);
                 }
                 setResult(Activity.RESULT_OK, intent);
                 finish();
@@ -148,5 +163,63 @@ public class EditTextActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, CHOOSE_PHOTO);
+    }
+
+    private String photoPath;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        switch (requestCode) {
+            case CHOOSE_PHOTO:
+                Uri uri = data.getData();
+                if (DocumentsContract.isDocumentUri(this, uri)) {
+                    String docId = DocumentsContract.getDocumentId(uri);
+                    if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                        String id = docId.split(":")[1];
+                        String selection = MediaStore.Images.Media._ID + "=" + id;
+                        photoPath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+                    } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                        Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                        photoPath = getImagePath(contentUri, null);
+                    }
+                } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+                    photoPath = getImagePath(uri, null);
+                } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+                    photoPath = uri.getPath();
+                } else {
+                    photoPath = null;
+                }
+                String imageText;
+                try {
+                    imageText = ImageToStringUtil.parseImageToString(photoPath);
+                    if (imageText!=null){
+                        mAuthorEdit.append(imageText);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+        }
+    }
+
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+
+        return path;
+    }
 
 }
