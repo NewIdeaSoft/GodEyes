@@ -10,7 +10,6 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
-import com.nisoft.inspectortools.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -113,13 +112,13 @@ public class ImageToStringUtil {
         Bitmap resizeBmp = ThumbnailUtils.extractThumbnail(newBmp, width, height);
         return resizeBmp;
     }
-    public static void resourceToFile(Context context){
-        if (!new File(TESS_BASE_PATH + "tessdata/",
-                DEFAULT_LANGUAGE +".traineddata").exists())
-            //推送字库到SD卡
-            ResourceToFile(context, R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
-                    DEFAULT_LANGUAGE +".traineddata");
-    }
+//    public static void resourceToFile(Context context){
+//        if (!new File(TESS_BASE_PATH + "tessdata/",
+//                DEFAULT_LANGUAGE +".traineddata").exists())
+//            //推送字库到SD卡
+//            ResourceToFile(context, R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
+//                    DEFAULT_LANGUAGE +".traineddata");
+//    }
     public static boolean ResourceToFile(Context context, int ResourceId,
                                          String filePath, String fileName) {
         InputStream is = null;
