@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -31,11 +32,9 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.utils.FileUtil;
 import com.nisoft.inspectortools.utils.ImageToStringUtil;
 import com.nisoft.inspectortools.utils.JsonParser;
 
-import java.io.File;
 import java.io.IOException;
 
 import static com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment.CHOOSE_PHOTO;
@@ -95,8 +94,26 @@ public class EditTextActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //拍照或从相册选择图片，转换成文字显示在文本框
-                ImageToStringUtil.resourseToFile(EditTextActivity.this);
-                openAlbum();
+                new AsyncTask<Void, Void, Boolean>(){
+
+                    @Override
+                    protected void onPreExecute() {
+                        Toast.makeText(EditTextActivity.this,"开始加载语言包",Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    protected Boolean doInBackground(Void... params) {
+                        ImageToStringUtil.resourseToFile(EditTextActivity.this);
+                        return true;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean aBoolean) {
+                        if(aBoolean) {
+                            openAlbum();
+                        }
+                    }
+                }.execute();
 
             }
         });
@@ -106,8 +123,6 @@ public class EditTextActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 14);
         }
-        requestPermissionSettings();
-
 
     }
 
@@ -130,13 +145,6 @@ public class EditTextActivity extends AppCompatActivity {
                     Toast.makeText(this, "未获得权限，无法进行语音输入！", Toast.LENGTH_LONG).show();
                 }
                 break;
-            case REQUEST_CODE:
-                if (Settings.System.canWrite(this)) {
-                    //检查返回结果
-                    Toast.makeText(EditTextActivity.this, "WRITE_SETTINGS permission granted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(EditTextActivity.this, "WRITE_SETTINGS permission not granted", Toast.LENGTH_SHORT).show();
-                }
 
             default:
                 break;
@@ -196,17 +204,39 @@ public class EditTextActivity extends AppCompatActivity {
                 } else {
                     photoPath = null;
                 }
-                String imageText;
-                try {
-                    imageText = ImageToStringUtil.parseImageToString(photoPath);
-                    if (imageText!=null){
-                        mAuthorEdit.append(imageText);
+                new AsyncTask<Void, Void, String>(){
+
+                    @Override
+                    protected void onPreExecute() {
+                        Toast.makeText(EditTextActivity.this, "开始识别文字", Toast.LENGTH_SHORT).show();
+                        showProgressDialog();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+                    @Override
+                    protected String doInBackground(Void... params) {
+
+                        try {
+                            return ImageToStringUtil.parseImageToString(photoPath);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+
+                        }
+                        return "出现错误啦！";
+                    }
+
+                    @Override
+                    protected void onPostExecute(String result) {
+                        mAuthorEdit.append(result);
+                    }
+                }.execute();
+
+
 
         }
+    }
+
+    private void showProgressDialog() {
+
     }
 
     private String getImagePath(Uri uri, String selection) {
