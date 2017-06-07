@@ -12,7 +12,6 @@
 
     <!--读取手机信息权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
 
 
@@ -38,7 +37,8 @@
             android:name=".ui.typeproblem.ProblemRecodeActivity"
             android:windowSoftInputMode="adjustPan">
         </activity>
-        <activity android:name=".ui.base.EditTextActivity">
+        <activity android:name=".ui.base.EditTextActivity"
+                  android:screenOrientation="portrait">
         </activity>
     </application>
 

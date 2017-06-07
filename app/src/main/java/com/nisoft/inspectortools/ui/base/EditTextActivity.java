@@ -3,6 +3,7 @@ package com.nisoft.inspectortools.ui.base;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,9 +36,12 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.utils.ImageToStringUtil;
 import com.nisoft.inspectortools.utils.JsonParser;
 
+import java.io.File;
 import java.io.IOException;
 
 import static com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment.CHOOSE_PHOTO;
+import static com.nisoft.inspectortools.utils.ImageToStringUtil.DEFAULT_LANGUAGE;
+import static com.nisoft.inspectortools.utils.ImageToStringUtil.TESS_BASE_PATH;
 
 public class EditTextActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 13;
@@ -46,6 +50,7 @@ public class EditTextActivity extends AppCompatActivity {
     private ImageButton mCameraButton;
     private static final String APPID = "59363ca2";
     private RecognizerDialogListener mRecognizerDialogListener;
+    private ProgressDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,27 +99,30 @@ public class EditTextActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //拍照或从相册选择图片，转换成文字显示在文本框
-                new AsyncTask<Void, Void, Boolean>(){
+                if (!new File(TESS_BASE_PATH + "tessdata/",
+                        DEFAULT_LANGUAGE +".traineddata").exists()){
+                    new AsyncTask<Void, Void, Boolean>(){
 
-                    @Override
-                    protected void onPreExecute() {
-                        Toast.makeText(EditTextActivity.this,"开始加载语言包",Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    protected Boolean doInBackground(Void... params) {
-                        ImageToStringUtil.resourseToFile(EditTextActivity.this);
-                        return true;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean aBoolean) {
-                        if(aBoolean) {
-                            openAlbum();
+                        @Override
+                        protected void onPreExecute() {
+                            Toast.makeText(EditTextActivity.this,"开始加载语言包",Toast.LENGTH_SHORT).show();
+                            showProgressDialog("正在传输数据...");
                         }
-                    }
-                }.execute();
 
+                        @Override
+                        protected Boolean doInBackground(Void... params) {
+                            ImageToStringUtil.ResourceToFile(EditTextActivity.this,R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
+                                    DEFAULT_LANGUAGE +".traineddata");
+                            return true;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Boolean result) {
+                            mDialog.dismiss();
+                        }
+                    }.execute();
+                }
+                openAlbum();
             }
         });
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -209,7 +217,7 @@ public class EditTextActivity extends AppCompatActivity {
                     @Override
                     protected void onPreExecute() {
                         Toast.makeText(EditTextActivity.this, "开始识别文字", Toast.LENGTH_SHORT).show();
-                        showProgressDialog();
+                        showProgressDialog("正在识别文字...");
                     }
 
                     @Override
@@ -226,6 +234,7 @@ public class EditTextActivity extends AppCompatActivity {
 
                     @Override
                     protected void onPostExecute(String result) {
+                        mDialog.dismiss();
                         mAuthorEdit.append(result);
                     }
                 }.execute();
@@ -235,8 +244,11 @@ public class EditTextActivity extends AppCompatActivity {
         }
     }
 
-    private void showProgressDialog() {
-
+    private void showProgressDialog(String message) {
+        mDialog = new ProgressDialog(this);
+        mDialog.setMessage(message);
+        mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mDialog.show();
     }
 
     private String getImagePath(Uri uri, String selection) {
