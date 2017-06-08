@@ -1,16 +1,12 @@
 package com.nisoft.inspectortools.utils;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.util.Log;
-
 import com.googlecode.tesseract.android.TessBaseAPI;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,7 +50,8 @@ public class ImageToStringUtil {
         mtx.preRotate(rotate);
         bitmap = Bitmap.createBitmap(bitmap,0,0,with,height,mtx,false);
         bitmap = bitmap.copy(Bitmap.Config.ARGB_8888,true);
-        Bitmap data = handleBlackWitheBitmap(bitmap);
+        bitmap = ImageFilter.convertToBlackWhite(bitmap);
+        bitmap = ImageFilter.bitmap2Gray(bitmap);
         TessBaseAPI baseAPI = new TessBaseAPI();
         baseAPI.init(TESS_BASE_PATH,DEFAULT_LANGUAGE);
         baseAPI.setImage(bitmap);
@@ -64,61 +61,6 @@ public class ImageToStringUtil {
         return recognizedText;
     }
 
-    public static Bitmap handleBlackWitheBitmap(Bitmap bmp) {
-        int width = bmp.getWidth(); // 获取位图的宽
-        int height = bmp.getHeight(); // 获取位图的高
-        final int tmp = 180;
-        int[] pixels = new int[width * height]; // 通过位图的大小创建像素点数组
-        // 设定二值化的域值，默认值为100
-        //tmp = 180;
-        bmp.getPixels(pixels, 0, width, 0, 0, width, height);
-        int alpha = 0xFF << 24;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                int grey = pixels[width * i + j];
-                // 分离三原色
-                alpha = ((grey & 0xFF000000) >> 24);
-                int red = ((grey & 0x00FF0000) >> 16);
-                int green = ((grey & 0x0000FF00) >> 8);
-                int blue = (grey & 0x000000FF);
-                if (red > tmp) {
-                    red = 255;
-                } else {
-                    red = 0;
-                }
-                if (blue > tmp) {
-                    blue = 255;
-                } else {
-                    blue = 0;
-                }
-                if (green > tmp) {
-                    green = 255;
-                } else {
-                    green = 0;
-                }
-                pixels[width * i + j] = alpha << 24 | red << 16 | green << 8
-                        | blue;
-                if (pixels[width * i + j] == -1) {
-                    pixels[width * i + j] = -1;
-                } else {
-                    pixels[width * i + j] = -16777216;
-                }
-            }
-        }
-        // 新建图片
-        Bitmap newBmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        // 设置图片数据
-        newBmp.setPixels(pixels, 0, width, 0, 0, width, height);
-        Bitmap resizeBmp = ThumbnailUtils.extractThumbnail(newBmp, width, height);
-        return resizeBmp;
-    }
-//    public static void resourceToFile(Context context){
-//        if (!new File(TESS_BASE_PATH + "tessdata/",
-//                DEFAULT_LANGUAGE +".traineddata").exists())
-//            //推送字库到SD卡
-//            ResourceToFile(context, R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
-//                    DEFAULT_LANGUAGE +".traineddata");
-//    }
     public static boolean ResourceToFile(Context context, int ResourceId,
                                          String filePath, String fileName) {
         InputStream is = null;

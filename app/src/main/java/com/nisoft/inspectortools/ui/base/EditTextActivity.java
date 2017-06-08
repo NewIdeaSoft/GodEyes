@@ -8,6 +8,10 @@ import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +27,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.iflytek.cloud.InitListener;
@@ -33,12 +38,16 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.utils.ImageFilter;
 import com.nisoft.inspectortools.utils.ImageToStringUtil;
 import com.nisoft.inspectortools.utils.JsonParser;
 
+import java.io.File;
 import java.io.IOException;
 
 import static com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment.CHOOSE_PHOTO;
+import static com.nisoft.inspectortools.utils.ImageToStringUtil.DEFAULT_LANGUAGE;
+import static com.nisoft.inspectortools.utils.ImageToStringUtil.TESS_BASE_PATH;
 
 public class EditTextActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 13;
@@ -92,36 +101,36 @@ public class EditTextActivity extends AppCompatActivity {
                 };
             }
         });
-//        mCameraButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //拍照或从相册选择图片，转换成文字显示在文本框
-//                if (!new File(TESS_BASE_PATH + "tessdata/",
-//                        DEFAULT_LANGUAGE +".traineddata").exists()){
-//                    new AsyncTask<Void, Void, Boolean>(){
-//
-//                        @Override
-//                        protected void onPreExecute() {
-//                            Toast.makeText(EditTextActivity.this,"开始加载语言包",Toast.LENGTH_SHORT).show();
-//                            showProgressDialog("正在传输数据...");
-//                        }
-//
-//                        @Override
-//                        protected Boolean doInBackground(Void... params) {
-//                            ImageToStringUtil.ResourceToFile(EditTextActivity.this,R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
-//                                    DEFAULT_LANGUAGE +".traineddata");
-//                            return true;
-//                        }
-//
-//                        @Override
-//                        protected void onPostExecute(Boolean result) {
-//                            mDialog.dismiss();
-//                        }
-//                    }.execute();
-//                }
-//                openAlbum();
-//            }
-//        });
+        mCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //拍照或从相册选择图片，转换成文字显示在文本框
+                if (!new File(TESS_BASE_PATH + "tessdata/",
+                        DEFAULT_LANGUAGE + ".traineddata").exists()) {
+                    new AsyncTask<Void, Void, Boolean>() {
+
+                        @Override
+                        protected void onPreExecute() {
+                            Toast.makeText(EditTextActivity.this, "开始加载语言包", Toast.LENGTH_SHORT).show();
+                            showProgressDialog("正在传输数据...");
+                        }
+
+                        @Override
+                        protected Boolean doInBackground(Void... params) {
+                            ImageToStringUtil.ResourceToFile(EditTextActivity.this, R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
+                                    DEFAULT_LANGUAGE + ".traineddata");
+                            return true;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Boolean result) {
+                            mDialog.dismiss();
+                        }
+                    }.execute();
+                }
+                openAlbum();
+            }
+        });
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 12);
         }
@@ -150,7 +159,6 @@ public class EditTextActivity extends AppCompatActivity {
                     Toast.makeText(this, "未获得权限，无法进行语音输入！", Toast.LENGTH_LONG).show();
                 }
                 break;
-
             default:
                 break;
         }
@@ -209,7 +217,8 @@ public class EditTextActivity extends AppCompatActivity {
                 } else {
                     photoPath = null;
                 }
-                new AsyncTask<Void, Void, String>(){
+
+                new AsyncTask<Void, Void, String>() {
 
                     @Override
                     protected void onPreExecute() {
@@ -224,7 +233,6 @@ public class EditTextActivity extends AppCompatActivity {
                             return ImageToStringUtil.parseImageToString(photoPath);
                         } catch (IOException e) {
                             e.printStackTrace();
-
                         }
                         return "出现错误啦！";
                     }
@@ -254,8 +262,6 @@ public class EditTextActivity extends AppCompatActivity {
             }
             cursor.close();
         }
-
         return path;
     }
-
 }

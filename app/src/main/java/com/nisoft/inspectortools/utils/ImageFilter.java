@@ -137,7 +137,7 @@ public class ImageFilter {
                 // 用公式X = 0.3×R+0.59×G+0.11×B计算出X代替原来的RGB
                 int gray = (int) ((float) red * 0.3 + (float) green * 0.59 + (float) blue * 0.11);
                 // 对图像进行二值化处理
-                if (gray <= 95) {
+                if (gray <= 75) {
                     gray = 0;
                 } else {
                     gray = 255;
@@ -154,7 +154,7 @@ public class ImageFilter {
     /**
      * 将彩色图转换为黑白图
      *
-     * @param 位图
+     * @param bmp 位图
      * @return 返回转换好的位图
      */
     public static Bitmap convertToBlackWhite(Bitmap bmp) {

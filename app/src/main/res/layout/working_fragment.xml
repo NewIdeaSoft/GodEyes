@@ -33,7 +33,7 @@
             android:id="@+id/job_num_save"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="#fff"
+            android:background="#00000000"
             android:src="@drawable/btn_done"
             android:layout_gravity="center_vertical"/>
     </LinearLayout>
