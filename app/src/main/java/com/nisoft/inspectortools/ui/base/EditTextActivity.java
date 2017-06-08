@@ -3,21 +3,25 @@ package com.nisoft.inspectortools.ui.base;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -38,14 +42,18 @@ import com.nisoft.inspectortools.utils.ImageToStringUtil;
 import com.nisoft.inspectortools.utils.JsonParser;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment.CHOOSE_PHOTO;
+import static com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment.IMAGE_ROOTPATH;
 import static com.nisoft.inspectortools.utils.ImageToStringUtil.DEFAULT_LANGUAGE;
 import static com.nisoft.inspectortools.utils.ImageToStringUtil.TESS_BASE_PATH;
 
 public class EditTextActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 13;
+    private static final int CHOOSE_PHOTO = 1;
+    private static final int TAKE_PHOTO = 2;
+    private static final int CROP_PHOTO = 3;
     private EditText mAuthorEdit;
     private ImageButton mSpeechButton;
     private ImageButton mCameraButton;
@@ -86,6 +94,7 @@ public class EditTextActivity extends AppCompatActivity {
                         mAuthorEdit.append(text);
                         mAuthorEdit.setSelection(mAuthorEdit.length());
                     }
+
                     @Override
                     public void onError(SpeechError speechError) {
                         Toast.makeText(EditTextActivity.this, speechError.getErrorCode() + "", Toast.LENGTH_SHORT).show();
@@ -106,6 +115,7 @@ public class EditTextActivity extends AppCompatActivity {
                             Toast.makeText(EditTextActivity.this, "开始加载语言包", Toast.LENGTH_SHORT).show();
                             showProgressDialog("正在传输数据...");
                         }
+
                         @Override
                         protected Boolean doInBackground(Void... params) {
                             ImageToStringUtil.ResourceToFile(EditTextActivity.this, R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
@@ -119,7 +129,7 @@ public class EditTextActivity extends AppCompatActivity {
                         }
                     }.execute();
                 }
-                openAlbum();
+                showDialog();
             }
         });
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -176,9 +186,10 @@ public class EditTextActivity extends AppCompatActivity {
     }
 
     private void openAlbum() {
-        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-        intent.setType("image/*");
-        startActivityForResult(intent, CHOOSE_PHOTO);
+//        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+//        intent.setType("image/*");
+//        startActivityForResult(intent, CHOOSE_PHOTO);
+        chooseAndCropPhoto(IMAGE_ROOTPATH + "cache", CHOOSE_PHOTO);
     }
 
     private String photoPath;
@@ -191,44 +202,38 @@ public class EditTextActivity extends AppCompatActivity {
         switch (requestCode) {
             case CHOOSE_PHOTO:
                 Uri uri = data.getData();
-                if (DocumentsContract.isDocumentUri(this, uri)) {
-                    String docId = DocumentsContract.getDocumentId(uri);
-                    if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
-                        String id = docId.split(":")[1];
-                        String selection = MediaStore.Images.Media._ID + "=" + id;
-                        photoPath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
-                    } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
-                        Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
-                        photoPath = getImagePath(contentUri, null);
-                    }
-                } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-                    photoPath = getImagePath(uri, null);
-                } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-                    photoPath = uri.getPath();
-                } else {
-                    photoPath = null;
+//                if (DocumentsContract.isDocumentUri(this, uri)) {
+//                    String docId = DocumentsContract.getDocumentId(uri);
+//                    if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+//                        String id = docId.split(":")[1];
+//                        String selection = MediaStore.Images.Media._ID + "=" + id;
+//                        photoPath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+//                    } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+//                        Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+//                        photoPath = getImagePath(contentUri, null);
+//                    }
+//                } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+//                    photoPath = getImagePath(uri, null);
+//                } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+//                    photoPath = uri.getPath();
+//                } else {
+//                    photoPath = null;
+//                }
+                cropImageUri(uri,CROP_PHOTO);
+                break;
+            case TAKE_PHOTO:
+                Uri uriCamera = data.getData();
+                cropImageUri(uriCamera,CROP_PHOTO);
+                break;
+            case CROP_PHOTO:
+                Uri imageUri = data.getData();
+                Bitmap bitmap = null;
+                try {
+                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
-                new AsyncTask<Void, Void, String>() {
-                    @Override
-                    protected void onPreExecute() {
-                        Toast.makeText(EditTextActivity.this, "开始识别文字", Toast.LENGTH_SHORT).show();
-                        showProgressDialog("正在识别文字...");
-                    }
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        try {
-                            return ImageToStringUtil.parseImageToString(photoPath);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return "出现错误啦！";
-                    }
-                    @Override
-                    protected void onPostExecute(String result) {
-                        mDialog.dismiss();
-                        mAuthorEdit.append(result);
-                    }
-                }.execute();
+                break;
         }
     }
 
@@ -257,7 +262,7 @@ public class EditTextActivity extends AppCompatActivity {
      * @param imagePath
      * @param requestCode
      */
-    public void startPhotoCrop(Uri uri,String imagePath,int requestCode) {
+    public void startPhotoCrop(Uri uri, String imagePath, int requestCode) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");
@@ -270,7 +275,7 @@ public class EditTextActivity extends AppCompatActivity {
         startActivityForResult(intent, requestCode);
     }
 
-    public void chooseAndCropPhoto(String imagePath,int requestCode){
+    public void chooseAndCropPhoto(String cachePath, int requestCode) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
@@ -278,9 +283,70 @@ public class EditTextActivity extends AppCompatActivity {
         intent.putExtra("scale", true);
         intent.putExtra("return-data", false);
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(new File(imagePath, "temp_cropped.jpg")));
+                Uri.fromFile(new File(cachePath, "temp_cropped.jpg")));
         intent.putExtra("outputFormat",
                 Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true); // no face detection
+        startActivityForResult(intent, requestCode);
+    }
+
+    private void showDialog() {
+        new AlertDialog.Builder(this)
+                .setItems(new String[]{"拍摄照片", "从相册选择"}, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                openCamera();
+                                break;
+                            case 1:
+                                openAlbum();
+                                break;
+                        }
+                    }
+                }).show();
+    }
+
+    private void openCamera() {
+        //调用系统相机拍摄照片
+        //照片文件存储路径
+        Uri uri = null;
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"cache");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File outputImage = new File(dir, "image.jpg");
+        String path = null;
+        if (outputImage.exists()) {
+            outputImage.delete();
+        }
+        try {
+            outputImage.createNewFile();
+            path = outputImage.getAbsolutePath();
+            Log.d("PhotoPath", path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (Build.VERSION.SDK_INT >= 24) {
+            uri = FileProvider.getUriForFile(this, "com.nisoft.inspectortools.fileprovider", outputImage);
+        } else {
+            uri = Uri.fromFile(outputImage);
+        }
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(intent, TAKE_PHOTO);
+    }
+
+    private void cropImageUri(Uri uri, int requestCode) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 2);
+        intent.putExtra("scale", true);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        intent.putExtra("return-data", false);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true); // no face detection
         startActivityForResult(intent, requestCode);
     }
