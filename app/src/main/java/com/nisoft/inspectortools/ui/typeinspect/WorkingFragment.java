@@ -104,6 +104,9 @@ public class WorkingFragment extends Fragment {
         mDatePickerButton = (TextView) view.findViewById(R.id.date_picker_button);
         mJobNumSaveButton = (ImageButton) view.findViewById(R.id.job_num_save);
         mDescriptionText = (TextView) view.findViewById(R.id.job_description);
+        if(sRecodePics.getDescription()!=null){
+            mDescriptionText.setText(sRecodePics.getDescription());
+        }
         Date date;
         if (sRecodePics.getDate() != null) {
             date = sRecodePics.getDate();

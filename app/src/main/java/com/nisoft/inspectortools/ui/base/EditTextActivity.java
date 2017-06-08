@@ -9,9 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,7 +24,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.iflytek.cloud.InitListener;
@@ -38,7 +34,6 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.utils.ImageFilter;
 import com.nisoft.inspectortools.utils.ImageToStringUtil;
 import com.nisoft.inspectortools.utils.JsonParser;
 
@@ -91,12 +86,10 @@ public class EditTextActivity extends AppCompatActivity {
                         mAuthorEdit.append(text);
                         mAuthorEdit.setSelection(mAuthorEdit.length());
                     }
-
                     @Override
                     public void onError(SpeechError speechError) {
                         Toast.makeText(EditTextActivity.this, speechError.getErrorCode() + "", Toast.LENGTH_SHORT).show();
                         Log.e("ErrorCode:", speechError.getErrorCode() + "");
-
                     }
                 };
             }
@@ -108,13 +101,11 @@ public class EditTextActivity extends AppCompatActivity {
                 if (!new File(TESS_BASE_PATH + "tessdata/",
                         DEFAULT_LANGUAGE + ".traineddata").exists()) {
                     new AsyncTask<Void, Void, Boolean>() {
-
                         @Override
                         protected void onPreExecute() {
                             Toast.makeText(EditTextActivity.this, "开始加载语言包", Toast.LENGTH_SHORT).show();
                             showProgressDialog("正在传输数据...");
                         }
-
                         @Override
                         protected Boolean doInBackground(Void... params) {
                             ImageToStringUtil.ResourceToFile(EditTextActivity.this, R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
@@ -217,18 +208,14 @@ public class EditTextActivity extends AppCompatActivity {
                 } else {
                     photoPath = null;
                 }
-
                 new AsyncTask<Void, Void, String>() {
-
                     @Override
                     protected void onPreExecute() {
                         Toast.makeText(EditTextActivity.this, "开始识别文字", Toast.LENGTH_SHORT).show();
                         showProgressDialog("正在识别文字...");
                     }
-
                     @Override
                     protected String doInBackground(Void... params) {
-
                         try {
                             return ImageToStringUtil.parseImageToString(photoPath);
                         } catch (IOException e) {
@@ -236,7 +223,6 @@ public class EditTextActivity extends AppCompatActivity {
                         }
                         return "出现错误啦！";
                     }
-
                     @Override
                     protected void onPostExecute(String result) {
                         mDialog.dismiss();
@@ -263,5 +249,39 @@ public class EditTextActivity extends AppCompatActivity {
             cursor.close();
         }
         return path;
+    }
+
+    /***
+     *  调用系统图片编辑进行裁剪
+     * @param uri
+     * @param imagePath
+     * @param requestCode
+     */
+    public void startPhotoCrop(Uri uri,String imagePath,int requestCode) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("scale", true);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                Uri.fromFile(new File(imagePath, "temp_cropped.jpg")));
+        intent.putExtra("return-data", false);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true); // no face detection
+        startActivityForResult(intent, requestCode);
+    }
+
+    public void chooseAndCropPhoto(String imagePath,int requestCode){
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("scale", true);
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                Uri.fromFile(new File(imagePath, "temp_cropped.jpg")));
+        intent.putExtra("outputFormat",
+                Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true); // no face detection
+        startActivityForResult(intent, requestCode);
     }
 }
