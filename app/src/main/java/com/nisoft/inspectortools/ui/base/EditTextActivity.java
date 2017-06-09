@@ -5,17 +5,18 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -38,14 +39,13 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.utils.ImageFilter;
 import com.nisoft.inspectortools.utils.ImageToStringUtil;
 import com.nisoft.inspectortools.utils.JsonParser;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment.IMAGE_ROOTPATH;
 import static com.nisoft.inspectortools.utils.ImageToStringUtil.DEFAULT_LANGUAGE;
 import static com.nisoft.inspectortools.utils.ImageToStringUtil.TESS_BASE_PATH;
 
@@ -60,6 +60,8 @@ public class EditTextActivity extends AppCompatActivity {
     private static final String APPID = "59363ca2";
     private RecognizerDialogListener mRecognizerDialogListener;
     private ProgressDialog mDialog;
+    private static final String CROP_CACHE_DIR =
+            Environment.getExternalStorageDirectory().getAbsolutePath()+"/工作相册/cache";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,15 +143,6 @@ public class EditTextActivity extends AppCompatActivity {
 
     }
 
-    @TargetApi(23)
-    private void requestPermissionSettings() {
-        if (!Settings.System.canWrite(this)) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
-                    Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, REQUEST_CODE);
-        }
-    }
-
     @Override
     @TargetApi(23)
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -186,10 +179,9 @@ public class EditTextActivity extends AppCompatActivity {
     }
 
     private void openAlbum() {
-//        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-//        intent.setType("image/*");
-//        startActivityForResult(intent, CHOOSE_PHOTO);
-        chooseAndCropPhoto(IMAGE_ROOTPATH + "cache", CHOOSE_PHOTO);
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, CHOOSE_PHOTO);
     }
 
     private String photoPath;
@@ -202,37 +194,59 @@ public class EditTextActivity extends AppCompatActivity {
         switch (requestCode) {
             case CHOOSE_PHOTO:
                 Uri uri = data.getData();
-//                if (DocumentsContract.isDocumentUri(this, uri)) {
-//                    String docId = DocumentsContract.getDocumentId(uri);
-//                    if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
-//                        String id = docId.split(":")[1];
-//                        String selection = MediaStore.Images.Media._ID + "=" + id;
-//                        photoPath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
-//                    } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
-//                        Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
-//                        photoPath = getImagePath(contentUri, null);
-//                    }
-//                } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-//                    photoPath = getImagePath(uri, null);
-//                } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-//                    photoPath = uri.getPath();
-//                } else {
-//                    photoPath = null;
-//                }
-                cropImageUri(uri,CROP_PHOTO);
+                if (DocumentsContract.isDocumentUri(this, uri)) {
+                    String docId = DocumentsContract.getDocumentId(uri);
+                    if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                        String id = docId.split(":")[1];
+                        String selection = MediaStore.Images.Media._ID + "=" + id;
+                        photoPath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+                    } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                        Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                        photoPath = getImagePath(contentUri, null);
+                    }
+                } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+                    photoPath = getImagePath(uri, null);
+                } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+                    photoPath = uri.getPath();
+                } else {
+                    photoPath = null;
+                }
+                if (photoPath!=null){
+                    Uri imageUri = Uri.fromFile(new File(photoPath));
+                    cropImageUri(imageUri,CROP_PHOTO);
+                }
                 break;
             case TAKE_PHOTO:
-                Uri uriCamera = data.getData();
+                Uri uriCamera = Uri.fromFile(new File(photoPath));
                 cropImageUri(uriCamera,CROP_PHOTO);
                 break;
             case CROP_PHOTO:
-                Uri imageUri = data.getData();
-                Bitmap bitmap = null;
-                try {
-                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected void onPreExecute() {
+                        showProgressDialog("正在识别数据...");
+                    }
+
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        try {
+                            return ImageToStringUtil.parseImageToString(CROP_CACHE_DIR+"/temp.jpg");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(String result) {
+                        mDialog.dismiss();
+                        if (result==null){
+                            Toast.makeText(EditTextActivity.this, "识别失败", Toast.LENGTH_SHORT).show();
+                        }else {
+                            mAuthorEdit.append(result);
+                        }
+                    }
+                }.execute();
                 break;
         }
     }
@@ -254,40 +268,6 @@ public class EditTextActivity extends AppCompatActivity {
             cursor.close();
         }
         return path;
-    }
-
-    /***
-     *  调用系统图片编辑进行裁剪
-     * @param uri
-     * @param imagePath
-     * @param requestCode
-     */
-    public void startPhotoCrop(Uri uri, String imagePath, int requestCode) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("scale", true);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(new File(imagePath, "temp_cropped.jpg")));
-        intent.putExtra("return-data", false);
-        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-        intent.putExtra("noFaceDetection", true); // no face detection
-        startActivityForResult(intent, requestCode);
-    }
-
-    public void chooseAndCropPhoto(String cachePath, int requestCode) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("scale", true);
-        intent.putExtra("return-data", false);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(new File(cachePath, "temp_cropped.jpg")));
-        intent.putExtra("outputFormat",
-                Bitmap.CompressFormat.JPEG.toString());
-        intent.putExtra("noFaceDetection", true); // no face detection
-        startActivityForResult(intent, requestCode);
     }
 
     private void showDialog() {
@@ -316,14 +296,12 @@ public class EditTextActivity extends AppCompatActivity {
             dir.mkdirs();
         }
         File outputImage = new File(dir, "image.jpg");
-        String path = null;
         if (outputImage.exists()) {
             outputImage.delete();
         }
         try {
             outputImage.createNewFile();
-            path = outputImage.getAbsolutePath();
-            Log.d("PhotoPath", path);
+            photoPath = outputImage.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -341,10 +319,12 @@ public class EditTextActivity extends AppCompatActivity {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 2);
         intent.putExtra("scale", true);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        File dir = new File(CROP_CACHE_DIR);
+        if (!dir.exists()){
+            dir.mkdirs();
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(CROP_CACHE_DIR,"temp.jpg")));
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true); // no face detection

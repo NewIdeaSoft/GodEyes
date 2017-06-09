@@ -22,7 +22,9 @@ public class ImageToStringUtil {
     public static final String DEFAULT_LANGUAGE = "chi_sim";
     private static final String TAG = "ResourceFileTag：";
     public static String parseImageToString(String imagePath) throws IOException {
+        Log.e("imagePath:",imagePath);
         if(imagePath==null||imagePath.equals("")){
+
             return "错误：图片不存在";
         }
         BitmapFactory.Options options = new BitmapFactory.Options();
