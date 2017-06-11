@@ -3,17 +3,15 @@
           package="com.nisoft.inspectortools">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <!--连接网络权限，用于执行云端语音能力 -->
+    <!-- 连接网络权限，用于执行云端语音能力 -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!--获取手机录音机使用权限，听写、识别、语义理解需要用到此权限 -->
+    <!-- 获取手机录音机使用权限，听写、识别、语义理解需要用到此权限 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <!--读取网络信息状态 -->
+    <!-- 读取网络信息状态 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <!--读取手机信息权限 -->
+    <!-- 读取手机信息权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-
-
 
     <application
         android:allowBackup="true"
@@ -37,8 +35,15 @@
             android:name=".ui.typeproblem.ProblemRecodeActivity"
             android:windowSoftInputMode="adjustPan">
         </activity>
-        <activity android:name=".ui.base.EditTextActivity"
-                  android:screenOrientation="portrait">
+        <activity
+            android:name=".ui.base.EditTextActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".ui.login.LoginActivity">
+        </activity>
+        <activity android:name=".ui.login.RegisterActivity">
+        </activity>
+        <activity android:name=".ui.settings.ManagerSettingsActivity">
         </activity>
     </application>
 

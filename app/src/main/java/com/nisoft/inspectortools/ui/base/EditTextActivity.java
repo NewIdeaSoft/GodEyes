@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -39,7 +38,6 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.utils.ImageFilter;
 import com.nisoft.inspectortools.utils.ImageToStringUtil;
 import com.nisoft.inspectortools.utils.JsonParser;
 
@@ -61,7 +59,7 @@ public class EditTextActivity extends AppCompatActivity {
     private RecognizerDialogListener mRecognizerDialogListener;
     private ProgressDialog mDialog;
     private static final String CROP_CACHE_DIR =
-            Environment.getExternalStorageDirectory().getAbsolutePath()+"/工作相册/cache";
+            Environment.getExternalStorageDirectory().getAbsolutePath() + "/工作相册/cache";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,14 +115,12 @@ public class EditTextActivity extends AppCompatActivity {
                             Toast.makeText(EditTextActivity.this, "开始加载语言包", Toast.LENGTH_SHORT).show();
                             showProgressDialog("正在传输数据...");
                         }
-
                         @Override
                         protected Boolean doInBackground(Void... params) {
                             ImageToStringUtil.ResourceToFile(EditTextActivity.this, R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
                                     DEFAULT_LANGUAGE + ".traineddata");
                             return true;
                         }
-
                         @Override
                         protected void onPostExecute(Boolean result) {
                             mDialog.dismiss();
@@ -162,13 +158,11 @@ public class EditTextActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             String contentEdit = mAuthorEdit.getText().toString();
-            if (!contentEdit.equals("")) {
-                Intent intent = new Intent();
-                intent.putExtra("content_edit", contentEdit);
-                int content_position = getIntent().getIntExtra("content_position", -1);
-                if (content_position > -1) {
-                    intent.putExtra("content_position", content_position);
-                }
+            Intent intent = new Intent();
+            intent.putExtra("content_edit", contentEdit);
+            int content_position = getIntent().getIntExtra("content_position", -1);
+            if (content_position > -1) {
+                intent.putExtra("content_position", content_position);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             } else {
@@ -211,14 +205,14 @@ public class EditTextActivity extends AppCompatActivity {
                 } else {
                     photoPath = null;
                 }
-                if (photoPath!=null){
+                if (photoPath != null) {
                     Uri imageUri = Uri.fromFile(new File(photoPath));
-                    cropImageUri(imageUri,CROP_PHOTO);
+                    cropImageUri(imageUri, CROP_PHOTO);
                 }
                 break;
             case TAKE_PHOTO:
                 Uri uriCamera = Uri.fromFile(new File(photoPath));
-                cropImageUri(uriCamera,CROP_PHOTO);
+                cropImageUri(uriCamera, CROP_PHOTO);
                 break;
             case CROP_PHOTO:
                 new AsyncTask<Void, Void, String>() {
@@ -230,7 +224,7 @@ public class EditTextActivity extends AppCompatActivity {
                     @Override
                     protected String doInBackground(Void... params) {
                         try {
-                            return ImageToStringUtil.parseImageToString(CROP_CACHE_DIR+"/temp.jpg");
+                            return ImageToStringUtil.parseImageToString(CROP_CACHE_DIR + "/temp.jpg");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -240,9 +234,9 @@ public class EditTextActivity extends AppCompatActivity {
                     @Override
                     protected void onPostExecute(String result) {
                         mDialog.dismiss();
-                        if (result==null){
+                        if (result == null) {
                             Toast.makeText(EditTextActivity.this, "识别失败", Toast.LENGTH_SHORT).show();
-                        }else {
+                        } else {
                             mAuthorEdit.append(result);
                         }
                     }
@@ -291,7 +285,7 @@ public class EditTextActivity extends AppCompatActivity {
         //调用系统相机拍摄照片
         //照片文件存储路径
         Uri uri = null;
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"cache");
+        File dir = new File(CROP_CACHE_DIR);
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -321,10 +315,10 @@ public class EditTextActivity extends AppCompatActivity {
         intent.putExtra("crop", "true");
         intent.putExtra("scale", true);
         File dir = new File(CROP_CACHE_DIR);
-        if (!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdirs();
         }
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(CROP_CACHE_DIR,"temp.jpg")));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(CROP_CACHE_DIR, "temp.jpg")));
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true); // no face detection
