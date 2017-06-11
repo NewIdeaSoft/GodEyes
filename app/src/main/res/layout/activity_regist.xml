@@ -96,6 +96,11 @@
             android:id="@+id/lv_position">
         </ListView>
     </LinearLayout>
-
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="提交"
+        android:background="@color/colorPrimary"
+        android:textColor="#ffffff"
+        android:id="@+id/btn_register_done"/>
 </LinearLayout>

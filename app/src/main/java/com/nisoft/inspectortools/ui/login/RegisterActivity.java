@@ -1,5 +1,6 @@
 package com.nisoft.inspectortools.ui.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.EmployeeInfo;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
+import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeActivity;
 
 import java.util.ArrayList;
 
@@ -24,6 +27,7 @@ import java.util.ArrayList;
  */
 public class RegisterActivity extends AppCompatActivity {
 
+    private Button mDoneButton;
     private ListView mOrgItemListView;
     private ListView mPositionListView;
     private OrgItemAdapter mOrgItemAdapter;
@@ -42,10 +46,12 @@ public class RegisterActivity extends AppCompatActivity {
     private void init() {
         mEmplyeeInfo = new EmployeeInfo();
         mOrgInfos = new ArrayList<>();
-
+        OrgInfo orgInfo = new OrgInfo();
+        mOrgInfos.add(orgInfo);
     }
 
     private void initView() {
+        mDoneButton = (Button) findViewById(R.id.btn_register_done);
         mOrgItemListView = (ListView) findViewById(R.id.lv_org_item);
         mOrgItemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -64,9 +70,26 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
         mPositionListView = (ListView) findViewById(R.id.lv_position);
+        mDoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(userRegister()){
+                    Intent intent = new Intent(RegisterActivity.this, ChooseRecodeTypeActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+    }
+
+    private boolean userRegister() {
+        return true;
     }
 
     class OrgItemAdapter extends BaseAdapter{
+        ArrayList<String> strings;
+        OrgItemAdapter(ArrayList<String> strs){
+            strings = strs;
+        }
 
         @Override
         public int getCount() {
@@ -88,17 +111,22 @@ public class RegisterActivity extends AppCompatActivity {
             convertView = View.inflate(RegisterActivity.this,R.layout.listi_tem_org_item,null);
             LinearLayout linearLayout = (LinearLayout) convertView.findViewById(R.id.ll_org_item);
             Spinner spinner = (Spinner) convertView.findViewById(R.id.spinner_org_item);
-            if(position==getCount()) {
-                linearLayout.removeAllViews();
-                TextView textView = new TextView(RegisterActivity.this);
-                textView.setText("点击添加下一级单位");
-                textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
-                        , ViewGroup.LayoutParams.MATCH_PARENT));
-                textView.setGravity(Gravity.CENTER);
-                linearLayout.addView(textView);
-            }else{
+            //adapter；data
+//            spinner.setSelection();
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                    mOrgInfos.set(position,)
+//                    if (mOrgInfos.size()<组织机构层级)
+//                    mOrgInfos.add(new OrgInfo());
+//                    adapter.notifyDataSetChanged();
+                }
 
-            }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
             return convertView;
         }
     }
