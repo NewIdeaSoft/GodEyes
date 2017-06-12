@@ -100,7 +100,7 @@ public class RegisterActivity extends AppCompatActivity {
         RequestBody body = new FormBody.Builder()
                 .add("username",phone)
                 .add("password",password)
-                .add("register","true")
+                .add("intent","register")
                 .build();
         HttpUtil.sendOkHttpRequest(LoginActivity.ADDRESS_LOGIN, body, new Callback() {
             @Override
@@ -152,5 +152,4 @@ public class RegisterActivity extends AppCompatActivity {
         ArrayList<OrgInfo> orgsInfo = new ArrayList<>();
         return orgsInfo;
     }
-
 }

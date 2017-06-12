@@ -1,6 +1,7 @@
 package com.nisoft.inspectortools.ui.login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -25,18 +26,33 @@ import okhttp3.Response;
  */
 public class LoginActivity extends AppCompatActivity {
     public static final String PHONE = "phone";
-    public static final String ADDRESS_LOGIN = "";
+    public static final String ADDRESS_LOGIN = "http://192.168.31.189:8080/InspectorTools/LoginServeice";
     private EditText mPhoneEditText;
     private EditText mPassWordEditText;
     private Button mLoginButton;
     private Button mRegisterButton;
+
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //从SharePreference中获取用户名和密码，连接服务器验证，成功自动登陆，失败将读取的用户名密码设置在输入框中
+        sp = getSharedPreferences("user", MODE_PRIVATE);
+        editor = sp.edit();
+        String remPhone = sp.getString("phone", "");
+        String remPassword = sp.getString("password", "");
+        if (!remPhone.equals("")&&!remPassword.equals("")){
+            checkUser(remPhone, remPassword);
+        }
         mPhoneEditText = (EditText) findViewById(R.id.edit_phone);
+        mPhoneEditText.setText(remPhone);
+
         mPassWordEditText = (EditText) findViewById(R.id.edit_password);
+        mPassWordEditText.setText(remPassword);
+
         mLoginButton = (Button) findViewById(R.id.btn_login);
         mRegisterButton = (Button) findViewById(R.id.btn_register);
 
@@ -45,24 +61,24 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String phone = mPhoneEditText.getText().toString();
                 String password = mPassWordEditText.getText().toString();
-                if(!checkPhoneFormat(phone)) {
+                if (!checkPhoneFormat(phone)) {
                     Toast.makeText(LoginActivity.this, "您输入的不是手机号！", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(!checkPasswordFormat(password)) {
+                if (!checkPasswordFormat(password)) {
                     return;
                 }
-                checkUser(phone,password);
+                checkUser(phone, password);
             }
         });
 
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 String phone = mPhoneEditText.getText().toString();
-                if (checkPhoneFormat(phone)){
-                    intent.putExtra(PHONE,phone);
+                if (checkPhoneFormat(phone)) {
+                    intent.putExtra(PHONE, phone);
                 }
                 startActivity(intent);
             }
@@ -75,10 +91,11 @@ public class LoginActivity extends AppCompatActivity {
      * @param password 密码
      *
      */
-    private void checkUser(String phone,String password){
+    private void checkUser(final String phone, final String password) {
         RequestBody body = new FormBody.Builder()
-                .add("username",phone)
-                .add("password",password)
+                .add("username", phone)
+                .add("password", password)
+                .add("intent", "login")
                 .build();
         HttpUtil.sendOkHttpRequest(ADDRESS_LOGIN, body, new Callback() {
             @Override
@@ -95,17 +112,20 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 final boolean canLogin = Boolean.parseBoolean(responseText);
-                if (canLogin){
+                if (canLogin) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            editor.putString("phone", phone);
+                            editor.putString("password", password);
+                            editor.commit();
                             Intent intent = new Intent(LoginActivity.this, ChooseRecodeTypeActivity.class);
-                            intent.putExtra(PHONE,mPhoneEditText.getText().toString());
+                            intent.putExtra(PHONE, phone);
                             startActivity(intent);
                             finish();
                         }
                     });
-                }else {
+                } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -116,18 +136,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-    private boolean checkPhoneFormat(String phone){
-        if(phone.length()!=11){
+
+    private boolean checkPhoneFormat(String phone) {
+        if (phone.length() != 11) {
             return false;
         }
-        if (phone.startsWith("13")||phone.startsWith("18")
-                ||phone.startsWith("14")||phone.startsWith("15")||phone.startsWith("17")){
+        if (phone.startsWith("13") || phone.startsWith("18")
+                || phone.startsWith("14") || phone.startsWith("15")
+                || phone.startsWith("17")) {
             return true;
         }
         return false;
     }
-    private boolean checkPasswordFormat(String password){
-        if (password.length()>=6&&password.length()<=20){
+
+    private boolean checkPasswordFormat(String password) {
+        if (password.length() >= 6 && password.length() <= 20) {
             return true;
         }
         return false;

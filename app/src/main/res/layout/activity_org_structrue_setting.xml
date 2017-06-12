@@ -7,4 +7,4 @@
     android:layout_height="match_parent"
     tools:context="com.nisoft.inspectortools.ui.settings.ManagerSettingsActivity">
 
-</android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
