@@ -137,6 +137,8 @@ public class ProblemRecodeFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.data_upload:
+                break;
             case R.id.data_push:
                 String data = "";
                 for (Content content: mProblemContents){

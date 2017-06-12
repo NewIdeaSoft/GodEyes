@@ -84,20 +84,8 @@ public class ProblemListFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 ProblemCursorWrapper cursor = ProblemLab.getProblemLab(getActivity())
-                        .queryProblem(ProblemTable.Cols.TITLE+" like ?",new String[]{"%"+newText+"%"});
-//                if(mSearchView.getSuggestionsAdapter()==null) {
-//                    mSearchView.setSuggestionsAdapter(
-//                            new SimpleCursorAdapter(
-//                                    getActivity()
-//                                    ,android.R.layout.simple_list_item_1
-//                                    ,cursor
-//                                    ,new String[]{ProblemTable.Cols.TITLE}
-//                                    ,new int[]{android.R.id.text1}
-//                                    , CursorAdapter.FLAG_AUTO_REQUERY)
-//                    );
-//                }else {
-//                    mSearchView.getSuggestionsAdapter().changeCursor(cursor);
-//                }
+                        .queryProblem(ProblemTable.Cols.TITLE+" like ?"
+                                ,new String[]{"%"+newText+"%"});
                 changeAdapterData(cursor);
                 return false;
             }
@@ -110,6 +98,22 @@ public class ProblemListFragment extends Fragment {
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.refresh:
+                refreshFromServer();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /***
+     * 连接服务器，更新数据，更新列表
+     */
+    private void refreshFromServer() {
+
+    }
 
     @Override
     public void onResume() {
