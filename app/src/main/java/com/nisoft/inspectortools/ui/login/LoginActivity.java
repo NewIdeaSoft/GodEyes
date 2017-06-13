@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +27,7 @@ import okhttp3.Response;
  */
 public class LoginActivity extends AppCompatActivity {
     public static final String PHONE = "phone";
-    public static final String ADDRESS_LOGIN = "http://192.168.31.189:8080/InspectorTools/LoginServeice";
+    public static final String ADDRESS_LOGIN = "http://192.168.31.189:8080/InspectorTools/LoginServlet";
     private EditText mPhoneEditText;
     private EditText mPassWordEditText;
     private Button mLoginButton;
@@ -111,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
+                Log.e("TAG",responseText);
                 final boolean canLogin = Boolean.parseBoolean(responseText);
                 if (canLogin) {
                     runOnUiThread(new Runnable() {
