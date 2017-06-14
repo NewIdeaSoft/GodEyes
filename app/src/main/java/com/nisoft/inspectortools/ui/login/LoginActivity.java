@@ -1,5 +1,6 @@
 package com.nisoft.inspectortools.ui.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeActivity;
+import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.IOException;
@@ -32,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPassWordEditText;
     private Button mLoginButton;
     private Button mRegisterButton;
+    private ProgressDialog mDialog;
 
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
@@ -40,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mDialog = new ProgressDialog(this);
         //从SharePreference中获取用户名和密码，连接服务器验证，成功自动登陆，失败将读取的用户名密码设置在输入框中
         sp = getSharedPreferences("user", MODE_PRIVATE);
         editor = sp.edit();
@@ -98,12 +102,14 @@ public class LoginActivity extends AppCompatActivity {
                 .add("password", password)
                 .add("intent", "login")
                 .build();
+        DialogUtil.showProgressDialog(this,mDialog,"正在登陆...");
         HttpUtil.sendOkHttpRequest(ADDRESS_LOGIN, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mDialog.dismiss();
                         Toast.makeText(LoginActivity.this, "登陆失败：请检查网络连接。", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -111,13 +117,14 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
+                final String responseText = response.body().string();
                 Log.e("TAG",responseText);
-                final boolean canLogin = Boolean.parseBoolean(responseText);
-                if (canLogin) {
+
+                if (responseText.equals("true")) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mDialog.dismiss();
                             editor.putString("phone", phone);
                             editor.putString("password", password);
                             editor.commit();
@@ -131,7 +138,8 @@ public class LoginActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(LoginActivity.this, "登陆失败：用户名或密码错误", Toast.LENGTH_SHORT).show();
+                            mDialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "登陆失败："+responseText, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -157,5 +165,4 @@ public class LoginActivity extends AppCompatActivity {
         }
         return false;
     }
-
 }

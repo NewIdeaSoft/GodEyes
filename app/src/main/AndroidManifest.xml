@@ -23,7 +23,6 @@
         </activity>
         <activity android:name=".ui.typeinspect.WorkingActivity"/>
         <activity android:name=".ui.choosetype.ChooseRecodeTypeActivity">
-
         </activity>
         <activity android:name=".ui.typeproblem.ProblemListActivity">
         </activity>
@@ -48,6 +47,12 @@
         </activity>
         <activity android:name=".ui.login.MoreUserInfoActivity">
         </activity>
+
+        <service
+            android:name=".service.FileUploadService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

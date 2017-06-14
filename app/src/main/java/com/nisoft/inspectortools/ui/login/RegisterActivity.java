@@ -1,5 +1,6 @@
 package com.nisoft.inspectortools.ui.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +23,7 @@ import com.nisoft.inspectortools.bean.org.EmployeeInfo;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeActivity;
 import com.nisoft.inspectortools.utils.CheckUserInfoUtil;
+import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.IOException;
@@ -42,6 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mPhoneEditText;
     private EditText mPasswordEditText;
     private EditText mCheckedPasswordEditText;
+    private ProgressDialog mDialog;
 
     private String initPhone;
 
@@ -56,6 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void init() {
+        mDialog = new ProgressDialog(this);
         initPhone = getIntent().getStringExtra(LoginActivity.PHONE);
     }
 
@@ -102,12 +106,14 @@ public class RegisterActivity extends AppCompatActivity {
                 .add("password",password)
                 .add("intent","register")
                 .build();
+        DialogUtil.showProgressDialog(this,mDialog,"正在连接服务器");
         HttpUtil.sendOkHttpRequest(LoginActivity.ADDRESS_LOGIN, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mDialog.dismiss();
                         Toast.makeText(RegisterActivity.this, "连接失败：请检查网络连接。", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -115,13 +121,13 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                boolean success = Boolean.parseBoolean(responseText);
-                if (success){
+                final String responseText = response.body().string();
+                if (responseText.equals("true")){
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = new Intent(RegisterActivity.this, ChooseRecodeTypeActivity.class);
+                            mDialog.dismiss();
+                            Intent intent = new Intent(RegisterActivity.this, MoreUserInfoActivity.class);
                             intent.putExtra(LoginActivity.PHONE,phone);
                             startActivity(intent);
                             finish();
@@ -131,7 +137,8 @@ public class RegisterActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(RegisterActivity.this, "用户已存在，请确认手机号！", Toast.LENGTH_SHORT).show();
+                            mDialog.dismiss();
+                            Toast.makeText(RegisterActivity.this, "注册失败！"+responseText, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -140,16 +147,4 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-
-
-
-    /***
-     * 从服务器获取下级单位清单
-     * @param parentOrgCode 上级组织代码
-     * @return 下级单位清单
-     */
-    private ArrayList<OrgInfo> getOrgInfoFromServer(@Nullable String parentOrgCode){
-        ArrayList<OrgInfo> orgsInfo = new ArrayList<>();
-        return orgsInfo;
-    }
 }
