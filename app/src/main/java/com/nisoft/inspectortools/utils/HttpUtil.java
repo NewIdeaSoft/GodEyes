@@ -11,11 +11,12 @@ import okhttp3.RequestBody;
  */
 
 public class HttpUtil {
-    public static final String ADDRESS_LOGIN = "http://192.168.31.189:8080/InspectorTools/LoginServlet";
-    public static final String ADDRESS_UPLOAD = "http://192.168.31.189:8080/InspectorTools/FileUploadServlet";
-    public static final String ADDRESS_USERINFO = "http://192.168.31.189:8080/InspectorTools/UserInfoServlet";
-    public static final String ADDRESS_JOBINFO = "http://192.168.31.189:8080/InspectorTools/JobInfoServlet";
-    public static final String ADDRESS_DOWNLOAD_LAN_CHI = "http://192.168.31.189:8080/InspectorTools/chi-sim";
+    public static final String SERVLET_LOGIN = "LoginServlet";
+    public static final String SERVLET_UPLOAD = "FileUploadServlet";
+    public static final String SERVLET_USERINFO = "UserInfoServlet";
+    public static final String SERVLET_JOBINFO = "JobInfoServlet";
+    public static final String SERVLET_DOWNLOAD_LAN_CHI = "chi-sim";
+    public static final String ADRESS_MAIN = "http://47.93.191.62:8080/InspectorTools/";
     public static void sendOkHttpRequest(String address, RequestBody body, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(address).post(body).build();

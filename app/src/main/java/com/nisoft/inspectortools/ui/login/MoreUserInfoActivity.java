@@ -34,7 +34,6 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private String phone;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,13 +42,13 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         initView();
     }
 
-    private void init(){
+    private void init() {
         phone = getIntent().getStringExtra("phone");
         downLoadInfo();
     }
 
 
-    private void initView(){
+    private void initView() {
         mDialog = new ProgressDialog(this);
         mNameEditText = (EditText) findViewById(R.id.et_name);
         mEmproyeeNumEditText = (EditText) findViewById(R.id.et_member_num);
@@ -67,10 +66,11 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private void downLoadInfo() {
 
         RequestBody body = new FormBody.Builder()
-                .add("phone",phone)
+                .add("phone", phone)
                 .build();
-        DialogUtil.showProgressDialog(this,mDialog,"正在从服务器加载用户信息...");
-        HttpUtil.sendOkHttpRequest(HttpUtil.ADDRESS_USERINFO, body, new Callback() {
+        String adress = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
+        DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载用户信息...");
+        HttpUtil.sendOkHttpRequest(adress, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 mDialog.dismiss();
@@ -80,15 +80,18 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                final EmployeeInfo employee;
-                final String name ;
-                final String memberNum;
-                final ArrayList<String> org;
-                final ArrayList<String> positions;
+                final EmployeeInfo employee = new EmployeeInfo();
+                final String name = "";
+                final String memberNum = "";
+                final ArrayList<String> org = new ArrayList<String>();
+                final ArrayList<String> positions = new ArrayList<String>();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mDialog.dismiss();
+                        mEmproyeeNumEditText.setText(memberNum);
+                        mNameEditText.setText(name);
+
                     }
                 });
             }
@@ -96,10 +99,11 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     }
 
     private void uploadMoreInfo() {
-        DialogUtil.showProgressDialog(this,mDialog,"正在上传用户信息...");
+        DialogUtil.showProgressDialog(this, mDialog, "正在上传用户信息...");
         RequestBody body = new FormBody.Builder()
                 .build();
-        HttpUtil.sendOkHttpRequest(HttpUtil.ADDRESS_USERINFO, body, new Callback() {
+        String adress = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
+        HttpUtil.sendOkHttpRequest(adress, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
