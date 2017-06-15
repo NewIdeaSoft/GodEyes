@@ -4,8 +4,10 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -38,6 +40,7 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.utils.HttpUtil;
 import com.nisoft.inspectortools.utils.ImageToStringUtil;
 import com.nisoft.inspectortools.utils.JsonParser;
 
@@ -109,25 +112,10 @@ public class EditTextActivity extends AppCompatActivity {
                 //拍照或从相册选择图片，转换成文字显示在文本框
                 if (!new File(TESS_BASE_PATH + "tessdata/",
                         DEFAULT_LANGUAGE + ".traineddata").exists()) {
-                    new AsyncTask<Void, Void, Boolean>() {
-                        @Override
-                        protected void onPreExecute() {
-                            Toast.makeText(EditTextActivity.this, "开始加载语言包", Toast.LENGTH_SHORT).show();
-                            showProgressDialog("正在传输数据...");
-                        }
-                        @Override
-                        protected Boolean doInBackground(Void... params) {
-                            ImageToStringUtil.ResourceToFile(EditTextActivity.this, R.raw.chi_sim, TESS_BASE_PATH + "tessdata/",
-                                    DEFAULT_LANGUAGE + ".traineddata");
-                            return true;
-                        }
-                        @Override
-                        protected void onPostExecute(Boolean result) {
-                            mDialog.dismiss();
-                        }
-                    }.execute();
+                    downloadLan();
+                }else{
+                    showDialog();
                 }
-                showDialog();
             }
         });
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -323,5 +311,18 @@ public class EditTextActivity extends AppCompatActivity {
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true); // no face detection
         startActivityForResult(intent, requestCode);
+    }
+
+    private void downloadLan(){
+        String address = HttpUtil.ADRESS_MAIN+"chi_sim.traineddata";
+        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(address));
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+        request.setTitle("下载语言包");
+        File file = new File(TESS_BASE_PATH + "tessdata/",
+                DEFAULT_LANGUAGE + ".traineddata");
+        request.setDestinationUri(Uri.fromFile(file));
+        long downloadId = downloadManager.enqueue(request);
+
     }
 }
