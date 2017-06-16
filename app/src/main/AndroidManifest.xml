@@ -53,11 +53,7 @@
             android:enabled="true"
             android:exported="true">
         </service>
-        <service
-            android:name=".service.FileDownloadService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
+
     </application>
 
 </manifest>

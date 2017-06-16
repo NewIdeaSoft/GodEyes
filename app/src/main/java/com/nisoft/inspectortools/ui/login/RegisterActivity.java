@@ -138,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             mDialog.dismiss();
-                            Toast.makeText(RegisterActivity.this, "注册失败！"+responseText, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, responseText, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

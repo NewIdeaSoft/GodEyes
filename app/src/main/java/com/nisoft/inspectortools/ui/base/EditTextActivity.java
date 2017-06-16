@@ -6,10 +6,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -63,7 +65,8 @@ public class EditTextActivity extends AppCompatActivity {
     private ProgressDialog mDialog;
     private static final String CROP_CACHE_DIR =
             Environment.getExternalStorageDirectory().getAbsolutePath() + "/工作相册/cache";
-
+    private DownloadManagerReceiver mReceiver;
+    private long lanDownloadId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,9 +115,9 @@ public class EditTextActivity extends AppCompatActivity {
                 //拍照或从相册选择图片，转换成文字显示在文本框
                 if (!new File(TESS_BASE_PATH + "tessdata/",
                         DEFAULT_LANGUAGE + ".traineddata").exists()) {
-                    downloadLan();
+                    showLanDownloadDialog();
                 }else{
-                    showDialog();
+                    showCameraDialog();
                 }
             }
         });
@@ -252,7 +255,7 @@ public class EditTextActivity extends AppCompatActivity {
         return path;
     }
 
-    private void showDialog() {
+    private void showCameraDialog() {
         new AlertDialog.Builder(this)
                 .setItems(new String[]{"拍摄照片", "从相册选择"}, new DialogInterface.OnClickListener() {
                     @Override
@@ -267,6 +270,28 @@ public class EditTextActivity extends AppCompatActivity {
                         }
                     }
                 }).show();
+    }
+
+    private void showLanDownloadDialog(){
+        new AlertDialog.Builder(this)
+                .setTitle("下载语言包")
+                .setMessage("没有文字识别所需的语言包，约50M，是否开始下载？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mReceiver = new DownloadManagerReceiver();
+                        registerReceiver(mReceiver,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                        mCameraButton.setClickable(false);
+                        lanDownloadId = downloadLan();
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
     }
 
     private void openCamera() {
@@ -313,7 +338,7 @@ public class EditTextActivity extends AppCompatActivity {
         startActivityForResult(intent, requestCode);
     }
 
-    private void downloadLan(){
+    private long downloadLan(){
         String address = HttpUtil.ADRESS_MAIN+"chi_sim.traineddata";
         DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(address));
@@ -323,6 +348,25 @@ public class EditTextActivity extends AppCompatActivity {
                 DEFAULT_LANGUAGE + ".traineddata");
         request.setDestinationUri(Uri.fromFile(file));
         long downloadId = downloadManager.enqueue(request);
+        return downloadId;
+    }
 
+    class DownloadManagerReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long completeDownloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+            if(completeDownloadId == lanDownloadId){
+                mCameraButton.setClickable(true);
+                if (mReceiver!=null){
+                    unregisterReceiver(mReceiver);
+                }
+            }
+//            String action = intent.getAction();
+//            if (action.equals(DownloadManager.ACTION_NOTIFICATION_CLICKED)){
+//                Intent downloadIntent = new Intent();
+//                startActivity(intent);
+//            }
+        }
     }
 }
