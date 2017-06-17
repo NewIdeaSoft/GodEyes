@@ -1,21 +1,23 @@
 package com.nisoft.inspectortools.ui.login;
 
 import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.bean.org.EmployeeInfo;
+import com.nisoft.inspectortools.bean.org.Employee;
+import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeActivity;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -68,9 +70,9 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         RequestBody body = new FormBody.Builder()
                 .add("phone", phone)
                 .build();
-        String adress = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
+        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
         DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载用户信息...");
-        HttpUtil.sendOkHttpRequest(adress, body, new Callback() {
+        HttpUtil.sendOkHttpRequest(address, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 mDialog.dismiss();
@@ -80,17 +82,15 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                final EmployeeInfo employee = new EmployeeInfo();
-                final String name = "";
-                final String memberNum = "";
-                final ArrayList<String> org = new ArrayList<String>();
-                final ArrayList<String> positions = new ArrayList<String>();
+                Gson gson = new Gson();
+
+                final Employee employeeInfo = gson.fromJson(result,Employee.class);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mDialog.dismiss();
-                        mEmproyeeNumEditText.setText(memberNum);
-                        mNameEditText.setText(name);
+                        mNameEditText.setText(employeeInfo.getName());
+                        mEmproyeeNumEditText.setText(employeeInfo.getWorkNum());
 
                     }
                 });
@@ -100,18 +100,44 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void uploadMoreInfo() {
         DialogUtil.showProgressDialog(this, mDialog, "正在上传用户信息...");
+
         RequestBody body = new FormBody.Builder()
                 .build();
-        String adress = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
-        HttpUtil.sendOkHttpRequest(adress, body, new Callback() {
+        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
+        HttpUtil.sendOkHttpRequest(address, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        Toast.makeText(MoreUserInfoActivity.this, "网络链接失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                final String s = response.body().string();
+                if(s.equals(true)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDialog.dismiss();
+                            Intent intent = new Intent(MoreUserInfoActivity.this, ChooseRecodeTypeActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
 
+                    });
+                }else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MoreUserInfoActivity.this, s, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
     }
