@@ -7,6 +7,7 @@ package com.nisoft.inspectortools.bean.org;
 public class User {
     private String mName;
     private String mPassWord;
+    private String mOrgId;
 
     public String getName() {
         return mName;
@@ -22,5 +23,13 @@ public class User {
 
     public void setPassWord(String passWord) {
         mPassWord = passWord;
+    }
+
+    public String getOrgId() {
+        return mOrgId;
+    }
+
+    public void setOrgId(String orgId) {
+        mOrgId = orgId;
     }
 }

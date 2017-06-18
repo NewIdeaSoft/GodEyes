@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                 .add("intent", "login")
                 .build();
         DialogUtil.showProgressDialog(this,mDialog,"正在登陆...");
-        HttpUtil.sendOkHttpRequest(ADDRESS_LOGIN, body, new Callback() {
+        HttpUtil.sendPostRequest(ADDRESS_LOGIN, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {

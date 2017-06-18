@@ -31,7 +31,7 @@ public class FileUploadUtil {
                 .build();
         dialog.setMessage(fileName+"正在上传...");
         dialog.show();
-        HttpUtil.sendOkHttpRequest(UPLOAD_ADRESS, body, new Callback() {
+        HttpUtil.sendPostRequest(UPLOAD_ADRESS, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Toast.makeText(context, fileName+"上传失败！", Toast.LENGTH_SHORT).show();
