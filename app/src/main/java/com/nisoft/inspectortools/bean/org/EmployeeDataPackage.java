@@ -1,6 +1,5 @@
 package com.nisoft.inspectortools.bean.org;
 
-import com.nisoft.inspectortools.bean.product.Product;
 
 import java.util.ArrayList;
 
@@ -10,9 +9,9 @@ import java.util.ArrayList;
 
 public class EmployeeDataPackage {
     private Employee mEmployee;
-    private ArrayList<String> mOrgInfo;
+    private ArrayList<OrgInfo> mOrgInfo;
     private ArrayList<String> mStations;
-    private ArrayList<OrgInfo> mOrgs;
+    private ArrayList<ArrayList<OrgInfo>> mOrgsInfoForSelect;
     private int mOrgLevels;
 
     public Employee getEmployee() {
@@ -23,11 +22,11 @@ public class EmployeeDataPackage {
         mEmployee = employee;
     }
 
-    public ArrayList<String> getOrgInfo() {
+    public ArrayList<OrgInfo> getOrgInfo() {
         return mOrgInfo;
     }
 
-    public void setOrgInfo(ArrayList<String> orgInfo) {
+    public void setOrgInfo(ArrayList<OrgInfo> orgInfo) {
         mOrgInfo = orgInfo;
     }
 
@@ -39,19 +38,19 @@ public class EmployeeDataPackage {
         mStations = stations;
     }
 
-    public ArrayList<OrgInfo> getOrgs() {
-        return mOrgs;
-    }
-
-    public void setOrgs(ArrayList<OrgInfo> orgs) {
-        mOrgs = orgs;
-    }
-
     public int getOrgLevels() {
         return mOrgLevels;
     }
 
     public void setOrgLevels(int orgLevels) {
         mOrgLevels = orgLevels;
+    }
+
+    public ArrayList<ArrayList<OrgInfo>> getOrgsInfoForSelect() {
+        return mOrgsInfoForSelect;
+    }
+
+    public void setOrgsInfoForSelect(ArrayList<ArrayList<OrgInfo>> orgsInfoForSelect) {
+        mOrgsInfoForSelect = orgsInfoForSelect;
     }
 }

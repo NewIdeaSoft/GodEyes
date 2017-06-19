@@ -5,9 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,8 +22,10 @@ import com.nisoft.inspectortools.bean.org.Company;
 import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.EmployeeDataPackage;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
+import com.nisoft.inspectortools.bean.org.OrgListPackage;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeActivity;
 import com.nisoft.inspectortools.utils.DialogUtil;
+import com.nisoft.inspectortools.utils.HttpCallback;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.IOException;
@@ -42,9 +49,10 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private String phone;
     private Employee mEmployee;
     private Company mCompany;
-    private ArrayList<String> mOrgInfo;
+    private ArrayList<OrgInfo> mOrgInfo;
     private ArrayList<String> mStationsInfo;
     private int mOrgLevels;
+    private OrgInfoAdapter mOrgInfoAdapter;
 
     private ArrayList<ArrayList<OrgInfo>> mOrgsForChoose;
 
@@ -59,9 +67,10 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void init() {
         phone = getIntent().getStringExtra("phone");
-        Gson gson  =  new Gson();
-        mCompany = gson.fromJson(getIntent().getStringExtra("company"),Company.class);
+        Gson gson = new Gson();
+        mCompany = gson.fromJson(getIntent().getStringExtra("company"), Company.class);
         mOrgsForChoose = new ArrayList<>();
+        mOrgInfoAdapter = new OrgInfoAdapter();
         downLoadInfo();
     }
 
@@ -86,6 +95,8 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
         mNameEditText.setText(mEmployee.getName());
         mEmployeeNumEditText.setText(mEmployee.getWorkNum());
+
+        mOrgListView.setAdapter(mOrgInfoAdapter);
     }
 
     private void downLoadInfo() {
@@ -107,13 +118,10 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                 String result = response.body().string();
                 Gson gson = new Gson();
 
-                final EmployeeDataPackage dataPackage = gson.fromJson(result,EmployeeDataPackage.class);
+                final EmployeeDataPackage dataPackage = gson.fromJson(result, EmployeeDataPackage.class);
                 mEmployee = dataPackage.getEmployee();
                 mOrgInfo = dataPackage.getOrgInfo();
                 mStationsInfo = dataPackage.getStations();
-                if (mOrgInfo==null||mOrgInfo.size()==0){
-                    mOrgsForChoose.add(dataPackage.getOrgs());
-                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -126,10 +134,10 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void uploadMoreInfo() {
         DialogUtil.showProgressDialog(this, mDialog, "正在上传用户信息...");
-        Gson gson =new Gson();
+        Gson gson = new Gson();
         String json = gson.toJson(mEmployee);
         RequestBody body = new FormBody.Builder()
-                .add("employee",json)
+                .add("employee", json)
                 .build();
         String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
         HttpUtil.sendPostRequest(address, body, new Callback() {
@@ -147,7 +155,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String s = response.body().string();
-                if(s.equals(true)) {
+                if (s.equals(true)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -158,7 +166,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                         }
 
                     });
-                }else {
+                } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -168,5 +176,81 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    class OrgInfoAdapter extends BaseAdapter {
+
+        private ArrayList<OrgInfo> mSelectedOrgInfos;
+
+
+        @Override
+        public int getCount() {
+            return mOrgsForChoose.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mOrgsForChoose.get(position);
+        }
+
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int itemPosition, View convertView, ViewGroup parent) {
+            convertView = View.inflate(MoreUserInfoActivity.this, R.layout.list_tem_org_item, null);
+            Spinner spinner = (Spinner) convertView.findViewById(R.id.spinner_org_item);
+
+            final ArrayList<OrgInfo> orgInfos = mOrgsForChoose.get(itemPosition);
+            ArrayAdapter adapter = new ArrayAdapter(MoreUserInfoActivity.this, android.R.layout.simple_spinner_item);
+            spinner.setAdapter(adapter);
+            int selected = orgInfos.indexOf(mOrgInfo.get(itemPosition));
+            if (selected!=-1){
+                spinner.setSelection(selected);
+            }
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    mOrgInfo.set(itemPosition,mOrgsForChoose.get(itemPosition).get(position));
+                    if (itemPosition<mOrgsForChoose.size()-1){
+                        getSecondaryOrgs(orgInfos.get(position).getOrgId(), itemPosition);
+                        mOrgInfoAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            return convertView;
+        }
+
+    }
+
+    private void getSecondaryOrgs(String parentId, final int parentLevel) {
+        RequestBody body = new FormBody.Builder()
+                .add("parentId", parentId)
+                .build();
+        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
+        HttpUtil.sendPostRequest(address, body
+                , new HttpCallback(MoreUserInfoActivity.this, "连接网络失败！", mDialog) {
+                    @Override
+                    protected void handResponse() throws IOException {
+                        String result = getResult();
+                        Gson gson = new Gson();
+                        OrgListPackage orgListPackage = gson.fromJson(result, OrgListPackage.class);
+                        mOrgsForChoose.set(parentLevel+1,orgListPackage.getOrgInfos());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDialog.dismiss();
+                            }
+                        });
+                    }
+                });
     }
 }
