@@ -29,7 +29,7 @@ import okhttp3.Response;
  */
 public class LoginActivity extends AppCompatActivity {
     public static final String PHONE = "phone";
-    public static final String ADDRESS_LOGIN = "http://47.93.191.62:8080/InspectorTools/LoginServlet";
+    public static final String ADDRESS_LOGIN = "http://47.93.191.62:8080/InspectorToolsServer/LoginServlet";
     private EditText mPhoneEditText;
     private EditText mPassWordEditText;
     private Button mLoginButton;

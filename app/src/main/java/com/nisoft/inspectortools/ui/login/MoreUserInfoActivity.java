@@ -103,6 +103,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
         RequestBody body = new FormBody.Builder()
                 .add("phone", phone)
+                .add("intent","query")
                 .build();
         String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
         DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载用户信息...");
@@ -138,6 +139,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         String json = gson.toJson(mEmployee);
         RequestBody body = new FormBody.Builder()
                 .add("employee", json)
+                .add("intent","update")
                 .build();
         String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
         HttpUtil.sendPostRequest(address, body, new Callback() {

@@ -16,7 +16,7 @@ public class HttpUtil {
     public static final String SERVLET_USERINFO = "UserInfoServlet";
     public static final String SERVLET_JOBINFO = "JobInfoServlet";
     public static final String SERVLET_DOWNLOAD_LAN_CHI = "chi-sim";
-    public static final String ADRESS_MAIN = "http://47.93.191.62:8080/InspectorTools/";
+    public static final String ADRESS_MAIN = "http://47.93.191.62:8080/InspectorToolsServer/";
     public static void sendPostRequest(String address, RequestBody body, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(address).post(body).build();

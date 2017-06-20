@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
         mDialog = new ProgressDialog(this);
         initPhone = getIntent().getStringExtra(LoginActivity.PHONE);
         getCompaniesFromServer();
-        mAdapter = new ArrayAdapter<Company>(this,android.R.layout.simple_spinner_item,mAllCompanies){
+        mAdapter = new ArrayAdapter<Company>(this,android.R.layout.simple_spinner_item){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -97,8 +97,6 @@ public class RegisterActivity extends AppCompatActivity {
                         mDialog.dismiss();
                     }
                 });
-
-
             }
         });
     }
@@ -126,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
                 if (!CheckUserInfoUtil.checkPasswordFormat(password)){
-                    Toast.makeText(RegisterActivity.this, "您输入的密码长度不在6-16位之间，请重新输入！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "您输入的密码长度不在6-20位之间，请重新输入！", Toast.LENGTH_SHORT).show();
                     mPasswordEditText.setText("");
                     mPasswordEditText.setSelection(0);
                     return;
