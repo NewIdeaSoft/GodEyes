@@ -130,6 +130,14 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                             mEmployeeNumEditText.setText(mEmployee.getWorkNum());
                         }
                     });
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDialog.dismiss();
+                            Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
 
             }

@@ -3,13 +3,10 @@ package com.nisoft.inspectortools.ui.login;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -74,8 +71,15 @@ public class RegisterActivity extends AppCompatActivity {
         HttpUtil.sendGetRequest(LoginActivity.ADDRESS_LOGIN, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                mDialog.dismiss();
-                Toast.makeText(RegisterActivity.this, "连接服务器失败！请检查网络连接。", Toast.LENGTH_SHORT).show();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        Toast.makeText(RegisterActivity.this, "连接服务器失败！请检查网络连接。", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
 
             @Override
