@@ -56,4 +56,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/lv_position_info">
     </ListView>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="提交"
+        android:textColor="#ffffff"
+        android:background="@color/colorPrimary"
+        android:id="@+id/btn_info_upload"/>
 </LinearLayout>

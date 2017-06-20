@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -67,8 +68,9 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void init() {
         phone = getIntent().getStringExtra("phone");
+        mOrgLevels = getIntent().getIntExtra("levels",-1);
         Gson gson = new Gson();
-        mCompany = gson.fromJson(getIntent().getStringExtra("company"), Company.class);
+        mCompany = gson.fromJson(getIntent().getStringExtra("company_json"), Company.class);
         mOrgsForChoose = new ArrayList<>();
         mOrgInfoAdapter = new OrgInfoAdapter();
         downLoadInfo();
@@ -82,7 +84,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         mCompanyNameTextView = (TextView) findViewById(R.id.tv_company_name);
         mOrgListView = (ListView) findViewById(R.id.lv_org_info_item);
         mStationListView = (ListView) findViewById(R.id.lv_position_info);
-        mDoneButton = (Button) findViewById(R.id.btn_register_done);
+        mDoneButton = (Button) findViewById(R.id.btn_info_upload);
 
         mCompanyNameTextView.setText(mCompany.getOrgName());
         mDoneButton.setOnClickListener(new View.OnClickListener() {
@@ -91,21 +93,16 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                 uploadMoreInfo();
             }
         });
-
-
-        mNameEditText.setText(mEmployee.getName());
-        mEmployeeNumEditText.setText(mEmployee.getWorkNum());
-
         mOrgListView.setAdapter(mOrgInfoAdapter);
     }
-
     private void downLoadInfo() {
 
         RequestBody body = new FormBody.Builder()
                 .add("phone", phone)
                 .add("intent","query")
+                .add("company_id",mCompany.getOrgCode())
                 .build();
-        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
+        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
         DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载用户信息...");
         HttpUtil.sendPostRequest(address, body, new Callback() {
             @Override
@@ -117,18 +114,24 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                Gson gson = new Gson();
+                Log.e("result",result);
+                if (!result.equals("false")){
+                    Gson gson = new Gson();
 
-                final EmployeeDataPackage dataPackage = gson.fromJson(result, EmployeeDataPackage.class);
-                mEmployee = dataPackage.getEmployee();
-                mOrgInfo = dataPackage.getOrgInfo();
-                mStationsInfo = dataPackage.getStations();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDialog.dismiss();
-                    }
-                });
+                    final EmployeeDataPackage dataPackage = gson.fromJson(result, EmployeeDataPackage.class);
+                    mEmployee = dataPackage.getEmployee();
+                    mOrgInfo = dataPackage.getOrgInfo();
+                    mOrgsForChoose = dataPackage.getOrgsInfoForSelect();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDialog.dismiss();
+                            mNameEditText.setText(mEmployee.getName());
+                            mEmployeeNumEditText.setText(mEmployee.getWorkNum());
+                        }
+                    });
+                }
+
             }
         });
     }
@@ -141,7 +144,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                 .add("employee", json)
                 .add("intent","update")
                 .build();
-        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
+        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
         HttpUtil.sendPostRequest(address, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -181,9 +184,6 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     }
 
     class OrgInfoAdapter extends BaseAdapter {
-
-        private ArrayList<OrgInfo> mSelectedOrgInfos;
-
 
         @Override
         public int getCount() {
@@ -237,7 +237,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         RequestBody body = new FormBody.Builder()
                 .add("parentId", parentId)
                 .build();
-        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_USERINFO;
+        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
         HttpUtil.sendPostRequest(address, body
                 , new HttpCallback(MoreUserInfoActivity.this, "连接网络失败！", mDialog) {
                     @Override

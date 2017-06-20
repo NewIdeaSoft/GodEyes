@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -45,10 +47,10 @@ public class RegisterActivity extends AppCompatActivity {
     private Spinner mSpinner;
 
     private String initPhone;
-    private ArrayList<Company> mAllCompanies;
+    private ArrayList<Company> mAllCompanies = new ArrayList<>();
 
 
-    private ArrayAdapter<Company> mAdapter;
+    private CompanySpinnerAdapter mAdapter;
 
 
 
@@ -64,17 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
         mDialog = new ProgressDialog(this);
         initPhone = getIntent().getStringExtra(LoginActivity.PHONE);
         getCompaniesFromServer();
-        mAdapter = new ArrayAdapter<Company>(this,android.R.layout.simple_spinner_item){
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                super.getView(position, convertView, parent);
-                convertView = View.inflate(RegisterActivity.this,android.R.layout.simple_spinner_item,null);
-                TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
-                textView.setText(mAllCompanies.get(position).getOrgName());
-                return convertView;
-            }
-        };
+        mAdapter = new CompanySpinnerAdapter();
     }
 
     private void getCompaniesFromServer() {
@@ -89,12 +81,16 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
+                Log.e("result",result);
                 Gson gson = new Gson();
                 mAllCompanies = gson.fromJson(result, RegisterDataPackage.class).getCompanies();
+                Log.e("mAllCompanies",mAllCompanies.size()+"");
+                Log.e("FirstName:",mAllCompanies.get(0).getOrgName());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mDialog.dismiss();
+                        mAdapter.notifyDataSetChanged();
                     }
                 });
             }
@@ -192,5 +188,28 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+    class CompanySpinnerAdapter extends BaseAdapter{
+        @Override
+        public int getCount() {
+            return mAllCompanies.size();
+        }
 
+        @Override
+        public Object getItem(int position) {
+            return mAllCompanies.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            convertView = View.inflate(RegisterActivity.this,android.R.layout.simple_spinner_item,null);
+            TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
+            textView.setText(mAllCompanies.get(position).getOrgName());
+            return convertView;
+        }
+    }
 }
