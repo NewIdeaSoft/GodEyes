@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +25,6 @@ import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.bean.org.OrgListPackage;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeActivity;
 import com.nisoft.inspectortools.utils.DialogUtil;
-import com.nisoft.inspectortools.utils.HttpCallback;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.IOException;
@@ -134,10 +132,10 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                             mEmployee = dataPackage.getEmployee();
                             mOrgInfo = dataPackage.getOrgInfo();
                             mOrgsForChoose = dataPackage.getOrgsInfoForSelect();
-                            if (mEmployee.getName()!=null){
+                            if (mEmployee.getName() != null) {
                                 mNameEditText.setText(mEmployee.getName());
                             }
-                            if (mEmployee.getWorkNum()!=null){
+                            if (mEmployee.getWorkNum() != null) {
                                 mEmployeeNumEditText.setText(mEmployee.getWorkNum());
                             }
                             mOrgInfoAdapter.notifyDataSetChanged();
@@ -152,6 +150,10 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void uploadMoreInfo() {
         DialogUtil.showProgressDialog(this, mDialog, "正在上传用户信息...");
+        mEmployee.setName(mNameEditText.getText().toString());
+        mEmployee.setOrgCode(mOrgInfo.get(mOrgInfo.size()-1).getOrgId());
+        mEmployee.setPhone(phone);
+        mEmployee.setWorkNum(mEmployeeNumEditText.getText().toString());
         Gson gson = new Gson();
         String json = gson.toJson(mEmployee);
         RequestBody body = new FormBody.Builder()
@@ -225,7 +227,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             spinner.setAdapter(adapter);
             if (mOrgInfo.size() > itemPosition) {
                 OrgInfo selectedOrg = mOrgInfo.get(itemPosition);
-                if (!selectedOrg.equals(new OrgInfo())) {
+                if (selectedOrg != null) {
                     int selected = orgInfos.indexOf(selectedOrg);
                     if (selected != -1) {
                         spinner.setSelection(selected);
@@ -235,13 +237,12 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(MoreUserInfoActivity.this, mOrgsForChoose.get(itemPosition).get(position).getOrgName(), Toast.LENGTH_SHORT).show();
                     mOrgInfo.set(itemPosition, mOrgsForChoose.get(itemPosition).get(position));
 
                     if (itemPosition < mOrgsForChoose.size() - 1) {
-                        if (mOrgInfo.get(itemPosition + 1).equals(new OrgInfo())) {
-                            OrgSpinnerAdapter adapter1 = (OrgSpinnerAdapter) spinner.getAdapter();
-                            getSecondaryOrgs(adapter1.getOrgs().get(position).getOrgId(), itemPosition);
+                        if (mOrgInfo.get(itemPosition + 1) == null) {
+                            Log.e("parent:",mOrgInfo.get(itemPosition).getOrgId());
+                            getSecondaryOrgs(mOrgInfo.get(itemPosition).getOrgId(), itemPosition);
                         }
                     }
                 }
@@ -259,7 +260,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private void getSecondaryOrgs(String parentId, final int parentLevel) {
         DialogUtil.showProgressDialog(this, mDialog, "正在加载单位列表...");
         RequestBody body = new FormBody.Builder()
-                .add("parentId", parentId)
+                .add("parent_id", parentId)
                 .add("intent", "secondary")
                 .build();
         String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
@@ -308,6 +309,9 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
+            if(mOrgs==null) {
+                return 0;
+            }
             return mOrgs.size();
         }
 
