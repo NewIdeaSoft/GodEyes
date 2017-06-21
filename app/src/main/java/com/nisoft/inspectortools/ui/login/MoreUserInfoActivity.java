@@ -68,12 +68,11 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void init() {
         phone = getIntent().getStringExtra("phone");
-        mOrgLevels = getIntent().getIntExtra("levels",-1);
+        mOrgLevels = getIntent().getIntExtra("levels", -1);
         Gson gson = new Gson();
         mCompany = gson.fromJson(getIntent().getStringExtra("company_json"), Company.class);
         mOrgsForChoose = new ArrayList<>();
         mOrgInfoAdapter = new OrgInfoAdapter();
-        downLoadInfo();
     }
 
 
@@ -94,51 +93,58 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             }
         });
         mOrgListView.setAdapter(mOrgInfoAdapter);
+        downLoadInfo();
     }
+
     private void downLoadInfo() {
 
         RequestBody body = new FormBody.Builder()
                 .add("phone", phone)
-                .add("intent","query")
-                .add("company_id",mCompany.getOrgCode())
+                .add("intent", "query")
+                .add("structure_levels", mCompany.getOrgStructure().size() - 1 + "")
+                .add("company_id", mCompany.getOrgCode())
                 .build();
         String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
         DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载用户信息...");
         HttpUtil.sendPostRequest(address, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                mDialog.dismiss();
-                Toast.makeText(MoreUserInfoActivity.this, "网络连接失败！", Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        Toast.makeText(MoreUserInfoActivity.this, "网络连接失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String result = response.body().string();
-                Log.e("result",result);
-                if (!result.equals("false")){
-                    Gson gson = new Gson();
+                final String result = response.body().string();
+                Log.e("result", result);
 
-                    final EmployeeDataPackage dataPackage = gson.fromJson(result, EmployeeDataPackage.class);
-                    mEmployee = dataPackage.getEmployee();
-                    mOrgInfo = dataPackage.getOrgInfo();
-                    mOrgsForChoose = dataPackage.getOrgsInfoForSelect();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDialog.dismiss();
-                            mNameEditText.setText(mEmployee.getName());
-                            mEmployeeNumEditText.setText(mEmployee.getWorkNum());
-                        }
-                    });
-                }else{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (result.equals("false")) {
                             Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Gson gson = new Gson();
+                            EmployeeDataPackage dataPackage = gson.fromJson(result, EmployeeDataPackage.class);
+                            mEmployee = dataPackage.getEmployee();
+                            mOrgInfo = dataPackage.getOrgInfo();
+                            mOrgsForChoose = dataPackage.getOrgsInfoForSelect();
+                            if (mEmployee.getName()!=null){
+                                mNameEditText.setText(mEmployee.getName());
+                            }
+                            if (mEmployee.getWorkNum()!=null){
+                                mEmployeeNumEditText.setText(mEmployee.getWorkNum());
+                            }
+                            mOrgInfoAdapter.notifyDataSetChanged();
                         }
-                    });
-                }
+                        mDialog.dismiss();
+                    }
+                });
 
             }
         });
@@ -150,7 +156,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         String json = gson.toJson(mEmployee);
         RequestBody body = new FormBody.Builder()
                 .add("employee", json)
-                .add("intent","update")
+                .add("intent", "update")
                 .build();
         String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
         HttpUtil.sendPostRequest(address, body, new Callback() {
@@ -183,6 +189,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mDialog.dismiss();
                             Toast.makeText(MoreUserInfoActivity.this, s, Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -212,22 +219,30 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         @Override
         public View getView(final int itemPosition, View convertView, ViewGroup parent) {
             convertView = View.inflate(MoreUserInfoActivity.this, R.layout.list_tem_org_item, null);
-            Spinner spinner = (Spinner) convertView.findViewById(R.id.spinner_org_item);
-
-            final ArrayList<OrgInfo> orgInfos = mOrgsForChoose.get(itemPosition);
-            ArrayAdapter adapter = new ArrayAdapter(MoreUserInfoActivity.this, android.R.layout.simple_spinner_item);
+            final Spinner spinner = (Spinner) convertView.findViewById(R.id.spinner_org_item);
+            ArrayList<OrgInfo> orgInfos = mOrgsForChoose.get(itemPosition);
+            OrgSpinnerAdapter adapter = new OrgSpinnerAdapter(orgInfos);
             spinner.setAdapter(adapter);
-            int selected = orgInfos.indexOf(mOrgInfo.get(itemPosition));
-            if (selected!=-1){
-                spinner.setSelection(selected);
+            if (mOrgInfo.size() > itemPosition) {
+                OrgInfo selectedOrg = mOrgInfo.get(itemPosition);
+                if (!selectedOrg.equals(new OrgInfo())) {
+                    int selected = orgInfos.indexOf(selectedOrg);
+                    if (selected != -1) {
+                        spinner.setSelection(selected);
+                    }
+                }
             }
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    mOrgInfo.set(itemPosition,mOrgsForChoose.get(itemPosition).get(position));
-                    if (itemPosition<mOrgsForChoose.size()-1){
-                        getSecondaryOrgs(orgInfos.get(position).getOrgId(), itemPosition);
-                        mOrgInfoAdapter.notifyDataSetChanged();
+                    Toast.makeText(MoreUserInfoActivity.this, mOrgsForChoose.get(itemPosition).get(position).getOrgName(), Toast.LENGTH_SHORT).show();
+                    mOrgInfo.set(itemPosition, mOrgsForChoose.get(itemPosition).get(position));
+
+                    if (itemPosition < mOrgsForChoose.size() - 1) {
+                        if (mOrgInfo.get(itemPosition + 1).equals(new OrgInfo())) {
+                            OrgSpinnerAdapter adapter1 = (OrgSpinnerAdapter) spinner.getAdapter();
+                            getSecondaryOrgs(adapter1.getOrgs().get(position).getOrgId(), itemPosition);
+                        }
                     }
                 }
 
@@ -242,25 +257,84 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     }
 
     private void getSecondaryOrgs(String parentId, final int parentLevel) {
+        DialogUtil.showProgressDialog(this, mDialog, "正在加载单位列表...");
         RequestBody body = new FormBody.Builder()
                 .add("parentId", parentId)
+                .add("intent", "secondary")
                 .build();
         String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
         HttpUtil.sendPostRequest(address, body
-                , new HttpCallback(MoreUserInfoActivity.this, "连接网络失败！", mDialog) {
+                , new Callback() {
                     @Override
-                    protected void handResponse() throws IOException {
-                        String result = getResult();
-                        Gson gson = new Gson();
-                        OrgListPackage orgListPackage = gson.fromJson(result, OrgListPackage.class);
-                        mOrgsForChoose.set(parentLevel+1,orgListPackage.getOrgInfos());
+                    public void onFailure(Call call, IOException e) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mDialog.dismiss();
+                                Toast.makeText(MoreUserInfoActivity.this, "网络连接失败！", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        final String result = response.body().string();
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.e("OrgListPackage", result);
+                                Gson gson = new Gson();
+                                OrgListPackage orgListPackage = gson.fromJson(result, OrgListPackage.class);
+                                if (orgListPackage.getOrgInfos().size() > 0) {
+                                    mOrgsForChoose.set(parentLevel + 1, orgListPackage.getOrgInfos());
+                                    mOrgInfoAdapter.notifyDataSetChanged();
+                                }
+                                mDialog.dismiss();
+
+                            }
+                        });
+                    }
+
                 });
+    }
+
+    class OrgSpinnerAdapter extends BaseAdapter {
+        private ArrayList<OrgInfo> mOrgs;
+
+        public OrgSpinnerAdapter(ArrayList<OrgInfo> orgs) {
+            mOrgs = orgs;
+        }
+
+        @Override
+        public int getCount() {
+            return mOrgs.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mOrgs.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            convertView = View.inflate(MoreUserInfoActivity.this, android.R.layout.simple_spinner_item, null);
+            TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
+            textView.setText(mOrgs.get(position).getOrgName());
+            return convertView;
+        }
+
+        public ArrayList<OrgInfo> getOrgs() {
+            return mOrgs;
+        }
+
+        public void setOrgs(ArrayList<OrgInfo> orgs) {
+            mOrgs = orgs;
+        }
     }
 }

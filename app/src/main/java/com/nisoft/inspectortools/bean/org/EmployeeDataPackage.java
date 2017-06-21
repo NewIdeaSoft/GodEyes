@@ -27,6 +27,7 @@ public class EmployeeDataPackage {
     public void setOrgInfo(ArrayList<OrgInfo> orgInfo) {
         mOrgInfo = orgInfo;
     }
+
     public ArrayList<ArrayList<OrgInfo>> getOrgsInfoForSelect() {
         return mOrgsInfoForSelect;
     }
