@@ -50,7 +50,6 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private Company mCompany;
     private ArrayList<OrgInfo> mOrgInfo;
     private ArrayList<String> mStationsInfo;
-    private int mOrgLevels;
     private OrgInfoAdapter mOrgInfoAdapter;
 
     private ArrayList<ArrayList<OrgInfo>> mOrgsForChoose;
@@ -66,7 +65,6 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void init() {
         phone = getIntent().getStringExtra("phone");
-        mOrgLevels = getIntent().getIntExtra("levels", -1);
         Gson gson = new Gson();
         mCompany = gson.fromJson(getIntent().getStringExtra("company_json"), Company.class);
         mOrgsForChoose = new ArrayList<>();
@@ -151,9 +149,15 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private void uploadMoreInfo() {
         DialogUtil.showProgressDialog(this, mDialog, "正在上传用户信息...");
         mEmployee.setName(mNameEditText.getText().toString());
-        mEmployee.setOrgCode(mOrgInfo.get(mOrgInfo.size()-1).getOrgId());
         mEmployee.setPhone(phone);
         mEmployee.setWorkNum(mEmployeeNumEditText.getText().toString());
+        for(OrgInfo info:mOrgInfo){
+            if (info!=null){
+                mEmployee.setOrgId(info.getOrgId());
+            }else{
+                break;
+            }
+        }
         Gson gson = new Gson();
         String json = gson.toJson(mEmployee);
         RequestBody body = new FormBody.Builder()
@@ -176,10 +180,11 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String s = response.body().string();
-                if (s.equals(true)) {
+                if (s.equals("true")) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Toast.makeText(MoreUserInfoActivity.this, "用户信息提交成功！", Toast.LENGTH_SHORT).show();
                             mDialog.dismiss();
                             Intent intent = new Intent(MoreUserInfoActivity.this, ChooseRecodeTypeActivity.class);
                             startActivity(intent);
@@ -227,22 +232,28 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             spinner.setAdapter(adapter);
             if (mOrgInfo.size() > itemPosition) {
                 OrgInfo selectedOrg = mOrgInfo.get(itemPosition);
-                if (selectedOrg != null) {
+                if (selectedOrg != null && orgInfos != null) {
                     int selected = orgInfos.indexOf(selectedOrg);
                     if (selected != -1) {
-                        spinner.setSelection(selected);
+                        spinner.setSelection(selected + 1);
                     }
                 }
             }
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    mOrgInfo.set(itemPosition, mOrgsForChoose.get(itemPosition).get(position));
+                    if (position > 0) {
+                        mOrgInfo.set(itemPosition, mOrgsForChoose.get(itemPosition).get(position - 1));
+                        if (itemPosition < mOrgsForChoose.size() - 1) {
+                            ArrayList<OrgInfo> secondaryOrgs = mOrgsForChoose.get(itemPosition + 1);
+                            OrgInfo parentOrg = mOrgInfo.get(itemPosition);
+                            if (secondaryOrgs == null
+                                    || (secondaryOrgs.size() != 0
+                                    && !secondaryOrgs.get(0).getParentOrgId().equals(parentOrg.getOrgId()))) {
+                                Log.e("parent:", mOrgInfo.get(itemPosition).getOrgId());
+                                getSecondaryOrgs(parentOrg.getOrgId(), itemPosition);
+                            }
 
-                    if (itemPosition < mOrgsForChoose.size() - 1) {
-                        if (mOrgInfo.get(itemPosition + 1) == null) {
-                            Log.e("parent:",mOrgInfo.get(itemPosition).getOrgId());
-                            getSecondaryOrgs(mOrgInfo.get(itemPosition).getOrgId(), itemPosition);
                         }
                     }
                 }
@@ -287,10 +298,8 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                                 Log.e("OrgListPackage", result);
                                 Gson gson = new Gson();
                                 OrgListPackage orgListPackage = gson.fromJson(result, OrgListPackage.class);
-                                if (orgListPackage.getOrgInfos().size() > 0) {
-                                    mOrgsForChoose.set(parentLevel + 1, orgListPackage.getOrgInfos());
-                                    mOrgInfoAdapter.notifyDataSetChanged();
-                                }
+                                mOrgsForChoose.set(parentLevel + 1, orgListPackage.getOrgInfos());
+                                mOrgInfoAdapter.notifyDataSetChanged();
                                 mDialog.dismiss();
 
                             }
@@ -309,15 +318,18 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            if(mOrgs==null) {
-                return 0;
+            if (mOrgs == null) {
+                return 1;
             }
-            return mOrgs.size();
+            return mOrgs.size() + 1;
         }
 
         @Override
         public Object getItem(int position) {
-            return mOrgs.get(position);
+            if (position == 0) {
+                return null;
+            }
+            return mOrgs.get(position - 1);
         }
 
         @Override
@@ -329,16 +341,13 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             convertView = View.inflate(MoreUserInfoActivity.this, android.R.layout.simple_spinner_item, null);
             TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
-            textView.setText(mOrgs.get(position).getOrgName());
+            if (position == 0) {
+                textView.setText("--请选择--");
+                textView.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            } else {
+                textView.setText(mOrgs.get(position - 1).getOrgName());
+            }
             return convertView;
-        }
-
-        public ArrayList<OrgInfo> getOrgs() {
-            return mOrgs;
-        }
-
-        public void setOrgs(ArrayList<OrgInfo> orgs) {
-            mOrgs = orgs;
         }
     }
 }

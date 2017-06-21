@@ -8,48 +8,38 @@ import java.util.ArrayList;
 
 public class Employee {
     private String mName;
-    private String mWorkNum;
     private String mPhone;
-    private String mOrgCode;
-    private ArrayList<String> mStationsCode;
-
+    private String mWorkNum;
+    private String mOrgId;
+    private ArrayList<String> mPositionsId;
     public String getName() {
         return mName;
     }
-
     public void setName(String name) {
         mName = name;
     }
-
-    public String getWorkNum() {
-        return mWorkNum;
-    }
-
-    public void setWorkNum(String workNum) {
-        mWorkNum = workNum;
-    }
-
     public String getPhone() {
         return mPhone;
     }
-
-    public void setPhone(String phone) {
-        mPhone = phone;
+    public void setPhone(String number) {
+        mPhone = number;
     }
-
-    public String getOrgCode() {
-        return mOrgCode;
+    public String getWorkNum() {
+        return mWorkNum;
     }
-
-    public void setOrgCode(String orgCode) {
-        mOrgCode = orgCode;
+    public void setWorkNum(String workNum) {
+        mWorkNum = workNum;
     }
-
-    public ArrayList<String> getStationsCode() {
-        return mStationsCode;
+    public String getOrgId() {
+        return mOrgId;
     }
-
-    public void setStationsCode(ArrayList<String> stationsCode) {
-        mStationsCode = stationsCode;
+    public void setOrgId(String orgId) {
+        mOrgId = orgId;
+    }
+    public ArrayList<String> getPositionsId() {
+        return mPositionsId;
+    }
+    public void setPositionsId(ArrayList<String> positionsId) {
+        mPositionsId = positionsId;
     }
 }
