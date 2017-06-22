@@ -100,9 +100,8 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                 .add("structure_levels", mCompany.getOrgStructure().size() - 1 + "")
                 .add("company_id", mCompany.getOrgCode())
                 .build();
-        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
         DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载用户信息...");
-        HttpUtil.sendPostRequest(address, body, new Callback() {
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
@@ -164,8 +163,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                 .add("employee", json)
                 .add("intent", "update")
                 .build();
-        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
-        HttpUtil.sendPostRequest(address, body, new Callback() {
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
@@ -274,8 +272,8 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                 .add("parent_id", parentId)
                 .add("intent", "secondary")
                 .build();
-        String address = HttpUtil.ADRESS_MAIN + HttpUtil.SERVLET_MEMBER_INFO;
-        HttpUtil.sendPostRequest(address, body
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO
+                , body
                 , new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {

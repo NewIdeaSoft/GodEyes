@@ -10,7 +10,6 @@ public class PicsDbSchema {
         public static final class Cols{
             public static final String PIC_JOB_NUM = "job_num";
             public static final String PIC_JOB_DATE = "job_date";
-            public static final String PICS = "job_pics";
             public static final String TYPE = "job_type";
             public static final String DESCRIPTION = "job_description";
             public static final String FOLDER_PATH = "folder_path";

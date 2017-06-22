@@ -68,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void getCompaniesFromServer() {
         DialogUtil.showProgressDialog(this,mDialog,"正在从服务器加载组织信息...");
-        HttpUtil.sendGetRequest(LoginActivity.ADDRESS_LOGIN, new Callback() {
+        HttpUtil.sendGetRequest(HttpUtil.SERVLET_LOGIN, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -152,7 +152,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .add("intent","register")
                 .build();
         DialogUtil.showProgressDialog(this,mDialog,"正在连接服务器");
-        HttpUtil.sendPostRequest(LoginActivity.ADDRESS_LOGIN, body, new Callback() {
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_LOGIN, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {

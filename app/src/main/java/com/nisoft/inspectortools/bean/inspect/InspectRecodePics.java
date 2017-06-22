@@ -2,7 +2,6 @@ package com.nisoft.inspectortools.bean.inspect;
 
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -11,11 +10,18 @@ import java.util.Date;
 
 public class InspectRecodePics {
     private String mJobNum;
-    private ArrayList<String> mPicPath;
     private String mImagesFolderPath;
     private Date mDate;
     private String mType;
     private String mDescription;
+
+    public InspectRecodePics() {
+    }
+
+    public InspectRecodePics(String jobNum, String type) {
+        mJobNum = jobNum;
+        mType = type;
+    }
 
     public String getJobNum() {
         return mJobNum;
@@ -23,14 +29,6 @@ public class InspectRecodePics {
 
     public void setJobNum(String jobNum) {
         mJobNum = jobNum;
-    }
-
-    public ArrayList<String> getPicPath() {
-        return mPicPath;
-    }
-
-    public void setPicPath(ArrayList<String> picPath) {
-        mPicPath = picPath;
     }
 
     public Date getDate() {

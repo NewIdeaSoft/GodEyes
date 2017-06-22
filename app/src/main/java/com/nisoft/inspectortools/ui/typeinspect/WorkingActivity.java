@@ -27,7 +27,7 @@ public class WorkingActivity extends SingleFragmentActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0){
             String jobNum = WorkingFragment.getsRecodePics().getJobNum();
-            EditText editText = ((WorkingFragment)getFragmentManager().findFragmentById(R.id.fragment_content)).getJobNumber();
+            EditText editText = ((WorkingFragment)getFragmentManager().findFragmentById(R.id.fragment_content)).getJobNumberTextView();
 
             if (editText.isFocusable()||jobNum==null||jobNum.length()<6){
                 Snackbar.make(findViewById(R.id.fragment_content),"未输入或确认检验编号，无法保存数据，确定退出吗？",Snackbar.LENGTH_LONG)

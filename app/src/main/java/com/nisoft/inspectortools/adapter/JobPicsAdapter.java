@@ -19,7 +19,6 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment;
 
 import java.io.File;
-import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2017/6/22.
@@ -50,7 +49,9 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         }
         mPicsPath = file.list();
     }
-
+    public String[] getPath(){
+        return mPicsPath;
+    }
     @Override
     public JobPicsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(mImageLayoutId, parent, false);

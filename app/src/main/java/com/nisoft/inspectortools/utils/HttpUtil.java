@@ -11,12 +11,15 @@ import okhttp3.RequestBody;
  */
 
 public class HttpUtil {
-    public static final String SERVLET_LOGIN = "LoginServlet";
-    public static final String SERVLET_UPLOAD = "FileUploadServlet";
-    public static final String SERVLET_MEMBER_INFO = "MemberInfoServlet";
-    public static final String SERVLET_JOBINFO = "JobInfoServlet";
-    public static final String SERVLET_DOWNLOAD_LAN_CHI = "chi-sim";
     public static final String ADRESS_MAIN = "http://47.93.191.62:8080/InspectorToolsServer/";
+    public static final String SERVLET_LOGIN = ADRESS_MAIN + "LoginServlet";
+    public static final String SERVLET_UPLOAD = ADRESS_MAIN + "FileUploadServlet";
+    public static final String SERVLET_MEMBER_INFO = ADRESS_MAIN + "MemberInfoServlet";
+    public static final String SERVLET_MATERIAL_RECODE = HttpUtil.ADRESS_MAIN + "MaterialRecodeServlet";
+    public static final String SERVLET_JOBINFO = ADRESS_MAIN + "JobInfoServlet";
+    public static final String SERVLET_DOWNLOAD_LAN_CHI = ADRESS_MAIN + "chi-sim";
+
+    //本地服务器地址："http://192.168.31.189:8080/InspectorToolsServer/"
 
     public static void sendPostRequest(String address, RequestBody body, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();

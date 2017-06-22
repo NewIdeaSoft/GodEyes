@@ -15,7 +15,6 @@ public class PicsDbHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE = "create table "
             + PicTable.NAME + "( _id integer primary key autoincrement,"
             + PicTable.Cols.PIC_JOB_NUM + ","
-            + PicTable.Cols.PICS + ","
             + PicTable.Cols.FOLDER_PATH + ","
             + PicTable.Cols.PIC_JOB_DATE + ","
             + PicTable.Cols.TYPE + ","

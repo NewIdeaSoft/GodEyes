@@ -9,7 +9,6 @@ import android.util.Log;
 import com.nisoft.inspectortools.db.inspect.PicsCursorWrapper;
 import com.nisoft.inspectortools.db.inspect.PicsDbHelper;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema.PicTable;
-import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.ArrayList;
 
@@ -72,9 +71,6 @@ public class PicsLab {
             contentValues.put(PicTable.Cols.PIC_JOB_NUM,pics.getJobNum());
         }
         contentValues.put(PicTable.Cols.PIC_JOB_DATE,pics.getDate().getTime());
-        if (pics.getPicPath()!=null&&pics.getPicPath().size()>0){
-            contentValues.put(PicTable.Cols.PICS, StringFormatUtil.arrayListToString(pics.getPicPath()));
-        }
         if(pics.getType()!=null) {
             contentValues.put(PicTable.Cols.TYPE,pics.getType());
         }
@@ -100,9 +96,13 @@ public class PicsLab {
                 Log.e("TAG","insert:"+pics.getJobNum());
             }
             cursorWrapper.close();
-
         }
     }
+    public void insertPics(InspectRecodePics pics){
+        ContentValues contentValues = getPicsContentValues(pics);
+        mDatabase.insert(PicTable.NAME,null,contentValues);
+    }
+
     public InspectRecodePics getPicsByJobNum(String mJobNum){
         PicsCursorWrapper cursorWrapper = queryPics(PicTable.Cols.PIC_JOB_NUM+"=?",new String[]{mJobNum});
         if (cursorWrapper==null){

@@ -29,7 +29,6 @@ import okhttp3.Response;
  */
 public class LoginActivity extends AppCompatActivity {
     public static final String PHONE = "phone";
-    public static final String ADDRESS_LOGIN = "http://47.93.191.62:8080/InspectorToolsServer/LoginServlet";
     private EditText mPhoneEditText;
     private EditText mPassWordEditText;
     private Button mLoginButton;
@@ -103,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                 .add("intent", "login")
                 .build();
         DialogUtil.showProgressDialog(this,mDialog,"正在登陆...");
-        HttpUtil.sendPostRequest(ADDRESS_LOGIN, body, new Callback() {
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_LOGIN, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {

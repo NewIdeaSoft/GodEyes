@@ -5,7 +5,6 @@ import android.database.CursorWrapper;
 
 import com.nisoft.inspectortools.bean.inspect.InspectRecodePics;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema.PicTable;
-import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.Date;
 
@@ -28,7 +27,6 @@ public class PicsCursorWrapper extends CursorWrapper {
         pics.setJobNum(getString(getColumnIndex(PicTable.Cols.PIC_JOB_NUM)));
         pics.setDate(new Date(getLong(getColumnIndex(PicTable.Cols.PIC_JOB_DATE))));
         pics.setImagesFolderPath(getString(getColumnIndex(PicTable.Cols.FOLDER_PATH)));
-        pics.setPicPath(StringFormatUtil.getStrings(getString(getColumnIndex(PicTable.Cols.PICS))));
         pics.setType(getString(getColumnIndex(PicTable.Cols.TYPE)));
         pics.setDescription(getString(getColumnIndex(PicTable.Cols.DESCRIPTION)));
         return pics;
