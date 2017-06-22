@@ -16,6 +16,7 @@ public class PicsDbHelper extends SQLiteOpenHelper {
             + PicTable.NAME + "( _id integer primary key autoincrement,"
             + PicTable.Cols.PIC_JOB_NUM + ","
             + PicTable.Cols.PICS + ","
+            + PicTable.Cols.FOLDER_PATH + ","
             + PicTable.Cols.PIC_JOB_DATE + ","
             + PicTable.Cols.TYPE + ","
             + PicTable.Cols.DESCRIPTION + ")";
@@ -31,7 +32,7 @@ public class PicsDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("alter table " + PicTable.NAME + " add column " + PicTable.Cols.TYPE + " text");
-        db.execSQL("alter table " + PicTable.NAME + " add column " + PicTable.Cols.DESCRIPTION + "text");
+//        db.execSQL("alter table " + PicTable.NAME + " add column " + PicTable.Cols.TYPE + " text");
+//        db.execSQL("alter table " + PicTable.NAME + " add column " + PicTable.Cols.DESCRIPTION + "text");
     }
 }

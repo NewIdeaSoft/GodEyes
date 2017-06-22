@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by Administrator on 2017/5/22.
+ * Created by Administrator on 2017/6/22.
  */
 
-public class InspectRecodePics {
+public class MaterialInspectRecode {
     private String mJobNum;
-    private ArrayList<String> mPicPath;
-    private String mImagesFolderPath;
+    private String mPicsRootPath;
     private Date mDate;
     private String mType;
     private String mDescription;
@@ -23,14 +22,6 @@ public class InspectRecodePics {
 
     public void setJobNum(String jobNum) {
         mJobNum = jobNum;
-    }
-
-    public ArrayList<String> getPicPath() {
-        return mPicPath;
-    }
-
-    public void setPicPath(ArrayList<String> picPath) {
-        mPicPath = picPath;
     }
 
     public Date getDate() {
@@ -56,13 +47,12 @@ public class InspectRecodePics {
     public void setDescription(String description) {
         mDescription = description;
     }
-
-    public String getImagesFolderPath() {
-        return mImagesFolderPath;
+    public String getPicsRootPath() {
+        return mPicsRootPath;
     }
 
-    public void setImagesFolderPath(String imagesFolderPath) {
-        mImagesFolderPath = imagesFolderPath;
+    public void setPicsRootPath(String picsRootPath) {
+        mPicsRootPath = picsRootPath;
     }
 
     @Override

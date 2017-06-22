@@ -275,6 +275,8 @@ public class WorkingFragment extends Fragment {
                 final String resourcePhotoPath = data.getStringExtra("resourcePhotoPath");
                 final int position = data.getIntExtra("position",-1);
                 if (path != null&&position>-1) {
+//                    mAdapter.refreshPics();
+
                     if (position<mPicsPath.size()){
                         mPicsPath.set(position,path);
                     }else {
@@ -286,7 +288,9 @@ public class WorkingFragment extends Fragment {
                                     @Override
                                     public void onClick(View v) {
                                         FileUtil.moveFile(path,resourcePhotoPath);
+//                                        mAdapter.refreshPics();
                                         mPicsPath.remove(position);
+
                                         mAdapter.notifyDataSetChanged();
                                     }
                                 })
@@ -297,6 +301,7 @@ public class WorkingFragment extends Fragment {
                 }else if(path==null){
                     Toast.makeText(getActivity(),"照片已存在，请重新选择！",Toast.LENGTH_LONG).show();
                 }
+                //mAdapter.refreshPics();
                 mAdapter.setPicsPath(mPicsPath);
                 sRecodePics.setPicPath(mPicsPath);
                 break;
@@ -328,9 +333,11 @@ public class WorkingFragment extends Fragment {
     public void removeSelectedPic(int position){
         File file = new File(mPicsPath.get(position));
         file.delete();
+        //mAdapter.refreshPics();
         mPicsPath.remove(position);
         mAdapter.setPicsPath(mPicsPath);
         sRecodePics.setPicPath(mPicsPath);
+
         mAdapter.notifyDataSetChanged();
     }
 }

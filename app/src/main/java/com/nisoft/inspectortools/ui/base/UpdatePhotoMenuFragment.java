@@ -26,6 +26,7 @@ import com.nisoft.inspectortools.utils.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Created by NewIdeaSoft on 2017/5/3.
@@ -113,6 +114,7 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
         if (!dir.exists()) {
             dir.mkdirs();
         }
+//        File outputImage = new File(dir, UUID.randomUUID().toString()+".jpg");
         File outputImage = new File(dir, position + ".jpg");
         path = null;
         if (outputImage.exists()) {
@@ -180,6 +182,7 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
+//                targetPhotoPath = getArguments().getString(IMAGE_ROOTPATH) + UUID.randomUUID().toString() + ".jpg";
                 targetPhotoPath = getArguments().getString(IMAGE_ROOTPATH) + position + ".jpg";
                 FileUtil.moveFile(photoPath, targetPhotoPath);
                 photoPath = targetPhotoPath;

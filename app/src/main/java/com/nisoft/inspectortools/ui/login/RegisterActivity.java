@@ -211,7 +211,7 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             convertView = View.inflate(RegisterActivity.this,android.R.layout.simple_spinner_item,null);
-            TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
+            TextView textView = (TextView) convertView;
             textView.setText(mAllCompanies.get(position).getOrgName());
             return convertView;
         }

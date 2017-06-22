@@ -27,7 +27,7 @@ public class PicsCursorWrapper extends CursorWrapper {
         InspectRecodePics pics = new InspectRecodePics();
         pics.setJobNum(getString(getColumnIndex(PicTable.Cols.PIC_JOB_NUM)));
         pics.setDate(new Date(getLong(getColumnIndex(PicTable.Cols.PIC_JOB_DATE))));
-
+        pics.setImagesFolderPath(getString(getColumnIndex(PicTable.Cols.FOLDER_PATH)));
         pics.setPicPath(StringFormatUtil.getStrings(getString(getColumnIndex(PicTable.Cols.PICS))));
         pics.setType(getString(getColumnIndex(PicTable.Cols.TYPE)));
         pics.setDescription(getString(getColumnIndex(PicTable.Cols.DESCRIPTION)));
