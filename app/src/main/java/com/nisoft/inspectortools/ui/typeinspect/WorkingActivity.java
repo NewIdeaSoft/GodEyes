@@ -21,15 +21,15 @@ public class WorkingActivity extends SingleFragmentActivity {
     protected Fragment createFragment() {
         mJobNum = getIntent().getStringExtra("job_num");
         boolean isNewJob = getIntent().getBooleanExtra("isNewJob", false);
-        String inpectType = getIntent().getStringExtra(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        return WorkingFragment.newInstance(mJobNum, inpectType, isNewJob);
+        String inspectType = getIntent().getStringExtra(ChooseRecodeTypeFragment.INSPECT_TYPE);
+        return WorkingFragment.newInstance(mJobNum, inspectType, isNewJob);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             String jobNum = WorkingFragment.getsRecodePics().getJobNum();
-            Snackbar.make(findViewById(R.id.fragment_content), "未输入或确认检验编号，无法保存数据，确定退出吗？", Snackbar.LENGTH_LONG)
+            Snackbar.make(findViewById(R.id.fragment_content), "数据未上传，确定退出吗？", Snackbar.LENGTH_LONG)
                     .setAction("确定", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

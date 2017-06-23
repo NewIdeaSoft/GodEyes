@@ -127,4 +127,9 @@ public class PicsLab {
         Cursor cursor = mDatabase.rawQuery(sql,null);
         return new PicsCursorWrapper(cursor);
     }
+    public void changeJobId (String newId, String oldId){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PicTable.Cols.JOB_ID,newId);
+        mDatabase.update(PicTable.NAME,contentValues,PicTable.Cols.JOB_ID +"=?",new String[]{oldId});
+    }
 }

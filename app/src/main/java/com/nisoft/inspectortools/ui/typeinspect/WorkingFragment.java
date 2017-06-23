@@ -89,7 +89,7 @@ public class WorkingFragment extends Fragment {
         isNewJob = getArguments().getBoolean("isNewJob");
         mJobNum = getArguments().getString("job_num");
         jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        mFolderPath = PATH + jobType + "/" + mJobNum+"/";
+        mFolderPath = PATH + jobType + "/" + mJobNum + "/";
         mAdapter = new JobPicsAdapter(WorkingFragment.this, R.layout.inspect_image_item, mFolderPath);
     }
 
@@ -113,7 +113,7 @@ public class WorkingFragment extends Fragment {
             sRecodePics.setPicFolderPath(mFolderPath);
         }
         mJobNumberTextView.setText(mJobNum);
-        if(!isNewJob){
+        if (!isNewJob) {
             mJobNumberTextView.setClickable(false);
         }
         mJobNumberTextView.setOnClickListener(new View.OnClickListener() {
@@ -153,6 +153,39 @@ public class WorkingFragment extends Fragment {
             exit = true;
         }
         return exit;
+    }
+
+    private void onJobNumChanged(final String newJobNum, String oldJobnum) {
+        if (isNewJob && !newJobNum.equals(oldJobnum)) {
+            PicsLab.getPicsLab(getActivity()).changeJobId(newJobNum,oldJobnum);
+            RequestBody body = new FormBody.Builder()
+                    .add("intent", "change_id")
+                    .add("newId", newJobNum)
+                    .add("oldId", oldJobnum)
+                    .build();
+            HttpUtil.sendPostRequest(HttpUtil.SERVLET_MATERIAL_RECODE
+                    , body, new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            final String result = response.body().string();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (result.equals("OK")) {
+                                        sRecodePics.setJobNum(newJobNum);
+                                        mJobNumberTextView.setText(newJobNum);
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+        }
     }
 
     private boolean checkJobType(String jobNum) {
@@ -207,8 +240,7 @@ public class WorkingFragment extends Fragment {
                                 if (exit) {
                                     Toast.makeText(getActivity(), "您输入的编号已被使用！", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    sRecodePics.setJobNum(s);
-                                    mJobNumberTextView.setText(s);
+                                    onJobNumChanged(s,sRecodePics.getJobNum());
                                 }
                             }
                         });
@@ -252,7 +284,7 @@ public class WorkingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (sRecodePics.getDate()!=null){
+        if (sRecodePics.getDate() != null) {
             mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
         }
         mAdapter.notifyDataSetChanged();
@@ -306,12 +338,14 @@ public class WorkingFragment extends Fragment {
                 break;
             case 3:
                 String jobNum = data.getStringExtra("content_edit");
-
-                if (isExitJobNum(jobNum)) {
-                    Toast.makeText(getActivity(), "您输入的编号已存在！", Toast.LENGTH_SHORT).show();
-                } else {
-                    isExitOnServer(jobNum);
+                if (!jobNum.equals(sRecodePics.getJobNum())) {
+                    if (isExitJobNum(jobNum)) {
+                        Toast.makeText(getActivity(), "您输入的编号已存在！", Toast.LENGTH_SHORT).show();
+                    } else {
+                        isExitOnServer(jobNum);
+                    }
                 }
+
         }
     }
 
@@ -388,7 +422,7 @@ public class WorkingFragment extends Fragment {
     }
 
     private void uploadJob() {
-        PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics,sRecodePics.getJobNum());
+        PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics, sRecodePics.getJobNum());
 //        Intent intent = new Intent(getActivity(), FileUploadService.class);
 //        intent.putExtra("folderPath",sRecodePics.getImagesFolderPath());
 //        getActivity().startService(intent);
@@ -396,11 +430,11 @@ public class WorkingFragment extends Fragment {
         Gson gson = new Gson();
         String jobJson = gson.toJson(sRecodePics);
         RequestBody body = new FormBody.Builder()
-                .add("intent","update")
-                .add("job",jobJson)
+                .add("intent", "update")
+                .add("job", jobJson)
                 .build();
 
-        DialogUtil.showProgressDialog(getActivity(),mDialog,"正在上传数据...");
+        DialogUtil.showProgressDialog(getActivity(), mDialog, "正在上传数据...");
         HttpUtil.sendPostRequest(HttpUtil.SERVLET_MATERIAL_RECODE, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -420,9 +454,9 @@ public class WorkingFragment extends Fragment {
                     @Override
                     public void run() {
                         mDialog.dismiss();
-                        if (result.equals("OK")){
+                        if (result.equals("OK")) {
                             Toast.makeText(getActivity(), "上传成功！", Toast.LENGTH_SHORT).show();
-                        }else {
+                        } else {
                             Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
                         }
                     }
