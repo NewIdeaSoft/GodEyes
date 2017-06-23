@@ -3,7 +3,7 @@ package com.nisoft.inspectortools.db.inspect;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
-import com.nisoft.inspectortools.bean.inspect.InspectRecodePics;
+import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema.PicTable;
 
 import java.util.Date;
@@ -22,13 +22,14 @@ public class PicsCursorWrapper extends CursorWrapper {
         super(cursor);
     }
 
-    public InspectRecodePics getPics(){
-        InspectRecodePics pics = new InspectRecodePics();
-        pics.setJobNum(getString(getColumnIndex(PicTable.Cols.PIC_JOB_NUM)));
-        pics.setDate(new Date(getLong(getColumnIndex(PicTable.Cols.PIC_JOB_DATE))));
-        pics.setImagesFolderPath(getString(getColumnIndex(PicTable.Cols.FOLDER_PATH)));
+    public MaterialInspectRecode getPics(){
+        MaterialInspectRecode pics = new MaterialInspectRecode();
+        pics.setJobNum(getString(getColumnIndex(PicTable.Cols.JOB_ID)));
+        pics.setDate(new Date(getLong(getColumnIndex(PicTable.Cols.JOB_DATE))));
+        pics.setPicFolderPath(getString(getColumnIndex(PicTable.Cols.FOLDER_PATH)));
         pics.setType(getString(getColumnIndex(PicTable.Cols.TYPE)));
         pics.setDescription(getString(getColumnIndex(PicTable.Cols.DESCRIPTION)));
+        pics.setInspectorId(getString(getColumnIndex(PicTable.Cols.INSPECTOR_ID)));
         return pics;
     }
 }

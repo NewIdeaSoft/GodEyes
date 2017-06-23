@@ -8,11 +8,12 @@ public class PicsDbSchema {
     public static final class PicTable{
         public static final String NAME= "recode_pic";
         public static final class Cols{
-            public static final String PIC_JOB_NUM = "job_num";
-            public static final String PIC_JOB_DATE = "job_date";
+            public static final String JOB_ID = "job_id";
+            public static final String JOB_DATE = "date";
             public static final String TYPE = "job_type";
-            public static final String DESCRIPTION = "job_description";
-            public static final String FOLDER_PATH = "folder_path";
+            public static final String DESCRIPTION = "description";
+            public static final String FOLDER_PATH = "folder";
+            public static final String INSPECTOR_ID = "inspector_id";
         }
 
     }

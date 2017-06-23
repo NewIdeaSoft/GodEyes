@@ -109,6 +109,9 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
 
     @Override
     public int getItemCount() {
+        if (mPicsPath==null){
+            return 1;
+        }
         return mPicsPath.length + 1;
     }
 

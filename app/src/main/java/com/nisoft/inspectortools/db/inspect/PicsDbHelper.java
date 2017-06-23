@@ -14,10 +14,11 @@ public class PicsDbHelper extends SQLiteOpenHelper {
     private static final String NAME = "inspector_tools.db";
     private static final String CREATE_TABLE = "create table "
             + PicTable.NAME + "( _id integer primary key autoincrement,"
-            + PicTable.Cols.PIC_JOB_NUM + ","
+            + PicTable.Cols.JOB_ID + ","
             + PicTable.Cols.FOLDER_PATH + ","
-            + PicTable.Cols.PIC_JOB_DATE + ","
+            + PicTable.Cols.JOB_DATE + ","
             + PicTable.Cols.TYPE + ","
+            + PicTable.Cols.INSPECTOR_ID + ","
             + PicTable.Cols.DESCRIPTION + ")";
 
     public PicsDbHelper(Context context, int version) {

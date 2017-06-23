@@ -8,20 +8,13 @@ import java.util.Date;
  * Created by Administrator on 2017/5/22.
  */
 
-public class InspectRecodePics {
+public class MaterialInspectRecode {
     private String mJobNum;
-    private String mImagesFolderPath;
+    private String mPicFolderPath;
+    private String mInspectorId;
     private Date mDate;
     private String mType;
     private String mDescription;
-
-    public InspectRecodePics() {
-    }
-
-    public InspectRecodePics(String jobNum, String type) {
-        mJobNum = jobNum;
-        mType = type;
-    }
 
     public String getJobNum() {
         return mJobNum;
@@ -55,12 +48,20 @@ public class InspectRecodePics {
         mDescription = description;
     }
 
-    public String getImagesFolderPath() {
-        return mImagesFolderPath;
+    public String getPicFolderPath() {
+        return mPicFolderPath;
     }
 
-    public void setImagesFolderPath(String imagesFolderPath) {
-        mImagesFolderPath = imagesFolderPath;
+    public void setPicFolderPath(String picFolderPath) {
+        mPicFolderPath = picFolderPath;
+    }
+
+    public String getInspectorId() {
+        return mInspectorId;
+    }
+
+    public void setInspectorId(String inspectorId) {
+        mInspectorId = inspectorId;
     }
 
     @Override

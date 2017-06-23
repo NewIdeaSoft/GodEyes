@@ -16,30 +16,26 @@ import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 
 public class WorkingActivity extends SingleFragmentActivity {
     private String mJobNum;
+
     @Override
     protected Fragment createFragment() {
         mJobNum = getIntent().getStringExtra("job_num");
+        boolean isNewJob = getIntent().getBooleanExtra("isNewJob", false);
         String inpectType = getIntent().getStringExtra(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        return WorkingFragment.newInstance(mJobNum,inpectType);
+        return WorkingFragment.newInstance(mJobNum, inpectType, isNewJob);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0){
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             String jobNum = WorkingFragment.getsRecodePics().getJobNum();
-            EditText editText = ((WorkingFragment)getFragmentManager().findFragmentById(R.id.fragment_content)).getJobNumberTextView();
-
-            if (editText.isFocusable()||jobNum==null||jobNum.length()<6){
-                Snackbar.make(findViewById(R.id.fragment_content),"未输入或确认检验编号，无法保存数据，确定退出吗？",Snackbar.LENGTH_LONG)
-                        .setAction("确定", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                finish();
-                            }
-                        }).show();
-                return true;
-            }
-
+            Snackbar.make(findViewById(R.id.fragment_content), "未输入或确认检验编号，无法保存数据，确定退出吗？", Snackbar.LENGTH_LONG)
+                    .setAction("确定", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                        }
+                    }).show();
         }
         return super.onKeyDown(keyCode, event);
     }

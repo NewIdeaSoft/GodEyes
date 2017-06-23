@@ -36,9 +36,9 @@ public class PicsLab {
 //        if (cursor==null){return null;}
         return new PicsCursorWrapper(cursor);
     }
-    public ArrayList<InspectRecodePics> getAllPics(){
+    public ArrayList<MaterialInspectRecode> getAllPics(){
         PicsCursorWrapper cursorWrapper = queryPics(null,null);
-        ArrayList<InspectRecodePics> pics = new ArrayList<>();
+        ArrayList<MaterialInspectRecode> pics = new ArrayList<>();
         try{
             cursorWrapper.moveToFirst();
             while (!cursorWrapper.isAfterLast()){
@@ -51,8 +51,8 @@ public class PicsLab {
 
         return pics;
     }
-    public ArrayList<InspectRecodePics> getAllPics(PicsCursorWrapper cursorWrapper){
-        ArrayList<InspectRecodePics> pics = new ArrayList<>();
+    public ArrayList<MaterialInspectRecode> getAllPics(PicsCursorWrapper cursorWrapper){
+        ArrayList<MaterialInspectRecode> pics = new ArrayList<>();
         try{
             cursorWrapper.moveToFirst();
             while (!cursorWrapper.isAfterLast()){
@@ -65,12 +65,12 @@ public class PicsLab {
 
         return pics;
     }
-    public static ContentValues getPicsContentValues(InspectRecodePics pics){
+    public static ContentValues getPicsContentValues(MaterialInspectRecode pics){
         ContentValues contentValues = new ContentValues();
         if (pics.getJobNum()!=null){
-            contentValues.put(PicTable.Cols.PIC_JOB_NUM,pics.getJobNum());
+            contentValues.put(PicTable.Cols.JOB_ID,pics.getJobNum());
         }
-        contentValues.put(PicTable.Cols.PIC_JOB_DATE,pics.getDate().getTime());
+        contentValues.put(PicTable.Cols.JOB_DATE,pics.getDate().getTime());
         if(pics.getType()!=null) {
             contentValues.put(PicTable.Cols.TYPE,pics.getType());
         }
@@ -80,16 +80,16 @@ public class PicsLab {
         return contentValues;
     }
 
-    public void updatePics (InspectRecodePics pics,String oldJobNum){
+    public void updatePics (MaterialInspectRecode pics, String oldJobNum){
         ContentValues contentValues = getPicsContentValues(pics);
         if (contentValues.size()>0){
             if (pics.getJobNum() == null){
                 return;
             }
-            PicsCursorWrapper cursorWrapper = queryPics(PicTable.Cols.PIC_JOB_NUM+"=?",new String[]{oldJobNum});
+            PicsCursorWrapper cursorWrapper = queryPics(PicTable.Cols.JOB_ID +"=?",new String[]{oldJobNum});
             Log.e("TAG",cursorWrapper.getCount()+"");
             if (cursorWrapper!=null&&cursorWrapper.getCount()>0){
-                mDatabase.update(PicTable.NAME,contentValues,PicTable.Cols.PIC_JOB_NUM+"=?",new String[]{oldJobNum});
+                mDatabase.update(PicTable.NAME,contentValues,PicTable.Cols.JOB_ID +"=?",new String[]{oldJobNum});
                 Log.e("TAG","update:"+pics.getJobNum());
             }else{
                 mDatabase.insert(PicTable.NAME,null,contentValues);
@@ -98,17 +98,17 @@ public class PicsLab {
             cursorWrapper.close();
         }
     }
-    public void insertPics(InspectRecodePics pics){
+    public void insertPics(MaterialInspectRecode pics){
         ContentValues contentValues = getPicsContentValues(pics);
         mDatabase.insert(PicTable.NAME,null,contentValues);
     }
 
-    public InspectRecodePics getPicsByJobNum(String mJobNum){
-        PicsCursorWrapper cursorWrapper = queryPics(PicTable.Cols.PIC_JOB_NUM+"=?",new String[]{mJobNum});
+    public MaterialInspectRecode getPicsByJobNum(String mJobNum){
+        PicsCursorWrapper cursorWrapper = queryPics(PicTable.Cols.JOB_ID +"=?",new String[]{mJobNum});
         if (cursorWrapper==null){
             return null;
         }
-        InspectRecodePics pics = null;
+        MaterialInspectRecode pics = null;
         try{
             cursorWrapper.moveToFirst();
             pics = cursorWrapper.getPics();
@@ -121,7 +121,7 @@ public class PicsLab {
     public PicsCursorWrapper queryPicsByTwo(String jobType,String jobNum){
         String sql = "select * from "+ PicTable.NAME +" where("
                 + PicTable.Cols.TYPE + " like '" + jobType
-                +"')and("+ PicTable.Cols.PIC_JOB_NUM + " like '%"+jobNum+"%')";
+                +"')and("+ PicTable.Cols.JOB_ID + " like '%"+jobNum+"%')";
         Cursor cursor = mDatabase.rawQuery(sql,null);
         return new PicsCursorWrapper(cursor);
     }

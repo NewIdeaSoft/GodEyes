@@ -56,6 +56,10 @@ public class ChooseRecodeTypeFragment extends Fragment {
                         startActivity(inspectIntent);
                         break;
                     case 2:
+                        inspectIntent.putExtra(INSPECT_TYPE, mTypes.get(2));
+                        startActivity(inspectIntent);
+                        break;
+                    case 3:
                         startActivity(qualityProblemIntent);
                         break;
                     default:
@@ -72,8 +76,9 @@ public class ChooseRecodeTypeFragment extends Fragment {
 
     private void setTypes() {
         mTypes = new ArrayList<>();
-        mTypes.add("原材料检验");
-        mTypes.add("外购件检验");
+        mTypes.add("金属材料");
+        mTypes.add("非金属材料");
+        mTypes.add("外购件");
         mTypes.add("质量问题");
     }
     @Override

@@ -12,8 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.bean.inspect.InspectRecodePics;
-import com.nisoft.inspectortools.ui.typeinspect.WorkingFragment;
+import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 
 import java.util.ArrayList;
 
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 public class LargePhotoFragment extends DialogFragment {
     private static final String SELECTED_POSITION = "selected_position";
     private static final String IMAGE_PATH_LIST = "image_path_list";
-    private InspectRecodePics mRecodePics;
+    private MaterialInspectRecode mRecodePics;
     private ArrayList<Fragment> mFragments;
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;

@@ -22,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.bean.inspect.InspectRecodePics;
+import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 import com.nisoft.inspectortools.bean.inspect.PicsLab;
 import com.nisoft.inspectortools.db.inspect.PicsCursorWrapper;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
@@ -49,7 +49,7 @@ public class JobListFragment extends Fragment {
     private JobListAdapter mAdapter;
     private FloatingActionButton mFloatButton;
     private ProgressDialog mDialog;
-    private ArrayList<InspectRecodePics> mPics;
+    private ArrayList<MaterialInspectRecode> mPics;
     private SearchView mSearchView;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
     private String mJobType;
@@ -124,6 +124,7 @@ public class JobListFragment extends Fragment {
                                 Intent intent = new Intent(getActivity(),WorkingActivity.class);
                                 intent.putExtra(ChooseRecodeTypeFragment.INSPECT_TYPE,getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE));
                                 intent.putExtra("job_num",jobNum);
+                                intent.putExtra("isNewJob",true);
                                 startActivity(intent);
                             }
                         });
@@ -191,9 +192,9 @@ public class JobListFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
                 PicsCursorWrapper cursor = PicsLab.getPicsLab(getActivity())
                         .queryPicsByTwo(mJobType,newText);
-                ArrayList<InspectRecodePics> pics = PicsLab.getPicsLab(getActivity()).getAllPics(cursor);
+                ArrayList<MaterialInspectRecode> pics = PicsLab.getPicsLab(getActivity()).getAllPics(cursor);
                 ArrayList<String> jobsNum = new ArrayList<String>();
-                for (InspectRecodePics pic : pics){
+                for (MaterialInspectRecode pic : pics){
                     jobsNum.add(pic.getJobNum());
                 }
                 mJobNumList = jobsNum;
@@ -236,7 +237,9 @@ public class JobListFragment extends Fragment {
                 ArrayList<String> newNumList = StringFormatUtil.getStrings(result);
                 for(String s:newNumList){
                     if(mJobNumList.indexOf(s)<0) {
-                        InspectRecodePics pics = new InspectRecodePics(s,mJobType);
+                        MaterialInspectRecode pics = new MaterialInspectRecode();
+                        pics.setJobNum(s);
+                        pics.setType(mJobType);
                         PicsLab.getPicsLab(getActivity()).insertPics(pics);
                     }
                 }
@@ -264,7 +267,7 @@ public class JobListFragment extends Fragment {
         mPics = PicsLab.getPicsLab(getActivity()).getAllPics();
         mJobNumList = new ArrayList<>();
         String jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        for (InspectRecodePics pic : mPics){
+        for (MaterialInspectRecode pic : mPics){
             if(pic.getType().equals(jobType)) {
                 mJobNumList.add(pic.getJobNum());
             }
