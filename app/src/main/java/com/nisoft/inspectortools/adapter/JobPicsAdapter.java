@@ -100,7 +100,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(JobPicsAdapter.ViewHolder holder, int position) {
-        if (position == mPicsPath.length) {
+        if (position == getItemCount()-1) {
             holder.mPicImage.setImageResource(R.drawable.ic_btn_add_photo);
         } else {
             Glide.with(mContext).load(mPicsPath[position]).into(holder.mPicImage);

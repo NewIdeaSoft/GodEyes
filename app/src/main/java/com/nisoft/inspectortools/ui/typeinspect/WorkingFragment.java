@@ -89,7 +89,7 @@ public class WorkingFragment extends Fragment {
         isNewJob = getArguments().getBoolean("isNewJob");
         mJobNum = getArguments().getString("job_num");
         jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        mFolderPath = PATH + jobType + "/" + mJobNum;
+        mFolderPath = PATH + jobType + "/" + mJobNum+"/";
         mAdapter = new JobPicsAdapter(WorkingFragment.this, R.layout.inspect_image_item, mFolderPath);
     }
 

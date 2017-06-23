@@ -70,7 +70,9 @@ public class PicsLab {
         if (pics.getJobNum()!=null){
             contentValues.put(PicTable.Cols.JOB_ID,pics.getJobNum());
         }
-        contentValues.put(PicTable.Cols.JOB_DATE,pics.getDate().getTime());
+        if(pics.getDate()!=null) {
+            contentValues.put(PicTable.Cols.JOB_DATE,pics.getDate().getTime());
+        }
         if(pics.getType()!=null) {
             contentValues.put(PicTable.Cols.TYPE,pics.getType());
         }
