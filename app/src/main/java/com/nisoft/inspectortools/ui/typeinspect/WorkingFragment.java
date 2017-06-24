@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -115,15 +116,17 @@ public class WorkingFragment extends Fragment {
         mJobNumberTextView.setText(mJobNum);
         if (!isNewJob) {
             mJobNumberTextView.setClickable(false);
+        }else{
+            mJobNumberTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), EditTextActivity.class);
+                    intent.putExtra("initText", mJobNumberTextView.getText());
+                    startActivityForResult(intent, 3);
+                }
+            });
         }
-        mJobNumberTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EditTextActivity.class);
-                intent.putExtra("initText", mJobNumberTextView.getText());
-                startActivityForResult(intent, 3);
-            }
-        });
+
         mDatePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,13 +158,14 @@ public class WorkingFragment extends Fragment {
         return exit;
     }
 
-    private void onJobNumChanged(final String newJobNum, String oldJobnum) {
-        if (isNewJob && !newJobNum.equals(oldJobnum)) {
-            PicsLab.getPicsLab(getActivity()).changeJobId(newJobNum,oldJobnum);
+    private void onJobNumChanged(final String newJobNum, String oldJobNum) {
+        if (isNewJob && !newJobNum.equals(oldJobNum)) {
+            PicsLab.getPicsLab(getActivity()).changeJobId(newJobNum,oldJobNum);
+            Log.e("local data:","本地数据更新完成！");
             RequestBody body = new FormBody.Builder()
                     .add("intent", "change_id")
                     .add("newId", newJobNum)
-                    .add("oldId", oldJobnum)
+                    .add("oldId", oldJobNum)
                     .build();
             HttpUtil.sendPostRequest(HttpUtil.SERVLET_MATERIAL_RECODE
                     , body, new Callback() {

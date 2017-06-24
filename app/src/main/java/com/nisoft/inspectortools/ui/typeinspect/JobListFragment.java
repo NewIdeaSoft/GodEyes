@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -132,6 +133,7 @@ public class JobListFragment extends Fragment {
                 });
             }
         });
+        getAllRecodeFromServer();
         return view;
     }
 
@@ -234,6 +236,7 @@ public class JobListFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
+                Log.e("listJson:",result);
                 ArrayList<String> newNumList = StringFormatUtil.getStrings(result);
                 for(String s:newNumList){
                     if(mJobNumList.indexOf(s)<0) {
