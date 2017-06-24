@@ -167,16 +167,24 @@ public class WorkingFragment extends Fragment {
                     .add("newId", newJobNum)
                     .add("oldId", oldJobNum)
                     .build();
+            DialogUtil.showProgressDialog(getActivity(),mDialog,"正在更新服务器数据...");
             HttpUtil.sendPostRequest(HttpUtil.SERVLET_MATERIAL_RECODE
                     , body, new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
-
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mDialog.dismiss();
+                                    Toast.makeText(getActivity(), "网络连接失败！", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             final String result = response.body().string();
+                            Log.e("更新结果：", "onResponse: "+result);
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -184,6 +192,7 @@ public class WorkingFragment extends Fragment {
                                         sRecodePics.setJobNum(newJobNum);
                                         mJobNumberTextView.setText(newJobNum);
                                     }
+                                    mDialog.dismiss();
                                 }
                             });
 
@@ -200,12 +209,12 @@ public class WorkingFragment extends Fragment {
                     return true;
                 }
             } else if (strs.length == 2) {
-                if (strs[2].startsWith("0")) {
-                    if ("非金属".equals(jobType)) {
+                if (strs[1].startsWith("0")) {
+                    if ("非金属材料".equals(jobType)) {
                         return true;
                     }
-                } else if (strs[2].startsWith("5")) {
-                    if ("金属".equals(jobType)) {
+                } else if (strs[1].startsWith("5")) {
+                    if ("金属材料".equals(jobType)) {
                         return true;
                     }
                 }
@@ -237,6 +246,7 @@ public class WorkingFragment extends Fragment {
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
                         final boolean exit = Boolean.parseBoolean(result);
+                        Log.e("isExitOnServer",exit+"");
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -303,6 +313,7 @@ public class WorkingFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
@@ -342,6 +353,7 @@ public class WorkingFragment extends Fragment {
                 break;
             case 3:
                 String jobNum = data.getStringExtra("content_edit");
+                Log.e("newJobNum:",jobNum);
                 if (!jobNum.equals(sRecodePics.getJobNum())) {
                     if (isExitJobNum(jobNum)) {
                         Toast.makeText(getActivity(), "您输入的编号已存在！", Toast.LENGTH_SHORT).show();
@@ -434,8 +446,8 @@ public class WorkingFragment extends Fragment {
         Gson gson = new Gson();
         String jobJson = gson.toJson(sRecodePics);
         RequestBody body = new FormBody.Builder()
-                .add("intent", "update")
-                .add("job", jobJson)
+                .add("intent", "upload")
+                .add("job_json", jobJson)
                 .build();
 
         DialogUtil.showProgressDialog(getActivity(), mDialog, "正在上传数据...");

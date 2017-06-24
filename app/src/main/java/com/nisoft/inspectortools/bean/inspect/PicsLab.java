@@ -32,7 +32,7 @@ public class PicsLab {
     }
 
     public PicsCursorWrapper queryPics(String whereClause,String [] selectionArgs){
-        Cursor cursor = mDatabase.query(PicTable.NAME,null,whereClause,selectionArgs,null,null,null);
+        Cursor cursor = mDatabase.query(PicTable.NAME,null,whereClause,selectionArgs,null,null,PicTable.Cols.JOB_ID);
 //        if (cursor==null){return null;}
         return new PicsCursorWrapper(cursor);
     }

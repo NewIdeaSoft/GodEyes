@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 import com.nisoft.inspectortools.bean.inspect.PicsLab;
@@ -33,6 +34,9 @@ import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -237,20 +241,39 @@ public class JobListFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
                 Log.e("listJson:",result);
-                ArrayList<String> newNumList = StringFormatUtil.getStrings(result);
+                final ArrayList<String> newNumList = StringFormatUtil.getStrings(result);
                 for(String s:newNumList){
                     if(mJobNumList.indexOf(s)<0) {
                         MaterialInspectRecode pics = new MaterialInspectRecode();
                         pics.setJobNum(s);
                         pics.setType(mJobType);
                         PicsLab.getPicsLab(getActivity()).insertPics(pics);
+                        mJobNumList.add(s);
                     }
                 }
-                mJobNumList = newNumList;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mDialog.dismiss();
+                        for(String s : mJobNumList){
+                            if (newNumList.indexOf(s)<0){
+                                MaterialInspectRecode pics = new MaterialInspectRecode();
+                                pics.setJobNum(s);
+                                pics.setType(mJobType);
+                                uploadJob(pics);
+                            }
+                        }
+                        Collections.sort(mJobNumList,new Comparator<String>() {
+                            @Override
+                            public int compare(String o1, String o2) {
+                                String [] strings = new String[]{o1,o2};
+                                Arrays.sort(strings);
+                                if (strings[0]==o1){
+                                    return 1;
+                                }
+                                return 0;
+                            }
+                        });
                         mAdapter.notifyDataSetChanged();
                         Toast.makeText(getActivity(), "同步完成！", Toast.LENGTH_SHORT).show();
                     }
@@ -275,5 +298,46 @@ public class JobListFragment extends Fragment {
                 mJobNumList.add(pic.getJobNum());
             }
         }
+    }
+
+    private void uploadJob(MaterialInspectRecode recode) {
+        PicsLab.getPicsLab(getActivity()).updatePics(recode, recode.getJobNum());
+        Gson gson = new Gson();
+        String jobJson = gson.toJson(recode);
+        RequestBody body = new FormBody.Builder()
+                .add("intent", "upload")
+                .add("job_json", jobJson)
+                .build();
+
+        DialogUtil.showProgressDialog(getActivity(), mDialog, "正在上传数据...");
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MATERIAL_RECODE, body, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        Toast.makeText(getActivity(), "获取网络连接失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String result = response.body().string();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        if (result.equals("OK")) {
+                            Toast.makeText(getActivity(), "上传成功！", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+            }
+        });
     }
 }

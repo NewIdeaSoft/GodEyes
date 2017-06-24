@@ -48,6 +48,9 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
             file.mkdirs();
         }
         mPicsPath = file.list();
+        for (int i =0;i<mPicsPath.length;i++){
+            mPicsPath[i] = mRootPath+mPicsPath[i];
+        }
     }
     public String[] getPath(){
         return mPicsPath;

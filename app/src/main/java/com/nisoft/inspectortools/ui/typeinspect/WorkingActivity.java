@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.support.design.widget.Snackbar;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.EditText;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.base.SingleFragmentActivity;

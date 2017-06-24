@@ -154,11 +154,9 @@ public class EditTextActivity extends AppCompatActivity {
             int content_position = getIntent().getIntExtra("content_position", -1);
             if (content_position > -1) {
                 intent.putExtra("content_position", content_position);
-                setResult(Activity.RESULT_OK, intent);
-                finish();
-            } else {
-                setResult(Activity.RESULT_CANCELED);
             }
+            setResult(Activity.RESULT_OK, intent);
+            finish();
         }
         return super.onKeyDown(keyCode, event);
     }
