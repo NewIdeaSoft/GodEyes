@@ -199,7 +199,7 @@ public class JobListFragment extends Fragment {
                 PicsCursorWrapper cursor = PicsLab.getPicsLab(getActivity())
                         .queryPicsByTwo(mJobType,newText);
                 ArrayList<MaterialInspectRecode> pics = PicsLab.getPicsLab(getActivity()).getAllPics(cursor);
-                ArrayList<String> jobsNum = new ArrayList<String>();
+                ArrayList<String> jobsNum = new ArrayList<>();
                 for (MaterialInspectRecode pic : pics){
                     jobsNum.add(pic.getJobNum());
                 }

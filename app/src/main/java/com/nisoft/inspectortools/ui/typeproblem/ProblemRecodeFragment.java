@@ -2,7 +2,6 @@ package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,7 +29,6 @@ import com.nisoft.inspectortools.db.problem.ProblemDbSchema.ProblemTable;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.base.EditTextActivity;
 import com.nisoft.inspectortools.ui.base.TimePickerDialog;
-import com.nisoft.inspectortools.utils.FileUploadUtil;
 import com.nisoft.inspectortools.utils.FileUtil;
 
 import java.io.File;
@@ -140,13 +138,13 @@ public class ProblemRecodeFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.data_upload:
-                File dir = new File(mRootPath);
-                if (dir.exists()&&dir.listFiles().length>0){
-                    ProgressDialog dialog = new ProgressDialog(getActivity());
-                    FileUploadUtil.uploadFileDir(dir,getActivity(),dialog);
-                }else {
-                    Toast.makeText(getActivity(), "没有可上传的文件!", Toast.LENGTH_SHORT).show();
-                }
+//                File dir = new File(mRootPath);
+//                if (dir.exists()&&dir.listFiles().length>0){
+//                    ProgressDialog dialog = new ProgressDialog(getActivity());
+//                    FileUploadUtil.uploadFileDir(dir);
+//                }else {
+//                    Toast.makeText(getActivity(), "没有可上传的文件!", Toast.LENGTH_SHORT).show();
+//                }
                 break;
             case R.id.data_push:
                 String data = "";

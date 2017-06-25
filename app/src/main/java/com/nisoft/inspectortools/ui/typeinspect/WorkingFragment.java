@@ -28,6 +28,7 @@ import com.nisoft.inspectortools.adapter.JobPicsAdapter;
 import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 import com.nisoft.inspectortools.bean.inspect.PicsLab;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema;
+import com.nisoft.inspectortools.service.FileUploadService;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.base.EditTextActivity;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
@@ -91,6 +92,10 @@ public class WorkingFragment extends Fragment {
         mJobNum = getArguments().getString("job_num");
         jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
         mFolderPath = PATH + jobType + "/" + mJobNum + "/";
+        File file = new File(mFolderPath);
+        if(!file.exists()) {
+            file.mkdirs();
+        }
         mAdapter = new JobPicsAdapter(WorkingFragment.this, R.layout.inspect_image_item, mFolderPath);
     }
 
@@ -112,6 +117,8 @@ public class WorkingFragment extends Fragment {
             sRecodePics.setJobNum(mJobNum);
             sRecodePics.setType(jobType);
             sRecodePics.setPicFolderPath(mFolderPath);
+            Date date = new Date();
+            sRecodePics.setDate(date);
         }
         mJobNumberTextView.setText(mJobNum);
         if (!isNewJob) {
@@ -126,11 +133,11 @@ public class WorkingFragment extends Fragment {
                 }
             });
         }
-
+        mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
         mDatePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog(0, sRecodePics.getDate());
+                showDatePickerDialog(0, new Date());
             }
         });
         mDescriptionText.setOnClickListener(new View.OnClickListener() {
@@ -393,6 +400,7 @@ public class WorkingFragment extends Fragment {
 
     private void downloadRecode() {
         sRecodePics = PicsLab.getPicsLab(getActivity()).getPicsByJobNum(mJobNum);
+        sRecodePics.setPicFolderPath(mFolderPath);
         if (sRecodePics == null) {
             downloadRecodeFromServer();
         } else {
@@ -403,6 +411,7 @@ public class WorkingFragment extends Fragment {
     private void downloadRecodeFromServer() {
         RequestBody body = new FormBody.Builder()
                 .add("intent", "recoding")
+                .add("job_id",mJobNum)
                 .add("type", jobType)
                 .build();
         DialogUtil.showProgressDialog(getActivity(), mDialog, "正在加载记录...");
@@ -439,10 +448,6 @@ public class WorkingFragment extends Fragment {
 
     private void uploadJob() {
         PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics, sRecodePics.getJobNum());
-//        Intent intent = new Intent(getActivity(), FileUploadService.class);
-//        intent.putExtra("folderPath",sRecodePics.getImagesFolderPath());
-//        getActivity().startService(intent);
-
         Gson gson = new Gson();
         String jobJson = gson.toJson(sRecodePics);
         RequestBody body = new FormBody.Builder()
@@ -472,6 +477,9 @@ public class WorkingFragment extends Fragment {
                         mDialog.dismiss();
                         if (result.equals("OK")) {
                             Toast.makeText(getActivity(), "上传成功！", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getActivity(), FileUploadService.class);
+                            intent.putExtra("folder_path",sRecodePics.getPicFolderPath());
+                            getActivity().startService(intent);
                         } else {
                             Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
                         }
@@ -495,6 +503,13 @@ public class WorkingFragment extends Fragment {
         }
         mDatePickerButton.setText(StringFormatUtil.dateFormat(date));
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent(getActivity(),FileUploadService.class);
+        getActivity().stopService(intent);
     }
 }
 

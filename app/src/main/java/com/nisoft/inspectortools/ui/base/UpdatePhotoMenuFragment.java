@@ -114,8 +114,8 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-//        File outputImage = new File(dir, UUID.randomUUID().toString()+".jpg");
-        File outputImage = new File(dir, position + ".jpg");
+        File outputImage = new File(dir, UUID.randomUUID().toString()+".jpg");
+//        File outputImage = new File(dir, position + ".jpg");
         path = null;
         if (outputImage.exists()) {
             outputImage.delete();
@@ -182,8 +182,8 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-//                targetPhotoPath = getArguments().getString(IMAGE_ROOTPATH) + UUID.randomUUID().toString() + ".jpg";
-                targetPhotoPath = getArguments().getString(IMAGE_ROOTPATH) + position + ".jpg";
+                targetPhotoPath = getArguments().getString(IMAGE_ROOTPATH) + UUID.randomUUID().toString() + ".jpg";
+//                targetPhotoPath = getArguments().getString(IMAGE_ROOTPATH) + position + ".jpg";
                 FileUtil.moveFile(photoPath, targetPhotoPath);
                 photoPath = targetPhotoPath;
         }
