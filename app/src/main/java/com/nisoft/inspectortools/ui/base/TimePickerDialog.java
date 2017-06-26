@@ -24,12 +24,15 @@ import java.util.GregorianCalendar;
 public class TimePickerDialog extends DialogFragment {
     public static final String DATE_VARIABLE = "date_variable";
     public static final String CLICK_POSITION = "click_position";
+    private static final String DATE_OLD = "date_old";
     private Date mDate;
+    private Date mOldDate;
 
-    public static TimePickerDialog newInstance(Date date, int position) {
+    public static TimePickerDialog newInstance(Date date, Date oldDate,int position) {
         TimePickerDialog timePickerDialog = new TimePickerDialog();
         Bundle args = new Bundle();
         args.putSerializable(DATE_VARIABLE, date);
+        args.putSerializable(DATE_OLD,oldDate);
         args.putInt(CLICK_POSITION, position);
         timePickerDialog.setArguments(args);
         return timePickerDialog;
@@ -41,6 +44,7 @@ public class TimePickerDialog extends DialogFragment {
         View view = View.inflate(getActivity(), R.layout.time_picker_dialog, null);
         TimePicker timePicker = (TimePicker) view.findViewById(R.id.time_picker);
         mDate = (Date) getArguments().getSerializable(DATE_VARIABLE);
+        mOldDate = (Date) getArguments().getSerializable(DATE_OLD);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(mDate);
         final int year = calendar.get(Calendar.YEAR);
@@ -62,7 +66,11 @@ public class TimePickerDialog extends DialogFragment {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sendResult(Activity.RESULT_OK);
+                        if (mDate.equals(mOldDate)){
+                            sendResult(Activity.RESULT_CANCELED);
+                        }else {
+                            sendResult(Activity.RESULT_OK);
+                        }
                     }
                 })
                 .create();

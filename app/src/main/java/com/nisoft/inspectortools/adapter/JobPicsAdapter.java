@@ -19,6 +19,7 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2017/6/22.
@@ -27,7 +28,7 @@ import java.io.File;
 public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHolder> {
     private Fragment mFragment;
     private Context mContext;
-    private String[] mPicsPath;
+    private ArrayList<String> mPicsPath;
     private int mImageLayoutId;
     private String mRootPath;
     private MediaScannerConnection conn;
@@ -47,12 +48,17 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         if (!file.exists()){
             file.mkdirs();
         }
-        mPicsPath = file.list();
-        for (int i =0;i<mPicsPath.length;i++){
-            mPicsPath[i] = mRootPath+mPicsPath[i];
+        mPicsPath = new ArrayList<>();
+        String[] picsName = file.list();
+        for (int i =0;i<picsName.length;i++){
+            String [] strings = picsName[i].split("\\.");
+            String type = strings[strings.length-1];
+            if (type.equals("jpg")){
+                mPicsPath.add(mRootPath+picsName[i]);
+            }
         }
     }
-    public String[] getPath(){
+    public ArrayList<String> getPath(){
         return mPicsPath;
     }
     @Override
@@ -79,7 +85,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
 //                    imageFragment.setTargetFragment(((Activity) mContext).getFragmentManager().findFragmentById(R.id.fragment_content), 2);
 //                    imageFragment.show(manager, "image");
 //                    FileUtil.openImageFile(mPicsPath.get(position),mContext);
-                    scanPath = mPicsPath[position];
+                    scanPath = mPicsPath.get(position);
                     startScan();
                 }
             }
@@ -106,7 +112,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         if (position == getItemCount()-1) {
             holder.mPicImage.setImageResource(R.drawable.ic_btn_add_photo);
         } else {
-            Glide.with(mContext).load(mPicsPath[position]).into(holder.mPicImage);
+            Glide.with(mContext).load(mPicsPath.get(position)).into(holder.mPicImage);
         }
     }
 
@@ -115,7 +121,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         if (mPicsPath==null){
             return 1;
         }
-        return mPicsPath.length + 1;
+        return mPicsPath.size() + 1;
     }
 
 

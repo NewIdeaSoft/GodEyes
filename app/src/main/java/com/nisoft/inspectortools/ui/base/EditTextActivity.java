@@ -67,6 +67,7 @@ public class EditTextActivity extends AppCompatActivity {
             Environment.getExternalStorageDirectory().getAbsolutePath() + "/工作相册/cache";
     private DownloadManagerReceiver mReceiver;
     private long lanDownloadId;
+    private String initText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +76,7 @@ public class EditTextActivity extends AppCompatActivity {
         mSpeechButton = (ImageButton) findViewById(R.id.input_speech);
         mCameraButton = (ImageButton) findViewById(R.id.input_camera);
         SpeechUtility.createUtility(EditTextActivity.this, SpeechConstant.APPID + "=" + APPID);
-        String initText = getIntent().getStringExtra("initText");
+        initText = getIntent().getStringExtra("initText");
         mAuthorEdit.setText(initText);
         if (initText != null) {
             mAuthorEdit.setSelection(initText.length());
@@ -149,13 +150,18 @@ public class EditTextActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             String contentEdit = mAuthorEdit.getText().toString();
-            Intent intent = new Intent();
-            intent.putExtra("content_edit", contentEdit);
-            int content_position = getIntent().getIntExtra("content_position", -1);
-            if (content_position > -1) {
-                intent.putExtra("content_position", content_position);
+            if(!contentEdit.equals(initText)){
+                Intent intent = new Intent();
+                intent.putExtra("content_edit", contentEdit);
+                int content_position = getIntent().getIntExtra("content_position", -1);
+                if (content_position > -1) {
+                    intent.putExtra("content_position", content_position);
+                }
+                setResult(Activity.RESULT_OK, intent);
+            }else {
+                setResult(Activity.RESULT_CANCELED);
             }
-            setResult(Activity.RESULT_OK, intent);
+
             finish();
         }
         return super.onKeyDown(keyCode, event);

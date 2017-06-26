@@ -93,7 +93,7 @@ public class WorkingFragment extends Fragment {
         jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
         mFolderPath = PATH + jobType + "/" + mJobNum + "/";
         File file = new File(mFolderPath);
-        if(!file.exists()) {
+        if (!file.exists()) {
             file.mkdirs();
         }
         mAdapter = new JobPicsAdapter(WorkingFragment.this, R.layout.inspect_image_item, mFolderPath);
@@ -119,11 +119,13 @@ public class WorkingFragment extends Fragment {
             sRecodePics.setPicFolderPath(mFolderPath);
             Date date = new Date();
             sRecodePics.setDate(date);
+            sRecodePics.setLatestUpdateTime(date.getTime());
+            mDatePickerButton.setText(StringFormatUtil.dateFormat(date));
         }
         mJobNumberTextView.setText(mJobNum);
         if (!isNewJob) {
             mJobNumberTextView.setClickable(false);
-        }else{
+        } else {
             mJobNumberTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -133,11 +135,11 @@ public class WorkingFragment extends Fragment {
                 }
             });
         }
-        mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
+
         mDatePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog(0, new Date());
+                showDatePickerDialog(0, sRecodePics.getDate());
             }
         });
         mDescriptionText.setOnClickListener(new View.OnClickListener() {
@@ -167,14 +169,14 @@ public class WorkingFragment extends Fragment {
 
     private void onJobNumChanged(final String newJobNum, String oldJobNum) {
         if (isNewJob && !newJobNum.equals(oldJobNum)) {
-            PicsLab.getPicsLab(getActivity()).changeJobId(newJobNum,oldJobNum);
-            Log.e("local data:","本地数据更新完成！");
+            PicsLab.getPicsLab(getActivity()).changeJobId(newJobNum, oldJobNum);
+            Log.e("local data:", "本地数据更新完成！");
             RequestBody body = new FormBody.Builder()
                     .add("intent", "change_id")
                     .add("newId", newJobNum)
                     .add("oldId", oldJobNum)
                     .build();
-            DialogUtil.showProgressDialog(getActivity(),mDialog,"正在更新服务器数据...");
+            DialogUtil.showProgressDialog(getActivity(), mDialog, "正在更新服务器数据...");
             HttpUtil.sendPostRequest(HttpUtil.SERVLET_MATERIAL_RECODE
                     , body, new Callback() {
                         @Override
@@ -191,12 +193,13 @@ public class WorkingFragment extends Fragment {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             final String result = response.body().string();
-                            Log.e("更新结果：", "onResponse: "+result);
+                            Log.e("更新结果：", "onResponse: " + result);
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     if (result.equals("OK")) {
                                         sRecodePics.setJobNum(newJobNum);
+                                        sRecodePics.setLatestUpdateTime(new Date().getTime());
                                         mJobNumberTextView.setText(newJobNum);
                                     }
                                     mDialog.dismiss();
@@ -253,7 +256,7 @@ public class WorkingFragment extends Fragment {
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
                         final boolean exit = Boolean.parseBoolean(result);
-                        Log.e("isExitOnServer",exit+"");
+                        Log.e("isExitOnServer", exit + "");
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -261,7 +264,7 @@ public class WorkingFragment extends Fragment {
                                 if (exit) {
                                     Toast.makeText(getActivity(), "您输入的编号已被使用！", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    onJobNumChanged(s,sRecodePics.getJobNum());
+                                    onJobNumChanged(s, sRecodePics.getJobNum());
                                 }
                             }
                         });
@@ -305,22 +308,18 @@ public class WorkingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (sRecodePics.getDate() != null) {
-            mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
-        }
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        sRecodePics.setType(jobType);
         PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics, sRecodePics.getJobNum());
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
@@ -328,6 +327,7 @@ public class WorkingFragment extends Fragment {
             case 0:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
                 sRecodePics.setDate(date);
+                sRecodePics.setLatestUpdateTime(new Date().getTime());
                 mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
                 break;
             case 1:
@@ -357,18 +357,18 @@ public class WorkingFragment extends Fragment {
             case 2:
                 String text = data.getStringExtra("content_edit");
                 sRecodePics.setDescription(text);
+                sRecodePics.setLatestUpdateTime(new Date().getTime());
                 mDescriptionText.setText(text);
                 break;
             case 3:
                 String jobNum = data.getStringExtra("content_edit");
-                Log.e("newJobNum:",jobNum);
-                if (!jobNum.equals(sRecodePics.getJobNum())) {
-                    if (isExitJobNum(jobNum)) {
-                        Toast.makeText(getActivity(), "您输入的编号已存在！", Toast.LENGTH_SHORT).show();
-                    } else {
-                        isExitOnServer(jobNum);
-                    }
+                Log.e("newJobNum:", jobNum);
+                if (isExitJobNum(jobNum)) {
+                    Toast.makeText(getActivity(), "您输入的编号已存在！", Toast.LENGTH_SHORT).show();
+                } else {
+                    isExitOnServer(jobNum);
                 }
+
 
         }
     }
@@ -393,7 +393,7 @@ public class WorkingFragment extends Fragment {
     }
 
     public void removeSelectedPic(int position) {
-        File file = new File(mAdapter.getPath()[position]);
+        File file = new File(mAdapter.getPath().get(position));
         file.delete();
         mAdapter.refreshPath();
         mAdapter.notifyDataSetChanged();
@@ -408,7 +408,7 @@ public class WorkingFragment extends Fragment {
     private void downloadRecodeFromServer(final MaterialInspectRecode localRecode) {
         RequestBody body = new FormBody.Builder()
                 .add("intent", "recoding")
-                .add("job_id",mJobNum)
+                .add("job_id", mJobNum)
                 .add("type", jobType)
                 .build();
         DialogUtil.showProgressDialog(getActivity(), mDialog, "正在加载记录...");
@@ -430,10 +430,12 @@ public class WorkingFragment extends Fragment {
                         String result = response.body().string();
                         Gson gson = new Gson();
                         MaterialInspectRecode serviceRecode = gson.fromJson(result, MaterialInspectRecode.class);
-                        if(localRecode.getLatestUpdateTime()>serviceRecode.getLatestUpdateTime()) {
+                        if (localRecode.getLatestUpdateTime() > serviceRecode.getLatestUpdateTime()) {
                             sRecodePics = localRecode;
-                        }else{
+                            Log.e("whichrecode:","localRecode");
+                        } else {
                             sRecodePics = serviceRecode;
+                            Log.e("whichrecode:","serviceRecode");
                         }
                         String picsAddress = sRecodePics.getPicFolderPath();
                         sRecodePics.setPicFolderPath(mFolderPath);
@@ -481,7 +483,7 @@ public class WorkingFragment extends Fragment {
                         if (result.equals("OK")) {
                             Toast.makeText(getActivity(), "上传成功！", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), FileUploadService.class);
-                            intent.putExtra("folder_path",sRecodePics.getPicFolderPath());
+                            intent.putExtra("folder_path", sRecodePics.getPicFolderPath());
                             getActivity().startService(intent);
                         } else {
                             Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
@@ -511,7 +513,7 @@ public class WorkingFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Intent intent = new Intent(getActivity(),FileUploadService.class);
+        Intent intent = new Intent(getActivity(), FileUploadService.class);
         getActivity().stopService(intent);
     }
 }

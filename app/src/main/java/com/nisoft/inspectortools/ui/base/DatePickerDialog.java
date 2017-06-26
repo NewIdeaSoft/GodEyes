@@ -24,6 +24,7 @@ public class DatePickerDialog extends DialogFragment {
     public static final String REQUEST_POSITION = "request_position";
     public static final String DATE_INITIALIZE = "date_initialize";
     private Date mDate;
+    private Date mOldDate;
 
     public static DatePickerDialog newInstance(int position,Date date) {
         Bundle args = new Bundle();
@@ -38,9 +39,10 @@ public class DatePickerDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.date_picker_dialog, null);
-        mDate = (Date) getArguments().getSerializable(DATE_INITIALIZE);
+        mOldDate = (Date) getArguments().getSerializable(DATE_INITIALIZE);
         final int position=getArguments().getInt(REQUEST_POSITION);
         Calendar calendar = Calendar.getInstance();
+        mDate = new Date();
         calendar.setTime(mDate);
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -61,7 +63,7 @@ public class DatePickerDialog extends DialogFragment {
 //                        sendResult(Activity.RESULT_OK);
                         FragmentManager fm = getFragmentManager();
 
-                        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(mDate,position);
+                        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(mDate,mOldDate,position);
                         timePickerDialog.setTargetFragment(getTargetFragment(),getTargetRequestCode());
                         timePickerDialog.show(fm,"time_picker");
                     }

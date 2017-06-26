@@ -23,7 +23,6 @@ public class MaterialInspectRecode {
 
     public void setJobNum(String jobNum) {
         mJobNum = jobNum;
-        setUpdateTime();
     }
 
     public Date getDate() {
@@ -32,7 +31,6 @@ public class MaterialInspectRecode {
 
     public void setDate(Date date) {
         mDate = date;
-        setUpdateTime();
     }
 
     public String getType() {
@@ -41,7 +39,6 @@ public class MaterialInspectRecode {
 
     public void setType(String type) {
         mType = type;
-        setUpdateTime();
     }
 
     public String getDescription() {
@@ -50,7 +47,6 @@ public class MaterialInspectRecode {
 
     public void setDescription(String description) {
         mDescription = description;
-        setUpdateTime();
     }
 
     public String getPicFolderPath() {
@@ -59,7 +55,6 @@ public class MaterialInspectRecode {
 
     public void setPicFolderPath(String picFolderPath) {
         mPicFolderPath = picFolderPath;
-        setUpdateTime();
     }
 
     public String getInspectorId() {
@@ -68,7 +63,6 @@ public class MaterialInspectRecode {
 
     public void setInspectorId(String inspectorId) {
         mInspectorId = inspectorId;
-        setUpdateTime();
     }
 
     public long getLatestUpdateTime() {
@@ -77,11 +71,6 @@ public class MaterialInspectRecode {
 
     public void setLatestUpdateTime(long latestUpdateTime) {
         mLatestUpdateTime = latestUpdateTime;
-    }
-
-    private void setUpdateTime(){
-        long time = new Date().getTime();
-        mLatestUpdateTime = time;
     }
     @Override
     public String toString() {
