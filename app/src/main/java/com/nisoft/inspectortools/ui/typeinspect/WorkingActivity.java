@@ -26,16 +26,16 @@ public class WorkingActivity extends SingleFragmentActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            String jobNum = WorkingFragment.getsRecodePics().getJobNum();
-            Snackbar.make(findViewById(R.id.fragment_content), "数据未上传，确定退出吗？", Snackbar.LENGTH_LONG)
-                    .setAction("确定", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            finish();
-                        }
-                    }).show();
-        }
+//        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+//            String jobNum = WorkingFragment.getsRecodePics().getJobNum();
+//            Snackbar.make(findViewById(R.id.fragment_content), "数据未上传，确定退出吗？", Snackbar.LENGTH_LONG)
+//                    .setAction("确定", new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            finish();
+//                        }
+//                    }).show();
+//        }
         return super.onKeyDown(keyCode, event);
     }
 }

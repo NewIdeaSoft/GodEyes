@@ -433,6 +433,7 @@ public class WorkingFragment extends Fragment {
                         String result = response.body().string();
                         Gson gson = new Gson();
                         sRecodePics = gson.fromJson(result, MaterialInspectRecode.class);
+                        String picsAddress = sRecodePics.getPicFolderPath();
                         sRecodePics.setPicFolderPath(mFolderPath);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override

@@ -23,19 +23,16 @@ public class FileUploadUtil {
             String org_id = "JXCZ";
             String folder_name = folder.getName();
             MultipartBody.Builder builder = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM);
-//                    .addFormDataPart("org_id",org_id)
-//                    .addFormDataPart("recode_type","material_inspect/金属材料")
-//                    .addFormDataPart("folder_name",folder_name);
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("org_id",org_id)
+                    .addFormDataPart("recode_type","material_inspect/金属材料/")
+                    .addFormDataPart("folder_name",folder_name);
             for (File file : files){
                 RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"),file);
                 String fileName = file.getName();
-                Log.e("fileName",fileName);
-                String [] strings = fileName.split(".");
-
-                Log.e("fileName",strings.length+"");
-//                String fileType = strings[strings.length-1];
-                String fileType = "jpg";
+                String [] strings = fileName.split("\\.");
+                String fileType = strings[strings.length-1];
+                Log.e("fileType:",fileType);
                 builder.addFormDataPart(fileType,fileName,fileBody);
             }
             RequestBody body = builder.build();
@@ -54,14 +51,4 @@ public class FileUploadUtil {
             return;
         }
     }
-
-    public static void uploadFileDir(File dir){
-        File [] files = dir.listFiles();
-        if (files.length>0){
-            for (File file:files){
-                FileUploadUtil.uploadFile(file);
-            }
-        }
-    }
-
 }
