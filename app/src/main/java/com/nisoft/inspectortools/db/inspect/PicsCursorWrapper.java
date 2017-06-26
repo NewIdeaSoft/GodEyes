@@ -30,6 +30,7 @@ public class PicsCursorWrapper extends CursorWrapper {
         pics.setType(getString(getColumnIndex(PicTable.Cols.TYPE)));
         pics.setDescription(getString(getColumnIndex(PicTable.Cols.DESCRIPTION)));
         pics.setInspectorId(getString(getColumnIndex(PicTable.Cols.INSPECTOR_ID)));
+        pics.setLatestUpdateTime(getLong(getColumnIndex(PicTable.Cols.UPDATE_TIME)));
         return pics;
     }
 }

@@ -334,6 +334,7 @@ public class WorkingFragment extends Fragment {
                 final String path = data.getStringExtra("PhotoPath");
                 final String resourcePhotoPath = data.getStringExtra("resourcePhotoPath");
                 final int position = data.getIntExtra("position", -1);
+                sRecodePics.setLatestUpdateTime(new Date().getTime());
                 if (path != null && position > -1) {
                     mAdapter.refreshPath();
                     if (resourcePhotoPath != null) {
@@ -399,16 +400,12 @@ public class WorkingFragment extends Fragment {
     }
 
     private void downloadRecode() {
-        sRecodePics = PicsLab.getPicsLab(getActivity()).getPicsByJobNum(mJobNum);
-        sRecodePics.setPicFolderPath(mFolderPath);
-        if (sRecodePics == null) {
-            downloadRecodeFromServer();
-        } else {
-            refreshView();
-        }
+        MaterialInspectRecode localRecode = PicsLab.getPicsLab(getActivity()).getPicsByJobNum(mJobNum);
+        localRecode.setPicFolderPath(mFolderPath);
+        downloadRecodeFromServer(localRecode);
     }
 
-    private void downloadRecodeFromServer() {
+    private void downloadRecodeFromServer(final MaterialInspectRecode localRecode) {
         RequestBody body = new FormBody.Builder()
                 .add("intent", "recoding")
                 .add("job_id",mJobNum)
@@ -432,7 +429,12 @@ public class WorkingFragment extends Fragment {
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
                         Gson gson = new Gson();
-                        sRecodePics = gson.fromJson(result, MaterialInspectRecode.class);
+                        MaterialInspectRecode serviceRecode = gson.fromJson(result, MaterialInspectRecode.class);
+                        if(localRecode.getLatestUpdateTime()>serviceRecode.getLatestUpdateTime()) {
+                            sRecodePics = localRecode;
+                        }else{
+                            sRecodePics = serviceRecode;
+                        }
                         String picsAddress = sRecodePics.getPicFolderPath();
                         sRecodePics.setPicFolderPath(mFolderPath);
                         getActivity().runOnUiThread(new Runnable() {

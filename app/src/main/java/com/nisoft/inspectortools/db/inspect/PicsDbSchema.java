@@ -14,6 +14,8 @@ public class PicsDbSchema {
             public static final String DESCRIPTION = "description";
             public static final String FOLDER_PATH = "folder";
             public static final String INSPECTOR_ID = "inspector_id";
+            public static final String UPDATE_TIME = "update_time";
+
         }
 
     }
