@@ -336,14 +336,14 @@ public class WorkingFragment extends Fragment {
                 final int position = data.getIntExtra("position", -1);
                 sRecodePics.setLatestUpdateTime(new Date().getTime());
                 if (path != null && position > -1) {
-                    mAdapter.refreshPath();
+                    mAdapter.resetPath();
                     if (resourcePhotoPath != null) {
                         Snackbar.make(mPicsView, "已移动照片至" + path + ",点击撤销", Snackbar.LENGTH_LONG)
                                 .setAction("撤销", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         FileUtil.moveFile(path, resourcePhotoPath);
-                                        mAdapter.refreshPath();
+                                        mAdapter.resetPath();
                                         mAdapter.notifyDataSetChanged();
                                     }
                                 })
@@ -352,7 +352,7 @@ public class WorkingFragment extends Fragment {
                 } else if (path == null) {
                     Toast.makeText(getActivity(), "照片已存在，请重新选择！", Toast.LENGTH_LONG).show();
                 }
-                mAdapter.refreshPath();
+                mAdapter.resetPath();
                 break;
             case 2:
                 String text = data.getStringExtra("content_edit");
@@ -432,9 +432,11 @@ public class WorkingFragment extends Fragment {
                         MaterialInspectRecode serviceRecode = gson.fromJson(result, MaterialInspectRecode.class);
                         if (localRecode.getLatestUpdateTime() > serviceRecode.getLatestUpdateTime()) {
                             sRecodePics = localRecode;
+                            sRecodePics.setImagesName(serviceRecode.getImagesName());
                         } else {
                             sRecodePics = serviceRecode;
                         }
+                        mAdapter.setRecode(sRecodePics);
                         String picsAddress = sRecodePics.getPicFolderPath();
                         getActivity().runOnUiThread(new Runnable() {
                             @Override

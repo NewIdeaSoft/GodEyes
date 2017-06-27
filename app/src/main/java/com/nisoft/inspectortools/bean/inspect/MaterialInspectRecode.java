@@ -2,6 +2,7 @@ package com.nisoft.inspectortools.bean.inspect;
 
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -16,6 +17,7 @@ public class MaterialInspectRecode {
     private String mType;
     private String mDescription;
     private long mLatestUpdateTime;
+    private ArrayList<String> imagesName;
 
     public String getJobNum() {
         return mJobNum;
@@ -72,6 +74,16 @@ public class MaterialInspectRecode {
     public void setLatestUpdateTime(long latestUpdateTime) {
         mLatestUpdateTime = latestUpdateTime;
     }
+
+
+    public ArrayList<String> getImagesName() {
+        return imagesName;
+    }
+
+    public void setImagesName(ArrayList<String> imagesName) {
+        this.imagesName = imagesName;
+    }
+
     @Override
     public String toString() {
         String separator = System.getProperty("line.separator");

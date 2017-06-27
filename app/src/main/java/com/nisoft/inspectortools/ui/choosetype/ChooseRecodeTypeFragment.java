@@ -32,6 +32,7 @@ public class ChooseRecodeTypeFragment extends Fragment {
     private ListView mListView;
     private ArrayAdapter<String> mAdapter;
     private ArrayList<String> mTypes;
+    private ArrayList<String> mTypes_eng;
 
     @Nullable
     @Override
@@ -48,15 +49,15 @@ public class ChooseRecodeTypeFragment extends Fragment {
                 Intent qualityProblemIntent = new Intent(getActivity(), ProblemListActivity.class);
                 switch (position) {
                     case 0:
-                        inspectIntent.putExtra(INSPECT_TYPE, mTypes.get(0));
+                        inspectIntent.putExtra(INSPECT_TYPE, mTypes_eng.get(0));
                         startActivity(inspectIntent);
                         break;
                     case 1:
-                        inspectIntent.putExtra(INSPECT_TYPE, mTypes.get(1));
+                        inspectIntent.putExtra(INSPECT_TYPE, mTypes_eng.get(1));
                         startActivity(inspectIntent);
                         break;
                     case 2:
-                        inspectIntent.putExtra(INSPECT_TYPE, mTypes.get(2));
+                        inspectIntent.putExtra(INSPECT_TYPE, mTypes_eng.get(2));
                         startActivity(inspectIntent);
                         break;
                     case 3:
@@ -76,10 +77,15 @@ public class ChooseRecodeTypeFragment extends Fragment {
 
     private void setTypes() {
         mTypes = new ArrayList<>();
+        mTypes_eng = new ArrayList<>();
         mTypes.add("金属材料");
+        mTypes_eng.add("material/metal");
         mTypes.add("非金属材料");
+        mTypes_eng.add("material/nonmetal");
         mTypes.add("外购件");
+        mTypes_eng.add("material/purchased_parts");
         mTypes.add("质量问题");
+        mTypes_eng.add("problem");
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
