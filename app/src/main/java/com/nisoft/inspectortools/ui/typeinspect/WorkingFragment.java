@@ -432,13 +432,10 @@ public class WorkingFragment extends Fragment {
                         MaterialInspectRecode serviceRecode = gson.fromJson(result, MaterialInspectRecode.class);
                         if (localRecode.getLatestUpdateTime() > serviceRecode.getLatestUpdateTime()) {
                             sRecodePics = localRecode;
-                            Log.e("whichrecode:","localRecode");
                         } else {
                             sRecodePics = serviceRecode;
-                            Log.e("whichrecode:","serviceRecode");
                         }
                         String picsAddress = sRecodePics.getPicFolderPath();
-                        sRecodePics.setPicFolderPath(mFolderPath);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

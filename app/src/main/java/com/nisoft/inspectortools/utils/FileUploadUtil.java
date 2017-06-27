@@ -25,7 +25,7 @@ public class FileUploadUtil {
             MultipartBody.Builder builder = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("org_id",org_id)
-                    .addFormDataPart("recode_type","material_inspect/金属材料/")
+                    .addFormDataPart("recode_type","material_inspect/metal/")
                     .addFormDataPart("folder_name",folder_name);
             for (File file : files){
                 RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"),file);
