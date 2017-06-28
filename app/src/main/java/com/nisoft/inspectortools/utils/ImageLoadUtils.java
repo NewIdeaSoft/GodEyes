@@ -60,4 +60,8 @@ public class ImageLoadUtils {
         }
         return list2;
     }
+
+    private void loadImage(String path){
+
+    }
 }

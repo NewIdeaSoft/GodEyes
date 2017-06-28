@@ -19,7 +19,7 @@ import okhttp3.Response;
 public class FileUploadUtil {
     public static void uploadFile(File folder){
         File [] files = folder.listFiles();
-        if(files.length>0) {
+        if(files!=null&&files.length>0) {
             String org_id = "JXCZ";
             String folder_name = folder.getName();
             MultipartBody.Builder builder = new MultipartBody.Builder()
