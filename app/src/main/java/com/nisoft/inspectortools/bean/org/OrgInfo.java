@@ -7,7 +7,7 @@ package com.nisoft.inspectortools.bean.org;
 public class OrgInfo {
     private String mOrgId;
     private String mOrgName;
-    private int mOrgLevel = -1;
+    private int mOrgLevel;
     private String mParentOrgId;
 
 

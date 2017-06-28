@@ -143,6 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                                 company.setOrgStructure(StringFormatUtil.getStrings(structure));
                                 Gson gson = new Gson();
                                 String json = gson.toJson(company);
+                                Log.e("LoginActivity",json);
                                 intent.putExtra("company_json",json);
                             }
 

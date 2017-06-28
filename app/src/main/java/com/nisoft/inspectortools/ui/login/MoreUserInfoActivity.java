@@ -24,7 +24,6 @@ import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.EmployeeDataPackage;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.bean.org.OrgListPackage;
-import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeActivity;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
@@ -67,7 +66,8 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private void init() {
         phone = getIntent().getStringExtra("phone");
         String json = getIntent().getStringExtra("company_json");
-        if (json == null){
+        Log.e("MoreUserInfoActivity", json);
+        if (json != null){
             Gson gson = new Gson();
             mCompany = gson.fromJson(json, Company.class);
         }
@@ -298,8 +298,9 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             spinner.setAdapter(adapter);
             if (mOrgInfo.size() > itemPosition) {
                 OrgInfo selectedOrg = mOrgInfo.get(itemPosition);
-                if (selectedOrg != null && orgInfos != null) {
-                    int selected = orgInfos.indexOf(selectedOrg);
+                if (selectedOrg != null && selectedOrg.getOrgLevel()!=0&&orgInfos != null) {
+                    int selected = getSelectedOrgPosition(selectedOrg,orgInfos);
+                    Log.e("TAG", ""+selected);
                     if (selected != -1) {
                         spinner.setSelection(selected + 1);
                     }
@@ -415,5 +416,15 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             }
             return convertView;
         }
+    }
+
+    private int getSelectedOrgPosition(OrgInfo selectedOrg,ArrayList<OrgInfo> Orgs){
+        for(int i=0;i<Orgs.size();i++){
+            OrgInfo org = Orgs.get(i);
+            if(org.getOrgId().equals(selectedOrg.getOrgId())) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
