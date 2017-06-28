@@ -2,6 +2,7 @@ package com.nisoft.inspectortools.ui.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,6 +19,8 @@ import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.Company;
 import com.nisoft.inspectortools.bean.org.RegisterDataPackage;
+import com.nisoft.inspectortools.bean.org.User;
+import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.utils.CheckUserInfoUtil;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
@@ -45,9 +48,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     private String initPhone;
     private ArrayList<Company> mAllCompanies = new ArrayList<>();
-
-
     private CompanySpinnerAdapter mAdapter;
+
+    private SharedPreferences mSpCompany;
+    private SharedPreferences.Editor mEditorCompany;
+    private SharedPreferences mSpUser;
+    private SharedPreferences.Editor mEditorUser;
 
 
 
@@ -55,6 +61,10 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_regist);
+        mSpCompany = getSharedPreferences("company", MODE_PRIVATE);
+        mEditorCompany = mSpCompany.edit();
+        mSpUser = getSharedPreferences("user", MODE_PRIVATE);
+        mEditorUser = mSpUser.edit();
         init();
         initView();
     }
@@ -140,9 +150,9 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void userRegister(final String phone,String password) {
-        Company company = mAllCompanies.get(mSpinner.getSelectedItemPosition());
-        String companyId = company.getOrgCode();
+    private void userRegister(final String phone,final String password) {
+        final Company company = mAllCompanies.get(mSpinner.getSelectedItemPosition());
+        final String companyId = company.getOrgCode();
 
         final String json = (new Gson()).toJson(company);
         RequestBody body = new FormBody.Builder()
@@ -168,6 +178,16 @@ public class RegisterActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
                 if (responseText.equals("true")){
+                    mEditorCompany.putString("phone",phone);
+                    mEditorCompany.putString("company_name",company.getOrgName());
+                    mEditorCompany.putString("company_code",company.getOrgCode());
+                    mEditorCompany.putString("company_structure",company.getOrgStructure().toString());
+                    mEditorCompany.commit();
+
+                    mEditorUser.putString("phone",phone);
+                    mEditorUser.putString("password",password);
+                    mEditorUser.commit();
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

@@ -11,10 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.bean.org.Company;
+import com.nisoft.inspectortools.bean.org.Employee;
+import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeActivity;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
+import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.io.IOException;
 
@@ -115,33 +120,52 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 final String responseText = response.body().string();
                 Log.e("TAG",responseText);
-
-                if (responseText.equals("true")) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        if (responseText.equals("non_info")){
                             editor.putString("phone", phone);
                             editor.putString("password", password);
                             editor.commit();
-                            Intent intent = new Intent(LoginActivity.this, ChooseRecodeTypeActivity.class);
-                            intent.putExtra(PHONE, phone);
+                            Intent intent = new Intent(LoginActivity.this,MoreUserInfoActivity.class);
+                            Company company = new Company();
+                            SharedPreferences spCompany = getSharedPreferences("company",MODE_PRIVATE);
+                            if (spCompany.getString("phone","").equals(phone)){
+                                String companyName = spCompany.getString("company_name","");
+                                String companyId=spCompany.getString("company_id","");
+                                String structure = spCompany.getString("company_structure","");
+                                company.setOrgCode(companyId);
+                                company.setOrgName(companyName);
+                                company.setOrgStructure(StringFormatUtil.getStrings(structure));
+                                Gson gson = new Gson();
+                                String json = gson.toJson(company);
+                                intent.putExtra("company_json",json);
+                            }
+
+                            intent.putExtra("phone",phone);
                             startActivity(intent);
-                            finish();
+                        }else if(responseText.equals("error:1")){
+                            Toast.makeText(LoginActivity.this, "登陆失败：密码错误！", Toast.LENGTH_SHORT).show();
+                        }else if(responseText.equals("error:2")){
+                            Toast.makeText(LoginActivity.this, "登陆失败：用户不存在！", Toast.LENGTH_SHORT).show();
+                        }else if(responseText.equals("error:3")){
+                            Toast.makeText(LoginActivity.this, "登陆失败：系统错误！", Toast.LENGTH_SHORT).show();
+                        }else{
+                            editor.putString("phone", phone);
+                            editor.putString("password", password);
+                            editor.commit();
+                            Gson gson = new Gson();
+                            Employee employee = gson.fromJson(responseText,Employee.class);
+                            UserLab.getUserLab(LoginActivity.this).setEmployee(employee);
+                            Intent intent = new Intent(LoginActivity.this,ChooseRecodeTypeActivity.class);
+                            startActivity(intent);
                         }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDialog.dismiss();
-                            Toast.makeText(LoginActivity.this, "登陆失败："+responseText, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+                    }
+                });
             }
         });
     }

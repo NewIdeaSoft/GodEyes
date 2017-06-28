@@ -2,6 +2,7 @@ package com.nisoft.inspectortools.ui.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -65,8 +66,11 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void init() {
         phone = getIntent().getStringExtra("phone");
-        Gson gson = new Gson();
-        mCompany = gson.fromJson(getIntent().getStringExtra("company_json"), Company.class);
+        String json = getIntent().getStringExtra("company_json");
+        if (json == null){
+            Gson gson = new Gson();
+            mCompany = gson.fromJson(json, Company.class);
+        }
         mOrgsForChoose = new ArrayList<>();
         mOrgInfoAdapter = new OrgInfoAdapter();
     }
@@ -80,16 +84,80 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         mOrgListView = (ListView) findViewById(R.id.lv_org_info_item);
         mStationListView = (ListView) findViewById(R.id.lv_position_info);
         mDoneButton = (Button) findViewById(R.id.btn_info_upload);
+        if (mCompany==null||mCompany.getOrgName().equals("")){
+            getCompanyFromServer();
+        }else {
+            mCompanyNameTextView.setText(mCompany.getOrgName());
+            downLoadInfo();
+        }
 
-        mCompanyNameTextView.setText(mCompany.getOrgName());
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadMoreInfo();
+                if (checkInfo()) {
+                    uploadMoreInfo();
+                }
             }
         });
         mOrgListView.setAdapter(mOrgInfoAdapter);
-        downLoadInfo();
+    }
+
+    private void getCompanyFromServer() {
+        RequestBody body = new FormBody.Builder()
+                .add("phone", phone)
+                .add("intent", "query_company")
+                .build();
+        DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载公司信息...");
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        Toast.makeText(MoreUserInfoActivity.this, "网络连接失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String result = response.body().string();
+                Log.e("result", result);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        if (result.equals("error!")) {
+                            Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Gson gson = new Gson();
+                            mCompany = gson.fromJson(result,Company.class);
+                            if (mCompany!=null){
+                                SharedPreferences sp = getSharedPreferences("company",MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.putString("phone",phone);
+                                editor.putString("company_name",mCompany.getOrgName());
+                                editor.putString("company_code",mCompany.getOrgCode());
+                                editor.putString("company_structure",mCompany.getOrgStructure().toString());
+                                editor.commit();
+                                mCompanyNameTextView.setText(mCompany.getOrgName());
+                                downLoadInfo();
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+    }
+
+    private boolean checkInfo() {
+        if (mNameEditText.getText().toString().equals("")){
+            return false;
+        }
+        return true;
     }
 
     private void downLoadInfo() {
@@ -184,7 +252,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                         public void run() {
                             Toast.makeText(MoreUserInfoActivity.this, "用户信息提交成功！", Toast.LENGTH_SHORT).show();
                             mDialog.dismiss();
-                            Intent intent = new Intent(MoreUserInfoActivity.this, ChooseRecodeTypeActivity.class);
+                            Intent intent = new Intent(MoreUserInfoActivity.this, LoginActivity.class);
                             startActivity(intent);
                             finish();
                         }
