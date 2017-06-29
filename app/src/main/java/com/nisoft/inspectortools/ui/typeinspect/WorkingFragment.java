@@ -27,6 +27,7 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.JobPicsAdapter;
 import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 import com.nisoft.inspectortools.bean.inspect.PicsLab;
+import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema;
 import com.nisoft.inspectortools.service.FileUploadService;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
@@ -56,12 +57,14 @@ public class WorkingFragment extends Fragment {
     private TextView mDatePickerButton;
     private TextView mJobNumberTextView;
     private TextView mDescriptionText;
+    private TextView mInspectorTextView;
     private RecyclerView mPicsView;
     private ProgressDialog mDialog;
 
     private static MaterialInspectRecode sRecodePics;
 
     private JobPicsAdapter mAdapter;
+    private StaggeredGridLayoutManager mManager;
 
     private boolean isNewJob;
     private String jobType;
@@ -91,12 +94,13 @@ public class WorkingFragment extends Fragment {
         isNewJob = getArguments().getBoolean("isNewJob");
         mJobNum = getArguments().getString("job_num");
         jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
+        mManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mFolderPath = PATH + jobType + "/" + mJobNum + "/";
         File file = new File(mFolderPath);
         if (!file.exists()) {
             file.mkdirs();
         }
-        mAdapter = new JobPicsAdapter(WorkingFragment.this, R.layout.inspect_image_item, mFolderPath);
+
     }
 
     @Nullable
@@ -109,6 +113,7 @@ public class WorkingFragment extends Fragment {
         mJobNumberTextView = (TextView) view.findViewById(R.id.tv_job_num);
         mDatePickerButton = (TextView) view.findViewById(R.id.date_picker_button);
         mDescriptionText = (TextView) view.findViewById(R.id.job_description);
+        mInspectorTextView = (TextView) view.findViewById(R.id.tv_inspector);
         mDialog = new ProgressDialog(getActivity());
         if (!isNewJob) {
             downloadRecode();
@@ -120,7 +125,12 @@ public class WorkingFragment extends Fragment {
             Date date = new Date();
             sRecodePics.setDate(date);
             sRecodePics.setLatestUpdateTime(date.getTime());
+            sRecodePics.setInspectorId(UserLab.getUserLab(getActivity()).getEmployee().getPhone());
             mDatePickerButton.setText(StringFormatUtil.dateFormat(date));
+            mInspectorTextView.setText(UserLab.getUserLab(getActivity()).getEmployee().getName());
+            mAdapter = new JobPicsAdapter(WorkingFragment.this, R.layout.inspect_image_item, mFolderPath);
+            mPicsView.setLayoutManager(mManager);
+            mPicsView.setAdapter(mAdapter);
         }
         mJobNumberTextView.setText(mJobNum);
         if (!isNewJob) {
@@ -150,9 +160,6 @@ public class WorkingFragment extends Fragment {
                 startActivityForResult(intent, 2);
             }
         });
-        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        mPicsView.setLayoutManager(manager);
-        mPicsView.setAdapter(mAdapter);
         return view;
     }
 
@@ -308,7 +315,9 @@ public class WorkingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mAdapter.notifyDataSetChanged();
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -436,13 +445,24 @@ public class WorkingFragment extends Fragment {
                         } else {
                             sRecodePics = serviceRecode;
                         }
-                        mAdapter.setRecode(sRecodePics);
-                        String picsAddress = sRecodePics.getPicFolderPath();
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mDialog.dismiss();
                                 Toast.makeText(getActivity(), "记录加载完成！", Toast.LENGTH_SHORT).show();
+                                mAdapter = new JobPicsAdapter(WorkingFragment.this,
+                                        R.layout.inspect_image_item, mFolderPath);
+                                mAdapter.setRecode(sRecodePics);
+                                mAdapter.setEditable(true);
+                                if (!sRecodePics.getInspectorId()
+                                        .equals(UserLab.getUserLab(getActivity()).getEmployee().getPhone())) {
+                                    setJobUnEdit();
+                                } else {
+                                    mInspectorTextView
+                                            .setText(UserLab.getUserLab(getActivity()).getEmployee().getName());
+                                }
+                                mPicsView.setLayoutManager(mManager);
+                                mPicsView.setAdapter(mAdapter);
                                 refreshView();
                             }
                         });
@@ -514,6 +534,14 @@ public class WorkingFragment extends Fragment {
         super.onDestroy();
         Intent intent = new Intent(getActivity(), FileUploadService.class);
         getActivity().stopService(intent);
+    }
+
+    private void setJobUnEdit() {
+        mInspectorTextView.setClickable(false);
+        mJobNumberTextView.setClickable(false);
+        mDatePickerButton.setClickable(false);
+        mDescriptionText.setClickable(false);
+        mAdapter.setEditable(false);
     }
 }
 

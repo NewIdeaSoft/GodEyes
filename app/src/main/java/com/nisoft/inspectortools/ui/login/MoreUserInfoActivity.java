@@ -88,6 +88,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             getCompanyFromServer();
         }else {
             mCompanyNameTextView.setText(mCompany.getOrgName());
+            Log.e("MoreUserInfoActivity","mCompany!=null "+mCompany.getOrgCode());
             downLoadInfo();
         }
 

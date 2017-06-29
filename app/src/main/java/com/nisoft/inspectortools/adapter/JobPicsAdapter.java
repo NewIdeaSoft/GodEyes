@@ -49,6 +49,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
     private String mRootPath;
     private MaterialInspectRecode mRecode;
     private ArrayList<String> mImagesName;
+    private boolean editable;
 
     private MediaScannerConnection conn;
     private static final String FILE_TYPE = MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpg");
@@ -142,13 +143,13 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 final int position = holder.getAdapterPosition();
-                if (position == getItemCount() - 1) {
+                if (position == getItemCount() - 1 && editable) {
                     //启动添加图片对话框（拍照或从相册选择）
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
                     UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position, mRootPath, false);
                     fragment.setTargetFragment(mFragment, 1);
                     fragment.show(manager, "update_menu");
-                } else {
+                } else if (position != getItemCount() - 1) {
                     //查看大图，仿朋友圈查看大图
 //                    FragmentManager manager = ((Activity) mContext).getFragmentManager();
 //                    LargePhotoFragment imageFragment = LargePhotoFragment.newInstance(position,mPicsPath);
@@ -156,7 +157,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
 //                    imageFragment.show(manager, "image");
 //                    FileUtil.openImageFile(mPicsPath.get(position),mContext);
                     if (isHttpUrl(mPicsPath.get(position))) {
-                        if (mProgressDialog == null){
+                        if (mProgressDialog == null) {
                             mProgressDialog = new ProgressDialog(mContext);
                         }
                         mProgressDialog.setMessage("正在下载图片...");
@@ -164,7 +165,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
                         HttpUtil.sendGetRequest(mPicsPath.get(position), new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
-                                ((Activity) mContext).runOnUiThread(new Runnable(){
+                                ((Activity) mContext).runOnUiThread(new Runnable() {
 
                                     @Override
                                     public void run() {
@@ -187,7 +188,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
                                     is = response.body().byteStream();
                                     fos = new FileOutputStream(file);
                                     while ((len = is.read(buffer)) != -1) {
-                                        fos.write(buffer,0,len);
+                                        fos.write(buffer, 0, len);
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -215,11 +216,12 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
                 }
             }
         });
+
         holder.mPicImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 int position = holder.getAdapterPosition();
-                if (position != getItemCount() - 1) {
+                if (position != getItemCount() - 1&&editable) {
                     //启动添加图片对话框（拍照或从相册选择）
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
                     UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position, mRootPath, true);
@@ -229,6 +231,8 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
                 return true;
             }
         });
+
+
         return holder;
     }
 
@@ -296,5 +300,9 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
             return true;
         }
         return false;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

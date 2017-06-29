@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences spCompany = getSharedPreferences("company",MODE_PRIVATE);
                             if (spCompany.getString("phone","").equals(phone)){
                                 String companyName = spCompany.getString("company_name","");
-                                String companyId=spCompany.getString("company_id","");
+                                String companyId=spCompany.getString("company_code","");
                                 String structure = spCompany.getString("company_structure","");
                                 company.setOrgCode(companyId);
                                 company.setOrgName(companyName);
@@ -149,6 +149,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             intent.putExtra("phone",phone);
                             startActivity(intent);
+                            finish();
                         }else if(responseText.equals("error:1")){
                             Toast.makeText(LoginActivity.this, "登陆失败：密码错误！", Toast.LENGTH_SHORT).show();
                         }else if(responseText.equals("error:2")){
@@ -164,6 +165,7 @@ public class LoginActivity extends AppCompatActivity {
                             UserLab.getUserLab(LoginActivity.this).setEmployee(employee);
                             Intent intent = new Intent(LoginActivity.this,ChooseRecodeTypeActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                     }
                 });
