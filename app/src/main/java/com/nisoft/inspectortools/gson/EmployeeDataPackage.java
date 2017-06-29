@@ -1,5 +1,8 @@
-package com.nisoft.inspectortools.bean.org;
+package com.nisoft.inspectortools.gson;
 
+
+import com.nisoft.inspectortools.bean.org.Employee;
+import com.nisoft.inspectortools.bean.org.OrgInfo;
 
 import java.util.ArrayList;
 

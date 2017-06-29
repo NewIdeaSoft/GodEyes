@@ -21,9 +21,9 @@ import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.Company;
 import com.nisoft.inspectortools.bean.org.Employee;
-import com.nisoft.inspectortools.bean.org.EmployeeDataPackage;
+import com.nisoft.inspectortools.gson.EmployeeDataPackage;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
-import com.nisoft.inspectortools.bean.org.OrgListPackage;
+import com.nisoft.inspectortools.gson.OrgListPackage;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 

@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2017/5/19.
@@ -87,5 +88,53 @@ public class FileUtil {
             expandedName = name.substring(index + 1, name.length()).toLowerCase();
         }
         return expandedName;
+    }
+
+    public static ArrayList<String> getAllImagesName(String folderPath){
+        ArrayList<String> imagesName = new ArrayList<>();
+        File file = new File(folderPath);
+        if (!file.exists()){
+            return null;
+        }
+        String[] picsName = file.list();
+        if (picsName==null||picsName.length==0){
+            return null;
+        }
+        for (int i = 0; i < picsName.length; i++) {
+            String[] strings = picsName[i].split("\\.");
+            String type = strings[strings.length - 1];
+            if (type.equals("jpg") || type.equals("bmp")) {
+                imagesName.add(picsName[i]);
+            }
+        }
+        return imagesName;
+    }
+
+    public static ArrayList<String> getAllFilesPath(String localFolder
+            ,String serviceAddress
+            ,ArrayList<String> allFilesNameOnServer){
+
+        ArrayList<String> filesUrl = new ArrayList<>();
+        ArrayList<String> localFilesName = getAllImagesName(localFolder);
+        if (localFilesName==null){
+            for (String name : allFilesNameOnServer) {
+                filesUrl.add(serviceAddress + name);
+            }
+            return filesUrl;
+        }
+        for (String name : allFilesNameOnServer) {
+            if (localFilesName.indexOf(name) >= 0) {
+                filesUrl.add(localFolder + name);
+            } else {
+                filesUrl.add(serviceAddress + name);
+            }
+        }
+        for (String name : localFilesName) {
+            if (allFilesNameOnServer.indexOf(name) < 0) {
+                filesUrl.add(localFolder + name);
+            }
+        }
+
+        return filesUrl;
     }
 }

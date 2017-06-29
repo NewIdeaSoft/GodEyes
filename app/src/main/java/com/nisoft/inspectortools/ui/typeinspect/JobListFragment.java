@@ -219,6 +219,19 @@ public class JobListFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
     private void getAllRecodeFromServer() {
         RequestBody body = new FormBody.Builder()
                 .add("type",mJobType)
@@ -340,4 +353,5 @@ public class JobListFragment extends Fragment {
             }
         });
     }
+
 }

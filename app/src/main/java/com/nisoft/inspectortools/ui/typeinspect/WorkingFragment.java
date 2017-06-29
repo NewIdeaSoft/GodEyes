@@ -29,6 +29,7 @@ import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 import com.nisoft.inspectortools.bean.inspect.PicsLab;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema;
+import com.nisoft.inspectortools.gson.RecodeDataPackage;
 import com.nisoft.inspectortools.service.FileUploadService;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.base.EditTextActivity;
@@ -39,7 +40,10 @@ import com.nisoft.inspectortools.utils.HttpUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 
 import okhttp3.Call;
@@ -240,6 +244,10 @@ public class WorkingFragment extends Fragment {
         return false;
     }
 
+    /***
+     * 用于检查更改后的编号是否重号，不重号则更改服务器和本地记录
+     * @param s 需要判断是否存在于服务器上的记录编号
+     */
     private void isExitOnServer(final String s) {
         RequestBody body = new FormBody.Builder()
                 .add("intent", "jub_num")
@@ -263,7 +271,6 @@ public class WorkingFragment extends Fragment {
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
                         final boolean exit = Boolean.parseBoolean(result);
-                        Log.e("isExitOnServer", exit + "");
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -410,10 +417,15 @@ public class WorkingFragment extends Fragment {
 
     private void downloadRecode() {
         MaterialInspectRecode localRecode = PicsLab.getPicsLab(getActivity()).getPicsByJobNum(mJobNum);
+        Log.e("localRecode", localRecode.getLatestUpdateTime() + "");
         localRecode.setPicFolderPath(mFolderPath);
         downloadRecodeFromServer(localRecode);
     }
 
+    /***
+     * 从服务器下载记录，和本地记录的时间戳比较，设置记录为最新记录
+     * @param localRecode 本地记录
+     */
     private void downloadRecodeFromServer(final MaterialInspectRecode localRecode) {
         RequestBody body = new FormBody.Builder()
                 .add("intent", "recoding")
@@ -437,14 +449,12 @@ public class WorkingFragment extends Fragment {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
+                        Log.e("workingFragment:", result);
                         Gson gson = new Gson();
-                        MaterialInspectRecode serviceRecode = gson.fromJson(result, MaterialInspectRecode.class);
-                        if (localRecode.getLatestUpdateTime() > serviceRecode.getLatestUpdateTime()) {
-                            sRecodePics = localRecode;
-                            sRecodePics.setImagesName(serviceRecode.getImagesName());
-                        } else {
-                            sRecodePics = serviceRecode;
-                        }
+                        RecodeDataPackage dataPackage = gson.fromJson(result, RecodeDataPackage.class);
+                        MaterialInspectRecode serviceRecode = dataPackage.getRecode();
+                        final String inspector = dataPackage.getName();
+                        sRecodePics = findLaterRecode(localRecode,serviceRecode);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -457,10 +467,8 @@ public class WorkingFragment extends Fragment {
                                 if (!sRecodePics.getInspectorId()
                                         .equals(UserLab.getUserLab(getActivity()).getEmployee().getPhone())) {
                                     setJobUnEdit();
-                                } else {
-                                    mInspectorTextView
-                                            .setText(UserLab.getUserLab(getActivity()).getEmployee().getName());
                                 }
+                                mInspectorTextView.setText(inspector);
                                 mPicsView.setLayoutManager(mManager);
                                 mPicsView.setAdapter(mAdapter);
                                 refreshView();
@@ -470,6 +478,9 @@ public class WorkingFragment extends Fragment {
                 });
     }
 
+    /***
+     * 同步记录，上传本地照片到服务器，下载服务器上的照片
+     */
     private void uploadJob() {
         PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics, sRecodePics.getJobNum());
         Gson gson = new Gson();
@@ -514,6 +525,24 @@ public class WorkingFragment extends Fragment {
         });
     }
 
+
+    /***
+     * 找出最新记录
+     * @param recode1 记录1
+     * @param recode2 记录2
+     * @return laterRecode
+     */
+    private MaterialInspectRecode findLaterRecode(MaterialInspectRecode recode1
+            ,MaterialInspectRecode recode2){
+        if(recode1.getLatestUpdateTime()>recode2.getLatestUpdateTime()){
+            return recode1;
+        }
+        return recode2;
+    }
+
+    /***
+     * 刷新界面
+     */
     private void refreshView() {
         if (sRecodePics.getDescription() != null) {
             mDescriptionText.setText(sRecodePics.getDescription());
@@ -532,16 +561,40 @@ public class WorkingFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
         Intent intent = new Intent(getActivity(), FileUploadService.class);
         getActivity().stopService(intent);
     }
 
+    /***
+     * 设置记录不可编辑
+     */
     private void setJobUnEdit() {
         mInspectorTextView.setClickable(false);
         mJobNumberTextView.setClickable(false);
         mDatePickerButton.setClickable(false);
         mDescriptionText.setClickable(false);
         mAdapter.setEditable(false);
+    }
+
+    private void synchronizeImages(){
+        ArrayList<String> urls = mAdapter.getPath();
+        for (String url:urls){
+            if(url.startsWith("http")){
+                downloadImage(url);
+            }else{
+                uploadImage(url);
+            }
+        }
+    }
+
+    private void uploadImage(String url) {
+
+    }
+
+    private void downloadImage(String url) {
     }
 }
 
