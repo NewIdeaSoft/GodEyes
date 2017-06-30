@@ -10,7 +10,6 @@ import com.nisoft.inspectortools.utils.FileUploadUtil;
 import java.io.File;
 
 public class FileUploadService extends Service {
-    private String uploadUrl;
     public FileUploadService() {
     }
 
@@ -26,10 +25,12 @@ public class FileUploadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        uploadUrl = intent.getStringExtra("folder_path");
+        String uploadUrl = intent.getStringExtra("folder_path");
+        String companyId = intent.getStringExtra("company_id");
+        String recodeType = intent.getStringExtra("recode_type");
         Log.e("uploadUrl", uploadUrl);
         File folder = new File(uploadUrl);
-        FileUploadUtil.uploadFile(folder);
+        FileUploadUtil.uploadFile(folder,companyId,recodeType);
         return super.onStartCommand(intent, flags, startId);
     }
 

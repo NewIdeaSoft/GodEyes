@@ -44,6 +44,10 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.KEY_SELECTED_TYPE;
+import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.RECODE_TYPE_CHI;
+import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.RECODE_TYPE_ENG;
+
 /**
  * Created by Administrator on 2017/5/22.
  */
@@ -58,11 +62,12 @@ public class JobListFragment extends Fragment {
     private SearchView mSearchView;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
     private String mJobType;
+    private int mWhichType = -1;
 
-    public static JobListFragment newInstance(String inspectType){
+    public static JobListFragment newInstance(int whichType) {
         JobListFragment fragment = new JobListFragment();
-        Bundle args  = new Bundle();
-        args.putString(ChooseRecodeTypeFragment.INSPECT_TYPE,inspectType);
+        Bundle args = new Bundle();
+        args.putInt(KEY_SELECTED_TYPE, whichType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,6 +79,7 @@ public class JobListFragment extends Fragment {
     }
 
     private void init() {
+        mWhichType = getArguments().getInt(KEY_SELECTED_TYPE, -1);
         setJobNumList();
         mAdapter = new JobListAdapter();
     }
@@ -82,9 +88,9 @@ public class JobListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.job_list_fragment, container, false);
-        mJobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        if (mJobType!=null){
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mJobType);
+        mJobType = RECODE_TYPE_ENG[mWhichType];
+        if (mJobType != null) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(RECODE_TYPE_CHI[mWhichType]);
         }
         setHasOptionsMenu(true);
         jobListView = (ListView) view.findViewById(R.id.job_list);
@@ -92,9 +98,9 @@ public class JobListFragment extends Fragment {
         jobListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(),WorkingActivity.class);
-                intent.putExtra("job_num",mJobNumList.get(position));
-                intent.putExtra(ChooseRecodeTypeFragment.INSPECT_TYPE,getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE));
+                Intent intent = new Intent(getActivity(), WorkingActivity.class);
+                intent.putExtra("job_num", mJobNumList.get(position));
+                intent.putExtra(KEY_SELECTED_TYPE, mWhichType);
                 startActivity(intent);
             }
         });
@@ -104,10 +110,10 @@ public class JobListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 RequestBody body = new FormBody.Builder()
-                        .add("intent","new")
-                        .add("type",mJobType)
+                        .add("intent", "new")
+                        .add("type", mJobType)
                         .build();
-                DialogUtil.showProgressDialog(getActivity(),mDialog,"正在获取新的检验编号...");
+                DialogUtil.showProgressDialog(getActivity(), mDialog, "正在获取新的检验编号...");
                 HttpUtil.sendPostRequest(HttpUtil.SERVLET_MATERIAL_RECODE, body, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
@@ -126,10 +132,10 @@ public class JobListFragment extends Fragment {
                             @Override
                             public void run() {
                                 mDialog.dismiss();
-                                Intent intent = new Intent(getActivity(),WorkingActivity.class);
-                                intent.putExtra(ChooseRecodeTypeFragment.INSPECT_TYPE,getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE));
-                                intent.putExtra("job_num",jobNum);
-                                intent.putExtra("isNewJob",true);
+                                Intent intent = new Intent(getActivity(), WorkingActivity.class);
+                                intent.putExtra(KEY_SELECTED_TYPE, mWhichType);
+                                intent.putExtra("job_num", jobNum);
+                                intent.putExtra("isNewJob", true);
                                 startActivity(intent);
                             }
                         });
@@ -182,11 +188,11 @@ public class JobListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.toolbar,menu);
+        inflater.inflate(R.menu.toolbar, menu);
         MenuItem menuItem = menu.findItem(R.id.search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(menuItem);
         mSearchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
-        mSearchView.setQueryHint("搜索"+mJobType);
+        mSearchView.setQueryHint("搜索" + RECODE_TYPE_CHI[mWhichType]);
         mSearchAutoComplete.setThreshold(1);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -197,10 +203,10 @@ public class JobListFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 PicsCursorWrapper cursor = PicsLab.getPicsLab(getActivity())
-                        .queryPicsByTwo(mJobType,newText);
+                        .queryPicsByTwo(mJobType, newText);
                 ArrayList<MaterialInspectRecode> pics = PicsLab.getPicsLab(getActivity()).getAllPics(cursor);
                 ArrayList<String> jobsNum = new ArrayList<>();
-                for (MaterialInspectRecode pic : pics){
+                for (MaterialInspectRecode pic : pics) {
                     jobsNum.add(pic.getJobNum());
                 }
                 mJobNumList = jobsNum;
@@ -213,7 +219,7 @@ public class JobListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==R.id.refresh) {
+        if (item.getItemId() == R.id.refresh) {
             getAllRecodeFromServer();
         }
         return super.onOptionsItemSelected(item);
@@ -234,10 +240,10 @@ public class JobListFragment extends Fragment {
 
     private void getAllRecodeFromServer() {
         RequestBody body = new FormBody.Builder()
-                .add("type",mJobType)
-                .add("intent","query")
+                .add("type", mJobType)
+                .add("intent", "query")
                 .build();
-        DialogUtil.showProgressDialog(getActivity(),mDialog,"正在同步列表...");
+        DialogUtil.showProgressDialog(getActivity(), mDialog, "正在同步列表...");
         HttpUtil.sendPostRequest(HttpUtil.SERVLET_MATERIAL_RECODE, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -253,10 +259,10 @@ public class JobListFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                Log.e("listJson:",result);
+                Log.e("listJson:", result);
                 final ArrayList<String> newNumList = StringFormatUtil.getStrings(result);
-                for(String s:newNumList){
-                    if(mJobNumList.indexOf(s)<0) {
+                for (String s : newNumList) {
+                    if (mJobNumList.indexOf(s) < 0) {
                         MaterialInspectRecode pics = new MaterialInspectRecode();
                         pics.setJobNum(s);
                         pics.setType(mJobType);
@@ -268,20 +274,20 @@ public class JobListFragment extends Fragment {
                     @Override
                     public void run() {
                         mDialog.dismiss();
-                        for(String s : mJobNumList){
-                            if (newNumList.indexOf(s)<0){
+                        for (String s : mJobNumList) {
+                            if (newNumList.indexOf(s) < 0) {
                                 MaterialInspectRecode pics = new MaterialInspectRecode();
                                 pics.setJobNum(s);
                                 pics.setType(mJobType);
                                 uploadJob(pics);
                             }
                         }
-                        Collections.sort(mJobNumList,new Comparator<String>() {
+                        Collections.sort(mJobNumList, new Comparator<String>() {
                             @Override
                             public int compare(String o1, String o2) {
-                                String [] strings = new String[]{o1,o2};
+                                String[] strings = new String[]{o1, o2};
                                 Arrays.sort(strings);
-                                if (strings[0]==o1){
+                                if (strings[0] == o1) {
                                     return 1;
                                 }
                                 return 0;
@@ -302,12 +308,12 @@ public class JobListFragment extends Fragment {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void setJobNumList(){
+    private void setJobNumList() {
         mPics = PicsLab.getPicsLab(getActivity()).getAllPics();
         mJobNumList = new ArrayList<>();
-        String jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        for (MaterialInspectRecode pic : mPics){
-            if(pic.getType().equals(jobType)) {
+        String jobType = mJobType;
+        for (MaterialInspectRecode pic : mPics) {
+            if (pic.getType().equals(jobType)) {
                 mJobNumList.add(pic.getJobNum());
             }
         }

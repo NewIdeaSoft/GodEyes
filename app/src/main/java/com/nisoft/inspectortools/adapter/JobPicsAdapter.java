@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
+import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
@@ -41,6 +42,7 @@ import okhttp3.Response;
  */
 
 public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHolder> {
+    public static final String RECODE_FOLDER_ADDRESS = "http://47.93.191.62:8080/InspectorToolsServer/recode/";
     private Fragment mFragment;
     private Context mContext;
 
@@ -116,9 +118,10 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
             if (localImageFilesName.indexOf(name) >= 0) {
                 imagesUrl.add(mRootPath + name);
             } else {
-                imagesUrl.add("http://47.93.191.62:8080/InspectorToolsServer/recode/JXCZ/" +
-                        mRecode.getType() + "/"
-                        + mRecode.getJobNum() + "/"
+                imagesUrl.add(RECODE_FOLDER_ADDRESS +
+                        UserLab.getUserLab(mContext).getEmployee().getCompanyId() + "/" +
+                        mRecode.getType() + "/" +
+                        mRecode.getJobNum() + "/"
                         + name);
             }
         }
@@ -221,7 +224,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
             @Override
             public boolean onLongClick(View v) {
                 int position = holder.getAdapterPosition();
-                if (position != getItemCount() - 1&&editable) {
+                if (position != getItemCount() - 1 && editable) {
                     //启动添加图片对话框（拍照或从相册选择）
                     FragmentManager manager = ((Activity) mContext).getFragmentManager();
                     UpdatePhotoMenuFragment fragment = UpdatePhotoMenuFragment.newInstance(position, mRootPath, true);

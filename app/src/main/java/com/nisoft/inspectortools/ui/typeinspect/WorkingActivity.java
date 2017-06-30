@@ -9,6 +9,8 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.base.SingleFragmentActivity;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 
+import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.KEY_SELECTED_TYPE;
+
 /**
  * Created by Administrator on 2017/5/22.
  */
@@ -20,8 +22,8 @@ public class WorkingActivity extends SingleFragmentActivity {
     protected Fragment createFragment() {
         mJobNum = getIntent().getStringExtra("job_num");
         boolean isNewJob = getIntent().getBooleanExtra("isNewJob", false);
-        String inspectType = getIntent().getStringExtra(ChooseRecodeTypeFragment.INSPECT_TYPE);
-        return WorkingFragment.newInstance(mJobNum, inspectType, isNewJob);
+        int whichType = getIntent().getIntExtra(KEY_SELECTED_TYPE,-1);
+        return WorkingFragment.newInstance(mJobNum, whichType, isNewJob);
     }
 
     @Override

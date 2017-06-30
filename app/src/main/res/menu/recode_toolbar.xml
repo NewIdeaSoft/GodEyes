@@ -3,12 +3,12 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/data_upload"
-        android:icon="@drawable/ic_menu_upload"
+        android:icon="@drawable/ic_menu_sync"
         android:title="上传数据"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/data_push"
-        android:icon="@drawable/ic_menu_export"
+        android:icon="@drawable/ic_menu_upload"
         android:title="导出数据"
         app:showAsAction="ifRoom">
     </item>

@@ -66,7 +66,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private void init() {
         phone = getIntent().getStringExtra("phone");
         String json = getIntent().getStringExtra("company_json");
-        Log.e("MoreUserInfoActivity", json);
+        Log.e("MoreUserInfoActivity", json+"");
         if (json != null){
             Gson gson = new Gson();
             mCompany = gson.fromJson(json, Company.class);
@@ -142,7 +142,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                                 editor.putString("company_name",mCompany.getOrgName());
                                 editor.putString("company_code",mCompany.getOrgCode());
                                 editor.putString("company_structure",mCompany.getOrgStructure().toString());
-                                editor.commit();
+                                editor.apply();
                                 mCompanyNameTextView.setText(mCompany.getOrgName());
                                 downLoadInfo();
                             }
@@ -198,11 +198,15 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                             mEmployee = dataPackage.getEmployee();
                             mOrgInfo = dataPackage.getOrgInfo();
                             mOrgsForChoose = dataPackage.getOrgsInfoForSelect();
-                            if (mEmployee.getName() != null) {
-                                mNameEditText.setText(mEmployee.getName());
-                            }
-                            if (mEmployee.getWorkNum() != null) {
-                                mEmployeeNumEditText.setText(mEmployee.getWorkNum());
+                            if (mEmployee!=null){
+                                if (mEmployee.getName() != null) {
+                                    mNameEditText.setText(mEmployee.getName());
+                                }
+                                if (mEmployee.getWorkNum() != null) {
+                                    mEmployeeNumEditText.setText(mEmployee.getWorkNum());
+                                }
+                            }else{
+                                mEmployee = new Employee();
                             }
                             mOrgInfoAdapter.notifyDataSetChanged();
                         }
@@ -219,6 +223,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         mEmployee.setName(mNameEditText.getText().toString());
         mEmployee.setPhone(phone);
         mEmployee.setWorkNum(mEmployeeNumEditText.getText().toString());
+        mEmployee.setCompanyId(mCompany.getOrgCode());
         for(OrgInfo info:mOrgInfo){
             if (info!=null){
                 mEmployee.setOrgId(info.getOrgId());

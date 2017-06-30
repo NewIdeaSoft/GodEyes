@@ -33,7 +33,6 @@ import com.nisoft.inspectortools.gson.RecodeDataPackage;
 import com.nisoft.inspectortools.service.FileUploadService;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.base.EditTextActivity;
-import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.FileUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
@@ -50,6 +49,9 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.KEY_SELECTED_TYPE;
+import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.RECODE_TYPE_ENG;
 
 
 /**
@@ -70,19 +72,20 @@ public class WorkingFragment extends Fragment {
     private StaggeredGridLayoutManager mManager;
 
     private boolean isNewJob;
+    private int mWhichType = -1;
     private String jobType;
     private String mJobNum;
     private static final String PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/工作相册/";
     private String mFolderPath;
     private boolean mEditable = false;
 
-    public static WorkingFragment newInstance(String jobNum, String inspectType, boolean isNew) {
+    public static WorkingFragment newInstance(String jobNum, int whichType, boolean isNew) {
         WorkingFragment fragment = new WorkingFragment();
         Bundle args = new Bundle();
         if (jobNum != null) {
             args.putString("job_num", jobNum);
         }
-        args.putString(ChooseRecodeTypeFragment.INSPECT_TYPE, inspectType);
+        args.putInt(KEY_SELECTED_TYPE, whichType);
         args.putBoolean("isNewJob", isNew);
         fragment.setArguments(args);
         return fragment;
@@ -95,9 +98,10 @@ public class WorkingFragment extends Fragment {
     }
 
     private void init() {
+        mWhichType = getArguments().getInt(KEY_SELECTED_TYPE);
         isNewJob = getArguments().getBoolean("isNewJob");
         mJobNum = getArguments().getString("job_num");
-        jobType = getArguments().getString(ChooseRecodeTypeFragment.INSPECT_TYPE);
+        jobType = RECODE_TYPE_ENG[mWhichType];
         mManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mFolderPath = PATH + jobType + "/" + mJobNum + "/";
         File file = new File(mFolderPath);
@@ -113,6 +117,11 @@ public class WorkingFragment extends Fragment {
         View view = inflater.inflate(R.layout.working_fragment, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mJobNum);
         setHasOptionsMenu(true);
+        initView(view);
+        return view;
+    }
+
+    private void initView(View view) {
         mPicsView = (RecyclerView) view.findViewById(R.id.pics_list);
         mJobNumberTextView = (TextView) view.findViewById(R.id.tv_job_num);
         mDatePickerButton = (TextView) view.findViewById(R.id.date_picker_button);
@@ -123,18 +132,11 @@ public class WorkingFragment extends Fragment {
             downloadRecode();
         } else {
             mEditable = true;
-            sRecodePics = new MaterialInspectRecode();
-            sRecodePics.setJobNum(mJobNum);
-            sRecodePics.setType(jobType);
-            sRecodePics.setPicFolderPath(mFolderPath);
-            Date date = new Date();
-            sRecodePics.setDate(date);
-            sRecodePics.setLatestUpdateTime(date.getTime());
-            sRecodePics.setInspectorId(UserLab.getUserLab(getActivity()).getEmployee().getPhone());
-            mDatePickerButton.setText(StringFormatUtil.dateFormat(date));
+            createNewJob();
+            mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
             mInspectorTextView.setText(UserLab.getUserLab(getActivity()).getEmployee().getName());
             mAdapter = new JobPicsAdapter(WorkingFragment.this, R.layout.inspect_image_item, mFolderPath);
-            mAdapter.setEditable(true);
+            mAdapter.setEditable(mEditable);
             mPicsView.setLayoutManager(mManager);
             mPicsView.setAdapter(mAdapter);
         }
@@ -151,7 +153,6 @@ public class WorkingFragment extends Fragment {
                 }
             });
         }
-
         mDatePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,9 +167,24 @@ public class WorkingFragment extends Fragment {
                 startActivityForResult(intent, 2);
             }
         });
-        return view;
     }
 
+    private void createNewJob(){
+        sRecodePics = new MaterialInspectRecode();
+        sRecodePics.setJobNum(mJobNum);
+        sRecodePics.setType(jobType);
+        sRecodePics.setPicFolderPath(mFolderPath);
+        Date date = new Date();
+        sRecodePics.setDate(date);
+        sRecodePics.setLatestUpdateTime(date.getTime());
+        sRecodePics.setInspectorId(UserLab.getUserLab(getActivity()).getEmployee().getPhone());
+    }
+
+    /***
+     *
+     * @param s mEditable用户自定义的检验编号
+     * @return 本地数据库存在返回true,不存在返回false
+     */
     private boolean isExitJobNum(String s) {
         boolean exit = checkJobType(s);
         if (exit) {
@@ -180,6 +196,11 @@ public class WorkingFragment extends Fragment {
         return exit;
     }
 
+    /***
+     * 成功更改检验编号时调用，以更新本地和服务器数据库对应的编号
+     * @param newJobNum 新编号
+     * @param oldJobNum 原编号
+     */
     private void onJobNumChanged(final String newJobNum, String oldJobNum) {
         if (isNewJob && !newJobNum.equals(oldJobNum)) {
             PicsLab.getPicsLab(getActivity()).changeJobId(newJobNum, oldJobNum);
@@ -224,20 +245,25 @@ public class WorkingFragment extends Fragment {
         }
     }
 
+    /***
+     *
+     * @param jobNum 检验编号
+     * @return 符合规范返回true
+     */
     private boolean checkJobType(String jobNum) {
         String[] strs = jobNum.split("-");
         if (strs.length > 1) {
             if (strs.length == 3) {
-                if ("外购件".equals(jobType)) {
+                if (RECODE_TYPE_ENG[2].equals(jobType)) {
                     return true;
                 }
             } else if (strs.length == 2) {
-                if (strs[1].startsWith("0")) {
-                    if ("非金属材料".equals(jobType)) {
+                if (Integer.parseInt(strs[1])<=5000) {
+                    if (RECODE_TYPE_ENG[1].equals(jobType)) {
                         return true;
                     }
-                } else if (strs[1].startsWith("5")) {
-                    if ("金属材料".equals(jobType)) {
+                } else if (Integer.parseInt(strs[1])>5000) {
+                    if (RECODE_TYPE_ENG[0].equals(jobType)) {
                         return true;
                     }
                 }
@@ -380,7 +406,6 @@ public class WorkingFragment extends Fragment {
                 break;
             case 3:
                 String jobNum = data.getStringExtra("content_edit");
-                Log.e("newJobNum:", jobNum);
                 if (isExitJobNum(jobNum)) {
                     Toast.makeText(getActivity(), "您输入的编号已存在！", Toast.LENGTH_SHORT).show();
                 } else {
@@ -390,15 +415,6 @@ public class WorkingFragment extends Fragment {
 
         }
     }
-
-    public static MaterialInspectRecode getsRecodePics() {
-        if (sRecodePics == null) {
-            sRecodePics = new MaterialInspectRecode();
-        }
-        return sRecodePics;
-    }
-
-
     private void showDatePickerDialog(int requestCode, Date date) {
         FragmentManager fm = getFragmentManager();
         DatePickerDialog dialog = DatePickerDialog.newInstance(-1, date);
@@ -406,10 +422,10 @@ public class WorkingFragment extends Fragment {
         dialog.show(fm, "date");
     }
 
-    public TextView getJobNumberTextView() {
-        return mJobNumberTextView;
-    }
-
+    /***
+     * 删除指定位置的照片
+     * @param position
+     */
     public void removeSelectedPic(int position) {
         File file = new File(mAdapter.getPath().get(position));
         file.delete();
@@ -419,7 +435,6 @@ public class WorkingFragment extends Fragment {
 
     private void downloadRecode() {
         MaterialInspectRecode localRecode = PicsLab.getPicsLab(getActivity()).getPicsByJobNum(mJobNum);
-        Log.e("localRecode", localRecode.getLatestUpdateTime() + "");
         localRecode.setPicFolderPath(mFolderPath);
         downloadRecodeFromServer(localRecode);
     }
@@ -484,7 +499,7 @@ public class WorkingFragment extends Fragment {
     }
 
     /***
-     * 同步记录，上传本地照片到服务器，下载服务器上的照片
+     * 上传记录
      */
     private void uploadJob() {
         PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics, sRecodePics.getJobNum());
@@ -519,6 +534,8 @@ public class WorkingFragment extends Fragment {
                             Toast.makeText(getActivity(), "上传成功！", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), FileUploadService.class);
                             intent.putExtra("folder_path", sRecodePics.getPicFolderPath());
+                            intent.putExtra("company_id",UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
+                            intent.putExtra("recode_type",jobType);
                             getActivity().startService(intent);
                         } else {
                             Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
@@ -585,6 +602,9 @@ public class WorkingFragment extends Fragment {
         mAdapter.setEditable(false);
     }
 
+    /***
+     * 同步服务器与本地记录
+     */
     private void synchronizeRecode() {
         ArrayList<String> urls = mAdapter.getPath();
         ArrayList<String> downloadUrls = new ArrayList<>();

@@ -23,69 +23,44 @@ import com.nisoft.inspectortools.ui.typeproblem.ProblemListActivity;
 
 import java.util.ArrayList;
 
+import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.KEY_SELECTED_TYPE;
+import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.RECODE_TYPE_CHI;
+
 /**
  * Created by Administrator on 2017/5/29.
  */
 
 public class ChooseRecodeTypeFragment extends Fragment {
-    public static final String INSPECT_TYPE = "inspect_type";
     private ListView mListView;
     private ArrayAdapter<String> mAdapter;
-    private ArrayList<String> mTypes;
-    private ArrayList<String> mTypes_eng;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_choose_job_type, container, false);
         mListView = (ListView) view.findViewById(R.id.recode_type_list);
-        setTypes();
-        mAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mTypes);
+        mAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, RECODE_TYPE_CHI);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent inspectIntent = new Intent(getActivity(), JobListActivity.class);
-                Intent qualityProblemIntent = new Intent(getActivity(), ProblemListActivity.class);
-                switch (position) {
-                    case 0:
-                        inspectIntent.putExtra(INSPECT_TYPE, mTypes_eng.get(0));
-                        startActivity(inspectIntent);
-                        break;
-                    case 1:
-                        inspectIntent.putExtra(INSPECT_TYPE, mTypes_eng.get(1));
-                        startActivity(inspectIntent);
-                        break;
-                    case 2:
-                        inspectIntent.putExtra(INSPECT_TYPE, mTypes_eng.get(2));
-                        startActivity(inspectIntent);
-                        break;
-                    case 3:
-                        startActivity(qualityProblemIntent);
-                        break;
-                    default:
-                        break;
-
+                Intent intent;
+                if (position < 3){
+                    intent = new Intent(getActivity(), JobListActivity.class);
+                    intent.putExtra(KEY_SELECTED_TYPE,position);
+                    startActivity(intent);
+                }else if (position==3){
+                    intent = new Intent(getActivity(), ProblemListActivity.class);
+                    intent.putExtra(KEY_SELECTED_TYPE,position);
+                    startActivity(intent);
                 }
+
             }
         });
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 11);
         }
         return view;
-    }
-
-    private void setTypes() {
-        mTypes = new ArrayList<>();
-        mTypes_eng = new ArrayList<>();
-        mTypes.add("金属材料");
-        mTypes_eng.add("material/metal");
-        mTypes.add("非金属材料");
-        mTypes_eng.add("material/nonmetal");
-        mTypes.add("外购件");
-        mTypes_eng.add("material/purchased_parts");
-        mTypes.add("质量问题");
-        mTypes_eng.add("problem");
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

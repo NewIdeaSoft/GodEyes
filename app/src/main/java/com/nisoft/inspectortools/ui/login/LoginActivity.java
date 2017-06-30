@@ -157,11 +157,12 @@ public class LoginActivity extends AppCompatActivity {
                         }else if(responseText.equals("error:3")){
                             Toast.makeText(LoginActivity.this, "登陆失败：系统错误！", Toast.LENGTH_SHORT).show();
                         }else{
-                            editor.putString("phone", phone);
-                            editor.putString("password", password);
-                            editor.commit();
                             Gson gson = new Gson();
                             Employee employee = gson.fromJson(responseText,Employee.class);
+                            editor.putString("phone", phone);
+                            editor.putString("password", password);
+                            editor.putString("employee",responseText);
+                            editor.commit();
                             UserLab.getUserLab(LoginActivity.this).setEmployee(employee);
                             Intent intent = new Intent(LoginActivity.this,ChooseRecodeTypeActivity.class);
                             startActivity(intent);

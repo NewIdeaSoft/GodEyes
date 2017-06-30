@@ -17,15 +17,14 @@ import okhttp3.Response;
  */
 
 public class FileUploadUtil {
-    public static void uploadFile(File folder){
+    public static void uploadFile(File folder,String companyId,String recodeType){
         File [] files = folder.listFiles();
         if(files!=null&&files.length>0) {
-            String org_id = "JXCZ";
             String folder_name = folder.getName();
             MultipartBody.Builder builder = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
-                    .addFormDataPart("org_id",org_id)
-                    .addFormDataPart("recode_type","material_inspect/metal/")
+                    .addFormDataPart("org_id",companyId)
+                    .addFormDataPart("recode_type",recodeType)
                     .addFormDataPart("folder_name",folder_name);
             for (File file : files){
                 RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"),file);
