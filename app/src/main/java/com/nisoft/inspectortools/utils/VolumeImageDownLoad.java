@@ -1,7 +1,5 @@
 package com.nisoft.inspectortools.utils;
 
-import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,9 +35,14 @@ public class VolumeImageDownLoad {
 
     public void startDownload() {
         mListener.onStart();
-        for (String url : mImageUrlList) {
-            downloadImage(url);
+        if(mImageUrlList.size()==0) {
+            mListener.onFinish();
+        }else{
+            for (String url : mImageUrlList) {
+                downloadImage(url);
+            }
         }
+
     }
 
     private void downloadImage(final String url) {

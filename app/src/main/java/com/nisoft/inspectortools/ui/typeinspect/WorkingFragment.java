@@ -1,13 +1,10 @@
 package com.nisoft.inspectortools.ui.typeinspect;
 
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -44,9 +41,7 @@ import com.nisoft.inspectortools.utils.StringFormatUtil;
 import com.nisoft.inspectortools.utils.VolumeImageDownLoad;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -79,7 +74,7 @@ public class WorkingFragment extends Fragment {
     private String mJobNum;
     private static final String PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/工作相册/";
     private String mFolderPath;
-    private boolean mEditable;
+    private boolean mEditable = false;
 
     public static WorkingFragment newInstance(String jobNum, String inspectType, boolean isNew) {
         WorkingFragment fragment = new WorkingFragment();
@@ -127,6 +122,7 @@ public class WorkingFragment extends Fragment {
         if (!isNewJob) {
             downloadRecode();
         } else {
+            mEditable = true;
             sRecodePics = new MaterialInspectRecode();
             sRecodePics.setJobNum(mJobNum);
             sRecodePics.setType(jobType);
@@ -138,6 +134,7 @@ public class WorkingFragment extends Fragment {
             mDatePickerButton.setText(StringFormatUtil.dateFormat(date));
             mInspectorTextView.setText(UserLab.getUserLab(getActivity()).getEmployee().getName());
             mAdapter = new JobPicsAdapter(WorkingFragment.this, R.layout.inspect_image_item, mFolderPath);
+            mAdapter.setEditable(true);
             mPicsView.setLayoutManager(mManager);
             mPicsView.setAdapter(mAdapter);
         }
@@ -318,7 +315,7 @@ public class WorkingFragment extends Fragment {
                 startActivity(i);
                 break;
             case R.id.data_upload:
-                uploadJob();
+                synchronizeRecode();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -459,7 +456,7 @@ public class WorkingFragment extends Fragment {
                         RecodeDataPackage dataPackage = gson.fromJson(result, RecodeDataPackage.class);
                         MaterialInspectRecode serviceRecode = dataPackage.getRecode();
                         final String inspector = dataPackage.getName();
-                        sRecodePics = findLaterRecode(localRecode,serviceRecode);
+                        sRecodePics = findLaterRecode(localRecode, serviceRecode);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -471,7 +468,10 @@ public class WorkingFragment extends Fragment {
                                 mAdapter.setEditable(true);
                                 if (!sRecodePics.getInspectorId()
                                         .equals(UserLab.getUserLab(getActivity()).getEmployee().getPhone())) {
+                                    mEditable = false;
                                     setJobUnEdit();
+                                } else {
+                                    mEditable = true;
                                 }
                                 mInspectorTextView.setText(inspector);
                                 mPicsView.setLayoutManager(mManager);
@@ -533,13 +533,14 @@ public class WorkingFragment extends Fragment {
 
     /***
      * 找出最新记录
-     * @param recode1 记录1
-     * @param recode2 记录2
+     * @param recode1 本地记录1
+     * @param recode2 服务器记录2
      * @return laterRecode
      */
     private MaterialInspectRecode findLaterRecode(MaterialInspectRecode recode1
-            ,MaterialInspectRecode recode2){
-        if(recode1.getLatestUpdateTime()>recode2.getLatestUpdateTime()){
+            , MaterialInspectRecode recode2) {
+        if (recode1.getLatestUpdateTime() > recode2.getLatestUpdateTime()) {
+            recode1.setImagesName(recode2.getImagesName());
             return recode1;
         }
         return recode2;
@@ -584,12 +585,12 @@ public class WorkingFragment extends Fragment {
         mAdapter.setEditable(false);
     }
 
-    private void synchronizeRecode(){
+    private void synchronizeRecode() {
         ArrayList<String> urls = mAdapter.getPath();
         ArrayList<String> downloadUrls = new ArrayList<>();
-        for(int i =0;i<urls.size();i++){
+        for (int i = 0; i < urls.size(); i++) {
             String url = urls.get(i);
-            if(url.startsWith("http")){
+            if (url.startsWith("http")) {
                 downloadUrls.add(url);
             }
         }
@@ -597,7 +598,7 @@ public class WorkingFragment extends Fragment {
                 , new VolumeImageDownLoad.DownloadStateListener() {
             @Override
             public void onStart() {
-
+                DialogUtil.showProgressDialog(getActivity(), mDialog, "正在同步记录...");
             }
 
             @Override
@@ -607,10 +608,18 @@ public class WorkingFragment extends Fragment {
 
             @Override
             public void onFinish() {
-                Toast.makeText(getActivity(), "图片现在完成！", Toast.LENGTH_SHORT).show();
-                if (mEditable){
-                    uploadJob();
-                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        Toast.makeText(getActivity(), "图片下载完成！", Toast.LENGTH_SHORT).show();
+                        Log.e("mEditable:",mEditable+"");
+                        if (mEditable) {
+                            uploadJob();
+                        }
+                    }
+                });
+
             }
         }).startDownload();
     }
