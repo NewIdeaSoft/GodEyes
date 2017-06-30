@@ -236,8 +236,13 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         return holder;
     }
 
-    private String getImageName(String s) {
-        String[] strings = s.split("/");
+    /***
+     *
+     * @param url 文件的路径或网址
+     * @return 文件名
+     */
+    private String getImageName(String url) {
+        String[] strings = url.split("/");
         return strings[strings.length - 1];
     }
 
@@ -305,4 +310,5 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
+
 }

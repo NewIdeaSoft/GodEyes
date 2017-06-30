@@ -1,10 +1,13 @@
 package com.nisoft.inspectortools.ui.typeinspect;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -38,6 +41,7 @@ import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.FileUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
+import com.nisoft.inspectortools.utils.VolumeImageDownLoad;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -75,6 +79,7 @@ public class WorkingFragment extends Fragment {
     private String mJobNum;
     private static final String PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/工作相册/";
     private String mFolderPath;
+    private boolean mEditable;
 
     public static WorkingFragment newInstance(String jobNum, String inspectType, boolean isNew) {
         WorkingFragment fragment = new WorkingFragment();
@@ -579,22 +584,35 @@ public class WorkingFragment extends Fragment {
         mAdapter.setEditable(false);
     }
 
-    private void synchronizeImages(){
+    private void synchronizeRecode(){
         ArrayList<String> urls = mAdapter.getPath();
-        for (String url:urls){
+        ArrayList<String> downloadUrls = new ArrayList<>();
+        for(int i =0;i<urls.size();i++){
+            String url = urls.get(i);
             if(url.startsWith("http")){
-                downloadImage(url);
-            }else{
-                uploadImage(url);
+                downloadUrls.add(url);
             }
         }
-    }
+        new VolumeImageDownLoad(downloadUrls, mFolderPath
+                , new VolumeImageDownLoad.DownloadStateListener() {
+            @Override
+            public void onStart() {
 
-    private void uploadImage(String url) {
+            }
 
-    }
+            @Override
+            public void onFailed() {
 
-    private void downloadImage(String url) {
+            }
+
+            @Override
+            public void onFinish() {
+                Toast.makeText(getActivity(), "图片现在完成！", Toast.LENGTH_SHORT).show();
+                if (mEditable){
+                    uploadJob();
+                }
+            }
+        }).startDownload();
     }
 }
 
