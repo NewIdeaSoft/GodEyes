@@ -8,7 +8,7 @@ import java.util.Date;
  */
 
 public class Problem {
-    private String mPromblemId;
+    private String mProblemId;
     private String mType;
     private String mTitle;
     private Date mDate;
@@ -18,12 +18,11 @@ public class Problem {
     private String mDetailedText;
     private String mFolderPath;
     private long mUpdateTime;
-    private String mAnylistId;
+    private String mAnalystId;
     private String mProgramId;
 
     public Problem() {
     }
-
     public String getTitle() {
         return mTitle;
     }
@@ -64,12 +63,12 @@ public class Problem {
         mDetailedText = detailedText;
     }
 
-    public String getPromblemId() {
-        return mPromblemId;
+    public String getProblemId() {
+        return mProblemId;
     }
 
-    public void setPromblemId(String promblemId) {
-        mPromblemId = promblemId;
+    public void setProblemId(String problemId) {
+        mProblemId = problemId;
     }
 
     public String getType() {
@@ -102,5 +101,21 @@ public class Problem {
 
     public void setUpdateTime(long updateTime) {
         mUpdateTime = updateTime;
+    }
+
+    public String getAnalystId() {
+        return mAnalystId;
+    }
+
+    public void setAnalystId(String analystId) {
+        mAnalystId = analystId;
+    }
+
+    public String getProgramId() {
+        return mProgramId;
+    }
+
+    public void setProgramId(String programId) {
+        mProgramId = programId;
     }
 }
