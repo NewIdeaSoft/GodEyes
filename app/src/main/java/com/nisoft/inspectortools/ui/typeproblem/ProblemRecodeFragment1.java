@@ -154,8 +154,8 @@ public class ProblemRecodeFragment1 extends Fragment {
         String problemId = getArguments().getString(RecodeTable.Cols.PROBLEM_ID);
         mProblem = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(problemId);
         problemFragmentList.add(new ProblemSimpleInfoFragment());
-        problemFragmentList.add(new ProblemDetailedInfoFragment());
         problemFragmentList.add(new ProblemReasonInfoFragment());
+        problemFragmentList.add(new ProblemProgramFragment());
         problemFragmentList.add(new ProblemSolvedInfoFragment());
     }
 
@@ -169,7 +169,7 @@ public class ProblemRecodeFragment1 extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(getProblem());
+        ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(mProblem);
     }
 
     public static ProblemDataPackage getProblem(){

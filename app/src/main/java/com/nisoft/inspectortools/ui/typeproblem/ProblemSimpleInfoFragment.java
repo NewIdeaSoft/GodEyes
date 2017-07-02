@@ -34,6 +34,12 @@ public class ProblemSimpleInfoFragment extends Fragment {
     private TextView mDiscoveredPosition;
     private TextView mTitle;
     RecyclerView mImagesRecyclerView;
+    private StartEdit iStartEdit;
+
+    public interface StartEdit{
+        void onAuthorTextClick();
+        void onDescriptionTextClick();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,14 +62,14 @@ public class ProblemSimpleInfoFragment extends Fragment {
         mDiscoveredDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog(REQUEST_CODE_DISCOVERED_DATE,"选择发现时间");
+                showDatePickerDialog(REQUEST_CODE_DISCOVERED_DATE,new Date());
             }
         });
         mDiscover = (TextView) view.findViewById(R.id.tv_discover);
         mDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                iStartEdit.onAuthorTextClick();
             }
         });
         mDiscoveredPosition = (TextView) view.findViewById(R.id.tv_discover_position);
@@ -76,6 +82,10 @@ public class ProblemSimpleInfoFragment extends Fragment {
         mImagesRecyclerView = (RecyclerView) view.findViewById(R.id.problem_images_recycler_view);
         updateView();
         return view;
+    }
+
+    private void startEditTextActivity() {
+
     }
 
     @Override
@@ -113,7 +123,6 @@ public class ProblemSimpleInfoFragment extends Fragment {
     }
 
     private void updateView() {
-        mProblem = ProblemRecodeFragment1.getProblem().getProblem();
         if(mProblem.getTitle()!=null) {
             mTitle.setText(mProblem.getTitle());
         }
@@ -135,17 +144,14 @@ public class ProblemSimpleInfoFragment extends Fragment {
         return dateString;
     }
 
-    private void showDatePickerDialog(int requestCode,String title){
+    private void showDatePickerDialog(int requestCode,Date date){
         FragmentManager fm = getFragmentManager();
-        DatePickerDialog dialog = DatePickerDialog.newInstance(title);
+        DatePickerDialog dialog = DatePickerDialog.newInstance(-1,date);
         dialog.setTargetFragment(ProblemSimpleInfoFragment.this,requestCode);
         dialog.show(fm,"date");
     }
 
-    private void updateProblemInfo(){
-
-        ProblemRecodeFragment1.getProblem().getProblem().setTitle(mTitle.getText().toString());
-        ProblemRecodeFragment1.getProblem().getProblem().setAuthor(mDiscover.getText().toString());
-        ProblemRecodeFragment1.getProblem().getProblem().setAddress(mDiscoveredPosition.getText().toString());
+    public void updateProblemInfo(){
+        ProblemRecodeFragment1.getProblem().setProblem(mProblem);
     }
 }

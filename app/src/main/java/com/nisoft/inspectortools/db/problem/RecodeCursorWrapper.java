@@ -3,11 +3,11 @@ package com.nisoft.inspectortools.db.problem;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
-import com.nisoft.managertools.db.problem.RecodeDbSchema.RecodeTable;
-import com.nisoft.managertools.entity.problem.ImageRecode;
-import com.nisoft.managertools.entity.problem.ProblemRecode;
-import com.nisoft.managertools.entity.problem.Recode;
-import com.nisoft.managertools.utils.StringFormatUtil;
+import com.nisoft.inspectortools.bean.problem.ImageRecode;
+import com.nisoft.inspectortools.bean.problem.ProblemRecode;
+import com.nisoft.inspectortools.bean.problem.Recode;
+import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
+import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.Date;
 

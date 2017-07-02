@@ -5,9 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nisoft.managertools.db.problem.ProblemsSQLiteOpenHelper;
-import com.nisoft.managertools.db.problem.RecodeCursorWrapper;
-import com.nisoft.managertools.db.problem.RecodeDbSchema.RecodeTable;
+import com.nisoft.inspectortools.db.ProblemsSQLiteOpenHelper;
+import com.nisoft.inspectortools.db.problem.RecodeCursorWrapper;
+import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 
 import java.util.ArrayList;
 
@@ -73,7 +73,7 @@ public class ProblemDataLab {
         values.put(RecodeTable.Cols.ADDRESS,address);
         return values;
     }
-    private RecodeCursorWrapper queryRecode(String table,String selection,String[] args){
+    private RecodeCursorWrapper queryRecode(String table, String selection, String[] args){
         Cursor cursor = mDatabase.query(table,
                 null,
                 selection,
@@ -93,17 +93,22 @@ public class ProblemDataLab {
                 null,
                 null);
         RecodeCursorWrapper cursorWrapper = new RecodeCursorWrapper(cursor);
+        Recode recode = null;
         switch (table) {
             case RecodeTable.PROBLEM_NAME :
-                return cursorWrapper.getProblemRecode();
+                recode = cursorWrapper.getProblemRecode();
+                break;
             case RecodeTable.PROGRAM_NAME:
-                return cursorWrapper.getRecode();
+                recode=cursorWrapper.getRecode();
+                break;
             case RecodeTable.RESULT_NAME:
-                return cursorWrapper.getImageRecode();
+                recode=cursorWrapper.getImageRecode();
+                break;
             case RecodeTable.ANALYSIS_NAME:
-                return cursorWrapper.getRecode();
+                recode=cursorWrapper.getRecode();
+                break;
         }
-        return cursorWrapper.getRecode();
+        return recode;
     }
 
     public ArrayList<ProblemRecode> getAllProblem(){
