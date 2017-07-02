@@ -137,4 +137,22 @@ public class FileUtil {
 
         return filesUrl;
     }
+
+    public static ArrayList<String> getImagesPath(String folderPath){
+        File file = new File(folderPath);
+        if(!file.exists()) {
+            file.mkdirs();
+        }
+        String [] files = file.list();
+        ArrayList<String> pathList = null;
+        if(files!=null&&files.length>0) {
+            pathList = new ArrayList<>();
+            for (String fileName : files) {
+                if(fileName.endsWith("jpg")||fileName.endsWith("bmp")||fileName.endsWith("png")) {
+                    pathList.add(folderPath+"/"+fileName);
+                }
+            }
+        }
+        return pathList;
+    }
 }
