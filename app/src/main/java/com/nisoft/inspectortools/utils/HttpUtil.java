@@ -16,6 +16,7 @@ public class HttpUtil {
     public static final String SERVLET_UPLOAD = ADRESS_MAIN + "FileUploadServlet";
     public static final String SERVLET_MEMBER_INFO = ADRESS_MAIN + "MemberInfoServlet";
     public static final String SERVLET_MATERIAL_RECODE = HttpUtil.ADRESS_MAIN + "MaterialInspectServlet";
+    public static final String SERVLET_PROBLEM_RECODE = HttpUtil.ADRESS_MAIN + "ProblemRecodeServlet";
     public static final String SERVLET_JOBINFO = ADRESS_MAIN + "JobInfoServlet";
     public static final String SERVLET_DOWNLOAD_LAN_CHI = ADRESS_MAIN + "chi-sim";
 

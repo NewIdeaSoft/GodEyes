@@ -83,16 +83,20 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
     }
 
     public void refreshPath() {
+        mPicsPath = new ArrayList<>();
+        if (mRootPath==null||mRootPath==""){
+            return;
+        }
         File file = new File(mRootPath);
         if (!file.exists()) {
             file.mkdirs();
         }
-        mPicsPath = new ArrayList<>();
+
         String[] picsName = file.list();
         for (int i = 0; i < picsName.length; i++) {
             String[] strings = picsName[i].split("\\.");
             String type = strings[strings.length - 1];
-            if (type.equals("jpg") || type.equals("bmp")) {
+            if (type.equals("jpg") || type.equals("bmp")||type.equals("png")) {
                 mPicsPath.add(mRootPath + picsName[i]);
             }
         }

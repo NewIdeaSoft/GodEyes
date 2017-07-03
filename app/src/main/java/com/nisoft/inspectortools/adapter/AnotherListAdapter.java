@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.bean.problem.Problem;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
 
 import java.util.ArrayList;

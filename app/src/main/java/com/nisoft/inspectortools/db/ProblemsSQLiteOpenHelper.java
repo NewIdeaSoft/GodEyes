@@ -16,41 +16,44 @@ public class ProblemsSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;
     private static final String DATABASE_NAME = "problem.db";
     private Context mContext;
-    private static final String CREATE_PROBLEM = "create table "+ RecodeTable.PROBLEM_NAME+
+    private static final String CREATE_PROBLEM = "create table " + RecodeTable.PROBLEM_NAME +
             "(id integer primary key autoincrement,"
-            + RecodeTable.Cols.PROBLEM_ID+" unique,"
-            + RecodeTable.Cols.TITLE+","
-            + RecodeTable.Cols.ADDRESS+","
-            + RecodeTable.Cols.AUTHOR+","
-            + RecodeTable.Cols.DATE+","
-            + RecodeTable.Cols.SUSPECTS+","
-            + RecodeTable.Cols.TYPE+","
-            + RecodeTable.Cols.FOLDER_PATH+","
-            + RecodeTable.Cols.UPDATE_TIME +","
-            + RecodeTable.Cols.DESCRIPTION_TEXT+")";
-    private static final String CREATE_ANALYSIS = "create table "+ RecodeTable.ANALYSIS_NAME+
+            + RecodeTable.Cols.PROBLEM_ID + " unique,"
+            + RecodeTable.Cols.TITLE + ","
+            + RecodeTable.Cols.ADDRESS + ","
+            + RecodeTable.Cols.AUTHOR + ","
+            + RecodeTable.Cols.DATE + ","
+            + RecodeTable.Cols.SUSPECTS + ","
+            + RecodeTable.Cols.TYPE + ","
+            + RecodeTable.Cols.FOLDER_PATH + ","
+            + RecodeTable.Cols.UPDATE_TIME + ","
+            + RecodeTable.Cols.DESCRIPTION_TEXT + ")";
+    private static final String CREATE_ANALYSIS = "create table " + RecodeTable.ANALYSIS_NAME +
             "(id integer primary key autoincrement,"
-            + RecodeTable.Cols.PROBLEM_ID+" unique,"
-            + RecodeTable.Cols.AUTHOR+","
-            + RecodeTable.Cols.DATE+","
-            + RecodeTable.Cols.SUSPECTS+","
-            + RecodeTable.Cols.UPDATE_TIME +","
-            + RecodeTable.Cols.DESCRIPTION_TEXT+")";
-    private static final String CREATE_PROGRAM = "create table "+ RecodeTable.PROGRAM_NAME +
+            + RecodeTable.Cols.PROBLEM_ID + " unique,"
+            + RecodeTable.Cols.TYPE + ","
+            + RecodeTable.Cols.AUTHOR + ","
+            + RecodeTable.Cols.DATE + ","
+            + RecodeTable.Cols.SUSPECTS + ","
+            + RecodeTable.Cols.UPDATE_TIME + ","
+            + RecodeTable.Cols.DESCRIPTION_TEXT + ")";
+    private static final String CREATE_PROGRAM = "create table " + RecodeTable.PROGRAM_NAME +
             "(id integer primary key autoincrement,"
-            + RecodeTable.Cols.PROBLEM_ID+" unique,"
-            + RecodeTable.Cols.AUTHOR+","
-            + RecodeTable.Cols.DATE+","
-            + RecodeTable.Cols.UPDATE_TIME +","
-            + RecodeTable.Cols.DESCRIPTION_TEXT+")";
-    private static final String CREATE_RESULT = "create table "+ RecodeTable.RESULT_NAME +
+            + RecodeTable.Cols.PROBLEM_ID + " unique,"
+            + RecodeTable.Cols.TYPE + ","
+            + RecodeTable.Cols.AUTHOR + ","
+            + RecodeTable.Cols.DATE + ","
+            + RecodeTable.Cols.UPDATE_TIME + ","
+            + RecodeTable.Cols.DESCRIPTION_TEXT + ")";
+    private static final String CREATE_RESULT = "create table " + RecodeTable.RESULT_NAME +
             "(id integer primary key autoincrement,"
-            + RecodeTable.Cols.PROBLEM_ID+" unique,"
-            + RecodeTable.Cols.AUTHOR+","
-            + RecodeTable.Cols.DATE+","
-            + RecodeTable.Cols.UPDATE_TIME +","
-            + RecodeTable.Cols.FOLDER_PATH+","
-            + RecodeTable.Cols.DESCRIPTION_TEXT+")";
+            + RecodeTable.Cols.PROBLEM_ID + " unique,"
+            + RecodeTable.Cols.TYPE + ","
+            + RecodeTable.Cols.AUTHOR + ","
+            + RecodeTable.Cols.DATE + ","
+            + RecodeTable.Cols.UPDATE_TIME + ","
+            + RecodeTable.Cols.FOLDER_PATH + ","
+            + RecodeTable.Cols.DESCRIPTION_TEXT + ")";
 
     public ProblemsSQLiteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);

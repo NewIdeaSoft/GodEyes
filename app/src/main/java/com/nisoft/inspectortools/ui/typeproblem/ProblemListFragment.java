@@ -1,6 +1,7 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,15 +17,25 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.AnotherListAdapter;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
+import com.nisoft.inspectortools.bean.problem.ProblemDataPackage;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
 import com.nisoft.inspectortools.db.problem.RecodeCursorWrapper;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
+import com.nisoft.inspectortools.utils.HttpUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by NewIdeaSoft on 2017/4/25.
@@ -37,6 +48,7 @@ public class ProblemListFragment extends Fragment {
     private FloatingActionButton mNewProblemRecodeFAB;
     private SearchView mSearchView;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
+    private ProgressDialog mDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +63,7 @@ public class ProblemListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_problems_list,container,false);
         setHasOptionsMenu(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("质量问题");
+        mDialog = new ProgressDialog(getActivity());
         mProblemsRecyclerView = (RecyclerView) view.findViewById(R.id.problems_list_recyclerView);
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
         mProblemsRecyclerView.setLayoutManager(manager);
@@ -131,11 +144,36 @@ public class ProblemListFragment extends Fragment {
         }
     }
     private void createProblem(){
-        ProblemRecode problem = new ProblemRecode();
-        Intent intent = new Intent(getActivity(), ProblemRecodeActivity.class);
-        ProblemDataLab.getProblemDataLab(getActivity()).addProblem(problem);
-        intent.putExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID,problem.getRecodeId());
-        startActivity(intent);
+        RequestBody body = new FormBody.Builder()
+                .add("intent","new_problem")
+                .build();
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_PROBLEM_RECODE, body, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String result = response.body().string();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (result.equals("false")){
+                            Toast.makeText(getActivity(), "新建记录失败！", Toast.LENGTH_SHORT).show();
+                        }else{
+                            ProblemDataPackage problem = new ProblemDataPackage(result);
+                            Intent intent = new Intent(getActivity(), ProblemRecodeActivity.class);
+                            ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(problem);
+                            intent.putExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID,result);
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+            }
+        });
+
     }
 
     private void changeAdapterData(RecodeCursorWrapper cursor){
@@ -143,4 +181,5 @@ public class ProblemListFragment extends Fragment {
         mAdapter.setProblems(problems);
         mAdapter.notifyDataSetChanged();
     }
+
 }

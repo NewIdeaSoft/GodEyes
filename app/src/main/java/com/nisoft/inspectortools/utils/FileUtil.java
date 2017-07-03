@@ -139,6 +139,9 @@ public class FileUtil {
     }
 
     public static ArrayList<String> getImagesPath(String folderPath){
+        if (folderPath==null||folderPath.equals("")){
+            return null;
+        }
         File file = new File(folderPath);
         if(!file.exists()) {
             file.mkdirs();

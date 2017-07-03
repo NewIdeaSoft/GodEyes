@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,8 @@ public class ProblemRecodeFragment1 extends Fragment {
     public static final int REQUEST_EXECUTOR = 401;
     public static final int REQUEST_EXECUTE_DATE = 402;
     public static final int REQUEST_EXECUTE_DESCRIPTION = 403;
+
+    public static final String TAG="ProblemRecodeFragment1:";
 
 
     private static ProblemDataPackage mProblem;
@@ -174,6 +177,7 @@ public class ProblemRecodeFragment1 extends Fragment {
     private void initVariables(){
         problemFragmentList = new ArrayList<>();
         String problemId = getArguments().getString(RecodeTable.Cols.PROBLEM_ID);
+        Log.e(TAG,problemId);
         mProblem = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(problemId);
         mProblemFragment = new ProblemSimpleInfoFragment();
         mAnalysisFragment = new ProblemAnalysisFragment();
