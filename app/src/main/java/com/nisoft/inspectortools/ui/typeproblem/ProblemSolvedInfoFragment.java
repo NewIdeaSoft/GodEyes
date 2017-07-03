@@ -9,9 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.nisoft.managertools.R;
-import com.nisoft.managertools.db.problem.RecodeDbSchema;
-import com.nisoft.managertools.entity.problem.Recode;
+import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.bean.problem.Recode;
+import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
+
 
 /**
  * Created by NewIdeaSoft on 2017/4/26.
@@ -31,7 +32,7 @@ public class ProblemSolvedInfoFragment extends Fragment {
 
             }
         });
-        mProblem = ProblemRecodeFragment.getProblem().getProgram();
+        mProblem = ProblemRecodeFragment1.getProblem().getProgram();
         if(mProblem.getDescription()!=null) {
             mSolvedText.setText(mProblem.getDescription());
         }
@@ -40,7 +41,7 @@ public class ProblemSolvedInfoFragment extends Fragment {
 
     public static ProblemSolvedInfoFragment newInstance(String problemId) {
         Bundle args = new Bundle();
-        args.putSerializable(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID,problemId);
+        args.putSerializable(RecodeTable.Cols.PROBLEM_ID,problemId);
         ProblemSolvedInfoFragment fragment = new ProblemSolvedInfoFragment();
         fragment.setArguments(args);
         return fragment;
@@ -57,6 +58,6 @@ public class ProblemSolvedInfoFragment extends Fragment {
 
     private void updateProblem(){
         mProblem.setDescription(mSolvedText.getText().toString());
-        ProblemRecodeFragment.getProblem().getProgram().setDescription(mSolvedText.getText().toString());
+        ProblemRecodeFragment1.getProblem().getProgram().setDescription(mSolvedText.getText().toString());
     }
 }

@@ -8,9 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.nisoft.managertools.R;
-import com.nisoft.managertools.db.problem.RecodeDbSchema;
-import com.nisoft.managertools.entity.problem.Recode;
+import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.bean.problem.Recode;
+import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
+
 
 /**
  * Created by NewIdeaSoft on 2017/4/26.
@@ -43,7 +44,7 @@ public class ProblemAnalysisFragment extends Fragment {
         reasonText = (TextView) view.findViewById(R.id.edit_problem_reason_info);
 
 //        mProblem = ProblemLab.getProblemLab(getActivity()).getProblem((UUID) getArguments().getSerializable(ProblemTable.Cols.UUID));
-        mProblem = ProblemRecodeFragment.getProblem().getAnalysis();
+        mProblem = ProblemRecodeFragment1.getProblem().getAnalysis();
         if (mProblem.getDescription() != null) {
             reasonText.setText(mProblem.getDescription());
         }
@@ -52,7 +53,7 @@ public class ProblemAnalysisFragment extends Fragment {
 
     public static ProblemAnalysisFragment newInstance(String problemId) {
         Bundle args = new Bundle();
-        args.putSerializable(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID, problemId);
+        args.putSerializable(RecodeTable.Cols.PROBLEM_ID, problemId);
         ProblemAnalysisFragment fragment = new ProblemAnalysisFragment();
         fragment.setArguments(args);
         return fragment;
@@ -66,6 +67,6 @@ public class ProblemAnalysisFragment extends Fragment {
 
     private void updateProblem() {
         mProblem.setDescription(reasonText.getText().toString());
-        ProblemRecodeFragment.getProblem().getAnalysis().setDescription(reasonText.getText().toString());
+        ProblemRecodeFragment1.getProblem().getAnalysis().setDescription(reasonText.getText().toString());
     }
 }

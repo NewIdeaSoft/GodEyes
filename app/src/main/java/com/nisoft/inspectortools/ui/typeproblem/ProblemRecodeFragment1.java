@@ -46,6 +46,10 @@ public class ProblemRecodeFragment1 extends Fragment {
     private static ProblemDataPackage mProblem;
     private ViewPager problemViewPager;
     private ArrayList<Fragment> problemFragmentList;
+    private ProblemSimpleInfoFragment mProblemFragment;
+    private ProblemAnalysisFragment mAnalysisFragment;
+    private ProblemProgramFragment mProgramFragment;
+    private ProblemSolvedInfoFragment mSolvedInfoFragment;
     private LinearLayout tab_problem_simple_info;
     private LinearLayout tab_problem_detailed_info;
     private LinearLayout tab_problem_reason_info;
@@ -70,7 +74,7 @@ public class ProblemRecodeFragment1 extends Fragment {
         return initView(inflater,container,savedInstanceState);
     }
     private View initView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.fragment_problem_recode,container,false);
+        View view = inflater.inflate(R.layout.fragment_problem_recode1,container,false);
         ActionBar actionBar = getActivity().getActionBar();
         if(actionBar!=null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -171,10 +175,14 @@ public class ProblemRecodeFragment1 extends Fragment {
         problemFragmentList = new ArrayList<>();
         String problemId = getArguments().getString(RecodeTable.Cols.PROBLEM_ID);
         mProblem = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(problemId);
-        problemFragmentList.add(new ProblemSimpleInfoFragment());
-        problemFragmentList.add(new ProblemAnalysisFragment());
-        problemFragmentList.add(new ProblemProgramFragment());
-        problemFragmentList.add(new ProblemSolvedInfoFragment());
+        mProblemFragment = new ProblemSimpleInfoFragment();
+        mAnalysisFragment = new ProblemAnalysisFragment();
+        mProgramFragment = new ProblemProgramFragment();
+        mSolvedInfoFragment = new ProblemSolvedInfoFragment();
+        problemFragmentList.add(mProblemFragment);
+        problemFragmentList.add(mAnalysisFragment);
+        problemFragmentList.add(mProgramFragment);
+        problemFragmentList.add(mSolvedInfoFragment);
     }
 
     private void resTabBackground(){
@@ -201,22 +209,22 @@ public class ProblemRecodeFragment1 extends Fragment {
             case REQUEST_DISCOVER_DESCRIPTION:
                 String problemDescription = data.getStringExtra("content_edit");
                 mProblem.getProblem().setDescription(problemDescription);
-                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).setProblem( mProblem.getProblem());
-                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).updateView();
+                mProblemFragment.setProblem( mProblem.getProblem());
+                mProblemFragment.updateView();
                 break;
             case REQUEST_DISCOVER_DATE :
                 break;
             case REQUEST_TITLE :
                 String problemTitle = data.getStringExtra("content_edit");
                 mProblem.getProblem().setDescription(problemTitle);
-                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).setProblem( mProblem.getProblem());
-                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).updateView();
+                mProblemFragment.setProblem( mProblem.getProblem());
+                mProblemFragment.updateView();
                 break;
             case REQUEST_DISCOVER_ADDRESS :
                 String address = data.getStringExtra("content_edit");
                 mProblem.getProblem().setDescription(address);
-                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).setProblem( mProblem.getProblem());
-                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).updateView();
+                mProblemFragment.setProblem( mProblem.getProblem());
+                mProblemFragment.updateView();
                 break;
             case REQUEST_ANALYST:
                 break;

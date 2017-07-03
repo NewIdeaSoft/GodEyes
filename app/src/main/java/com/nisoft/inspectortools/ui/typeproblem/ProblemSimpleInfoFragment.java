@@ -1,6 +1,5 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -8,12 +7,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.JobPicsAdapter;
@@ -76,7 +73,8 @@ public class ProblemSimpleInfoFragment extends Fragment {
         mDiscoveredPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startEditTextActivity(ProblemRecodeFragment1.REQUEST_DISCOVER_DESCRIPTION);
+                startEditTextActivity(ProblemRecodeFragment1.REQUEST_DISCOVER_DESCRIPTION,
+                        mDiscoveredPosition.getText().toString());
             }
         });
         mImagesRecyclerView = (RecyclerView) view.findViewById(R.id.problem_images_recycler_view);
@@ -89,8 +87,9 @@ public class ProblemSimpleInfoFragment extends Fragment {
         return view;
     }
 
-    private void startEditTextActivity(int requestCode) {
+    private void startEditTextActivity(int requestCode,String initText) {
         Intent intent = new Intent(getActivity(), EditTextActivity.class);
+        intent .putExtra("initText",initText);
         startActivityForResult(intent,requestCode);
     }
 

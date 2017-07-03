@@ -4,21 +4,16 @@ import android.app.Fragment;
 import android.support.design.widget.Snackbar;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.EditText;
-
 
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.db.problem.ProblemDbSchema.ProblemTable;
+import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
 import com.nisoft.inspectortools.ui.base.SingleFragmentActivity;
-import com.nisoft.inspectortools.ui.typeinspect.WorkingFragment;
-
-import java.util.UUID;
 
 public class ProblemRecodeActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
-        UUID uuid = (UUID) getIntent().getSerializableExtra(ProblemTable.Cols.UUID);
-        return ProblemRecodeFragment.newInstance(uuid);
+        String problemID = getIntent().getStringExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID);
+        return ProblemRecodeFragment1.newInstance(problemID);
     }
 
     @Override
