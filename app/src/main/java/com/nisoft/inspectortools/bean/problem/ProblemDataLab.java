@@ -73,7 +73,7 @@ public class ProblemDataLab {
         values.put(RecodeTable.Cols.ADDRESS,address);
         return values;
     }
-    private RecodeCursorWrapper queryRecode(String table, String selection, String[] args){
+    public RecodeCursorWrapper queryRecode(String table, String selection, String[] args){
         Cursor cursor = mDatabase.query(table,
                 null,
                 selection,
@@ -156,5 +156,14 @@ public class ProblemDataLab {
     }
 
     public void updateProblem(ProblemDataPackage problem) {
+    }
+
+    public ArrayList<ProblemRecode> getProblems(RecodeCursorWrapper cursor) {
+        cursor.moveToFirst();
+        ArrayList<ProblemRecode> problems = new ArrayList<>();
+        while (!cursor.isAfterLast()){
+            problems.add(cursor.getProblemRecode());
+        }
+        return problems;
     }
 }

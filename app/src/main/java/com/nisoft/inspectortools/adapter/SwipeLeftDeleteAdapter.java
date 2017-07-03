@@ -14,10 +14,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.problem.Problem;
+import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
 import com.nisoft.inspectortools.bean.problem.ProblemLab;
+import com.nisoft.inspectortools.bean.problem.ProblemRecode;
 import com.nisoft.inspectortools.db.problem.ProblemDbSchema;
+import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemListActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeActivity;
+import com.nisoft.inspectortools.utils.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,8 +32,8 @@ import java.util.ArrayList;
 
 public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDeleteAdapter.SwipeLeftViewHolder> {
     private Context mContext;
-    private Problem mProblem;
-    public SwipeLeftDeleteAdapter(Context context, Problem problem){
+    private ProblemRecode mProblem;
+    public SwipeLeftDeleteAdapter(Context context, ProblemRecode problem){
         mContext = context;
         mProblem = problem;
     }
@@ -42,21 +46,23 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
     @Override
     public void onBindViewHolder(SwipeLeftViewHolder holder, int position) {
         if (position == 0){
-            if (mProblem.getPhotoPath()!=null&&mProblem.getPhotoPath().size()>0){
-                Glide.with(mContext).load(mProblem.getPhotoPath().get(0)).into(holder.mProblemImageView);
+            String folderPath = mProblem.getImagesFolderPath();
+            ArrayList<String> imagePathList = FileUtil.getImagesPath(folderPath);
+            if (imagePathList!=null&&imagePathList.size()>0){
+                Glide.with(mContext).load(imagePathList.get(0)).into(holder.mProblemImageView);
             }
             if (mProblem.getTitle()!=null){
                 holder.mProblemTitle.setText(mProblem.getTitle());
             }
-            if (mProblem.getDetailedText()!=null){
-                holder.mProblemDetailedInfo.setText(mProblem.getDetailedText());
+            if (mProblem.getDescription()!=null){
+                holder.mProblemDetailedInfo.setText(mProblem.getDescription());
             }
 
             holder.mParent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ProblemRecodeActivity.class);
-                    intent.putExtra(ProblemDbSchema.ProblemTable.Cols.UUID,mProblem.getUUID());
+                    intent.putExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID,mProblem.getRecodeId());
                     mContext.startActivity(intent);
                 }
             });
@@ -69,16 +75,11 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ArrayList<String> photosPath = mProblem.getPhotoPath();
-                    ProblemLab.getProblemLab(mContext.getApplicationContext()).delete(mProblem);
+                    String folderPath = mProblem.getImagesFolderPath();
+                    ProblemDataLab.getProblemDataLab(mContext.getApplicationContext()).delete(mProblem);
                     //删除照片文件，添加从相册复制文件到应用图片存储文件后启用，以免删除相册图片
-
-                    if (photosPath!=null&&photosPath.size()>0){
-                        for (int i = 0;i<photosPath.size();i++){
-                            File file = new File(photosPath.get(i));
-                            file.delete();
-                        }
-                    }
+                    File file = new File(folderPath);
+                    file.delete();
                     (((ProblemListActivity)mContext).getFragmentManager().findFragmentById(R.id.fragment_content)).onResume();
                 }
             });

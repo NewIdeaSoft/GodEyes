@@ -16,7 +16,7 @@ import com.nisoft.managertools.entity.problem.Recode;
  * Created by NewIdeaSoft on 2017/4/26.
  */
 
-public class ProblemReasonInfoFragment extends Fragment {
+public class ProblemAnalysisFragment extends Fragment {
     private TextView mAnalyserTextView;
     private TextView mAnalystDateTextView;
     private TextView reasonText;
@@ -50,10 +50,10 @@ public class ProblemReasonInfoFragment extends Fragment {
         return view;
     }
 
-    public static ProblemReasonInfoFragment newInstance(String problemId) {
+    public static ProblemAnalysisFragment newInstance(String problemId) {
         Bundle args = new Bundle();
         args.putSerializable(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID, problemId);
-        ProblemReasonInfoFragment fragment = new ProblemReasonInfoFragment();
+        ProblemAnalysisFragment fragment = new ProblemAnalysisFragment();
         fragment.setArguments(args);
         return fragment;
     }

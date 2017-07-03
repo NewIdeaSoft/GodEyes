@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +16,10 @@ import android.widget.TextView;
 
 
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.adapter.JobPicsAdapter;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
+import com.nisoft.inspectortools.ui.base.EditTextActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,13 +36,10 @@ public class ProblemSimpleInfoFragment extends Fragment {
     private TextView mDiscover;
     private TextView mDiscoveredPosition;
     private TextView mTitle;
-    RecyclerView mImagesRecyclerView;
-    private StartEdit iStartEdit;
+    private RecyclerView mImagesRecyclerView;
+    private JobPicsAdapter mAdapter;
 
-    public interface StartEdit{
-        void onAuthorTextClick();
-        void onDescriptionTextClick();
-    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,60 +69,39 @@ public class ProblemSimpleInfoFragment extends Fragment {
         mDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                iStartEdit.onAuthorTextClick();
+
             }
         });
         mDiscoveredPosition = (TextView) view.findViewById(R.id.tv_discover_position);
         mDiscoveredPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startEditTextActivity(ProblemRecodeFragment1.REQUEST_DISCOVER_DESCRIPTION);
             }
         });
         mImagesRecyclerView = (RecyclerView) view.findViewById(R.id.problem_images_recycler_view);
         updateView();
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
+        mImagesRecyclerView.setLayoutManager(layoutManager);
+        String folder = ProblemRecodeFragment1.getProblem().getProblem().getImagesFolderPath();
+        mAdapter = new JobPicsAdapter(ProblemSimpleInfoFragment.this,R.layout.problem_image_item,folder);
+        mImagesRecyclerView.setAdapter(mAdapter);
         return view;
     }
 
-    private void startEditTextActivity() {
-
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode!= Activity.RESULT_OK) {
-            return;
-        }
-        Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
-        switch (requestCode) {
-            case  REQUEST_CODE_DISCOVERED_DATE:
-                ProblemRecodeFragment1.getProblem().getProblem().setDate(date);
-//                mProblem.setDate(date);
-//                SingleProblem.getSingleProblem(getActivity()).getProblem().setDate(date);
-                mDiscoveredDate.setText(dateFormat(date));
-                break;
-        }
+    private void startEditTextActivity(int requestCode) {
+        Intent intent = new Intent(getActivity(), EditTextActivity.class);
+        startActivityForResult(intent,requestCode);
     }
 
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        updateProblemInfo();
-//        ProblemLab.getProblemLab(getActivity()).updateProblem(mProblem);
-        Log.e("TAG",mProblem.getAuthor());
-        Log.e("TAG",mProblem.getDate().toString());
-        Log.e("TAG",mProblem.getAddress());
-        Log.e("TAG","simple");
-    }
 
     @Override
     public void onResume() {
         super.onResume();
     }
 
-    private void updateView() {
+    public void updateView() {
         if(mProblem.getTitle()!=null) {
             mTitle.setText(mProblem.getTitle());
         }
@@ -135,7 +114,6 @@ public class ProblemSimpleInfoFragment extends Fragment {
         if (mProblem.getAddress() != null) {
             mDiscoveredPosition.setText(mProblem.getAddress());
         }
-
     }
 
     private String dateFormat(Date date){
@@ -151,7 +129,7 @@ public class ProblemSimpleInfoFragment extends Fragment {
         dialog.show(fm,"date");
     }
 
-    public void updateProblemInfo(){
-        ProblemRecodeFragment1.getProblem().setProblem(mProblem);
+    public void setProblem(ProblemRecode recode){
+        mProblem = recode;
     }
 }

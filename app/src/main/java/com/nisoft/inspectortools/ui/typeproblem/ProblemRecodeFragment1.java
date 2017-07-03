@@ -1,8 +1,10 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -25,6 +27,22 @@ import java.util.ArrayList;
  */
 
 public class ProblemRecodeFragment1 extends Fragment {
+    public static final int REQUEST_DISCOVER = 101;
+    public static final int REQUEST_DISCOVER_DESCRIPTION = 102;
+    public static final int REQUEST_DISCOVER_DATE = 103;
+    public static final int REQUEST_TITLE = 104;
+    public static final int REQUEST_DISCOVER_ADDRESS = 105;
+    public static final int REQUEST_ANALYST = 201;
+    public static final int REQUEST_ANALYSIS_DATE = 202;
+    public static final int REQUEST_ANALYSIS_DESCRIPTION = 203;
+    public static final int REQUEST_PROGRAM_AUTHOR = 301;
+    public static final int REQUEST_PROGRAM_DATE = 302;
+    public static final int REQUEST_PROGRAM_DESCRIPTION = 303;
+    public static final int REQUEST_EXECUTOR = 401;
+    public static final int REQUEST_EXECUTE_DATE = 402;
+    public static final int REQUEST_EXECUTE_DESCRIPTION = 403;
+
+
     private static ProblemDataPackage mProblem;
     private ViewPager problemViewPager;
     private ArrayList<Fragment> problemFragmentList;
@@ -154,7 +172,7 @@ public class ProblemRecodeFragment1 extends Fragment {
         String problemId = getArguments().getString(RecodeTable.Cols.PROBLEM_ID);
         mProblem = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(problemId);
         problemFragmentList.add(new ProblemSimpleInfoFragment());
-        problemFragmentList.add(new ProblemReasonInfoFragment());
+        problemFragmentList.add(new ProblemAnalysisFragment());
         problemFragmentList.add(new ProblemProgramFragment());
         problemFragmentList.add(new ProblemSolvedInfoFragment());
     }
@@ -170,6 +188,56 @@ public class ProblemRecodeFragment1 extends Fragment {
     public void onPause() {
         super.onPause();
         ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(mProblem);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode!= Activity.RESULT_OK){
+            return;
+        }
+        switch (requestCode){
+            case REQUEST_DISCOVER :
+                break;
+            case REQUEST_DISCOVER_DESCRIPTION:
+                String problemDescription = data.getStringExtra("content_edit");
+                mProblem.getProblem().setDescription(problemDescription);
+                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).setProblem( mProblem.getProblem());
+                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).updateView();
+                break;
+            case REQUEST_DISCOVER_DATE :
+                break;
+            case REQUEST_TITLE :
+                String problemTitle = data.getStringExtra("content_edit");
+                mProblem.getProblem().setDescription(problemTitle);
+                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).setProblem( mProblem.getProblem());
+                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).updateView();
+                break;
+            case REQUEST_DISCOVER_ADDRESS :
+                String address = data.getStringExtra("content_edit");
+                mProblem.getProblem().setDescription(address);
+                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).setProblem( mProblem.getProblem());
+                ((ProblemSimpleInfoFragment)problemFragmentList.get(0)).updateView();
+                break;
+            case REQUEST_ANALYST:
+                break;
+            case REQUEST_ANALYSIS_DATE :
+                break;
+            case REQUEST_ANALYSIS_DESCRIPTION :
+                break;
+            case REQUEST_PROGRAM_AUTHOR :
+                break;
+            case REQUEST_PROGRAM_DATE :
+                break;
+            case REQUEST_PROGRAM_DESCRIPTION :
+                break;
+            case REQUEST_EXECUTOR :
+                break;
+            case REQUEST_EXECUTE_DATE :
+                break;
+            case REQUEST_EXECUTE_DESCRIPTION :
+                break;
+
+        }
     }
 
     public static ProblemDataPackage getProblem(){

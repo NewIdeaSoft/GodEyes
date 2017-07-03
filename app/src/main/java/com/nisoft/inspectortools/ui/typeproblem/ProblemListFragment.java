@@ -19,10 +19,10 @@ import android.view.ViewGroup;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.AnotherListAdapter;
-import com.nisoft.inspectortools.bean.problem.Problem;
-import com.nisoft.inspectortools.bean.problem.ProblemLab;
-import com.nisoft.inspectortools.db.problem.ProblemCursorWrapper;
-import com.nisoft.inspectortools.db.problem.ProblemDbSchema.ProblemTable;
+import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
+import com.nisoft.inspectortools.bean.problem.ProblemRecode;
+import com.nisoft.inspectortools.db.problem.RecodeCursorWrapper;
+import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ import java.util.ArrayList;
  */
 
 public class ProblemListFragment extends Fragment {
-    private ArrayList<Problem> mProblems;
+    private ArrayList<ProblemRecode> mProblems;
     private AnotherListAdapter mAdapter;
     private RecyclerView mProblemsRecyclerView;
     private FloatingActionButton mNewProblemRecodeFAB;
@@ -41,7 +41,7 @@ public class ProblemListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProblems = ProblemLab.getProblemLab(getActivity()).getProblems();
+        mProblems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
         mAdapter = new AnotherListAdapter(getActivity(),mProblems);
     }
 
@@ -83,8 +83,8 @@ public class ProblemListFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                ProblemCursorWrapper cursor = ProblemLab.getProblemLab(getActivity())
-                        .queryProblem(ProblemTable.Cols.TITLE+" like ?"
+                RecodeCursorWrapper cursor = ProblemDataLab.getProblemDataLab(getActivity())
+                        .queryRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME,RecodeDbSchema.RecodeTable.Cols.TITLE+" like ?"
                                 ,new String[]{"%"+newText+"%"});
                 changeAdapterData(cursor);
                 return false;
@@ -125,21 +125,21 @@ public class ProblemListFragment extends Fragment {
             if(mSearchAutoComplete!=null&&mSearchAutoComplete.isShown()) {
                 mSearchAutoComplete.setText("");
             }
-            ArrayList<Problem> problems = ProblemLab.getProblemLab(getActivity()).getProblems();
+            ArrayList<ProblemRecode> problems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
             mAdapter.setProblems(problems);
             mAdapter.notifyDataSetChanged();
         }
     }
     private void createProblem(){
-        Problem problem = new Problem();
+        ProblemRecode problem = new ProblemRecode();
         Intent intent = new Intent(getActivity(), ProblemRecodeActivity.class);
-        ProblemLab.getProblemLab(getActivity()).addProblem(problem);
-        intent.putExtra(ProblemTable.Cols.UUID,problem.getUUID());
+        ProblemDataLab.getProblemDataLab(getActivity()).addProblem(problem);
+        intent.putExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID,problem.getRecodeId());
         startActivity(intent);
     }
 
-    private void changeAdapterData(ProblemCursorWrapper cursor){
-        ArrayList<Problem> problems = ProblemLab.getProblemLab(getActivity()).getProblems(cursor);
+    private void changeAdapterData(RecodeCursorWrapper cursor){
+        ArrayList<ProblemRecode> problems = ProblemDataLab.getProblemDataLab(getActivity()).getProblems(cursor);
         mAdapter.setProblems(problems);
         mAdapter.notifyDataSetChanged();
     }

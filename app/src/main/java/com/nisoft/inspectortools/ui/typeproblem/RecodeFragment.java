@@ -1,11 +1,15 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.nisoft.inspectortools.bean.problem.Recode;
 
 /**
  * Created by NewIdeaSoft on 2017/7/2.
@@ -13,12 +17,9 @@ import android.view.ViewGroup;
 
 public class RecodeFragment extends Fragment {
 
+    private Recode mRecode;
     private int layoutResId;
-    private StartEdit iStartEdit;
 
-    protected void setOnTextClickListener(StartEdit startEdit){
-        iStartEdit = startEdit;
-    }
 
     protected void init(){
 
@@ -26,12 +27,13 @@ public class RecodeFragment extends Fragment {
     public void updateData(){
 
     }
-    private void updateView() {
+    public void updateView() {
 
     }
-    protected View initView(View view){
-        return view;
+    protected View initView(){
+        return null;
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +43,7 @@ public class RecodeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(layoutResId,container,false);
-        initView(view);
+        View view = initView();
         return view;
     }
 
@@ -58,8 +59,4 @@ public class RecodeFragment extends Fragment {
         updateData();
     }
 
-    public interface StartEdit{
-        void onAuthorTextClick();
-        void onDescriptionTextClick();
-    }
 }
