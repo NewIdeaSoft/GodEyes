@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.nisoft.inspectortools.db.ProblemsSQLiteOpenHelper;
-import com.nisoft.inspectortools.db.inspect.PicsCursorWrapper;
-import com.nisoft.inspectortools.db.inspect.PicsDbSchema;
 import com.nisoft.inspectortools.db.problem.RecodeCursorWrapper;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 
@@ -191,7 +189,7 @@ public class ProblemDataLab {
         mDatabase.delete(RecodeTable.RESULT_NAME, whereClause, args);
     }
 
-    private void updateRecode(String table, Recode recode) {
+    public void updateRecode(String table, Recode recode) {
         ContentValues contentValues = getRecodeValues(recode);
         if (contentValues.size() > 0) {
             if (recode.getRecodeId() == null) {

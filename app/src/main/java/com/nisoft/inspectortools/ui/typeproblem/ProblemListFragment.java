@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.AnotherListAdapter;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
@@ -26,6 +28,8 @@ import com.nisoft.inspectortools.bean.problem.ProblemDataPackage;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
 import com.nisoft.inspectortools.db.problem.RecodeCursorWrapper;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
+import com.nisoft.inspectortools.gson.ProblemListDataPackage;
+import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.IOException;
@@ -54,18 +58,18 @@ public class ProblemListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mProblems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
-        mAdapter = new AnotherListAdapter(getActivity(),mProblems);
+        mAdapter = new AnotherListAdapter(getActivity(), mProblems);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_problems_list,container,false);
+        View view = inflater.inflate(R.layout.fragment_problems_list, container, false);
         setHasOptionsMenu(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("质量问题");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("质量问题");
         mDialog = new ProgressDialog(getActivity());
         mProblemsRecyclerView = (RecyclerView) view.findViewById(R.id.problems_list_recyclerView);
-        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         mProblemsRecyclerView.setLayoutManager(manager);
         mProblemsRecyclerView.setAdapter(mAdapter);
         mNewProblemRecodeFAB = (FloatingActionButton) view.findViewById(R.id.new_problem_fab);
@@ -75,13 +79,14 @@ public class ProblemListFragment extends Fragment {
                 createProblem();
             }
         });
+        refreshFromServer();
         return view;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu,inflater);
-        inflater.inflate(R.menu.toolbar,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.toolbar, menu);
         MenuItem menuItem = menu.findItem(R.id.search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(menuItem);
         mSearchView.setQueryHint("搜索质量问题");
@@ -97,8 +102,8 @@ public class ProblemListFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 RecodeCursorWrapper cursor = ProblemDataLab.getProblemDataLab(getActivity())
-                        .queryRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME,RecodeDbSchema.RecodeTable.Cols.TITLE+" like ?"
-                                ,new String[]{"%"+newText+"%"});
+                        .queryRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, RecodeDbSchema.RecodeTable.Cols.TITLE + " like ?"
+                                , new String[]{"%" + newText + "%"});
                 changeAdapterData(cursor);
                 return false;
             }
@@ -113,7 +118,7 @@ public class ProblemListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.refresh:
                 refreshFromServer();
                 break;
@@ -125,27 +130,71 @@ public class ProblemListFragment extends Fragment {
      * 连接服务器，更新数据，更新列表
      */
     private void refreshFromServer() {
+        RequestBody body = new FormBody.Builder()
+                .add("intent", "list")
+                .build();
+        DialogUtil.showProgressDialog(getActivity(), mDialog, "正在同步列表...");
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_PROBLEM_RECODE, body, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        Toast.makeText(getActivity(), "连接网络失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                Log.e("listJson:", result);
+
+                Gson gson = new Gson();
+                ProblemListDataPackage recodeData = gson.fromJson(result, ProblemListDataPackage.class);
+                ArrayList<ProblemRecode> recodes = recodeData.getProblemRecodes();
+                for (ProblemRecode recode1 : recodes) {
+                    for (ProblemRecode recode2 : mProblems) {
+                        if (recode1.getRecodeId().equals(recode2.getRecodeId())) {
+                            break;
+                        }
+                        ProblemDataLab.getProblemDataLab(getActivity()).updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
+                    }
+                }
+                mProblems = recodes;
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        mAdapter.setProblems(mProblems);
+                        mAdapter.notifyDataSetChanged();
+                        Toast.makeText(getActivity(), "同步完成！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(mAdapter == null) {
-            mAdapter = new AnotherListAdapter(getActivity(),mProblems);
-            mProblemsRecyclerView.setAdapter(mAdapter);
-        }else{
-            if(mSearchAutoComplete!=null&&mSearchAutoComplete.isShown()) {
-                mSearchAutoComplete.setText("");
-            }
-            ArrayList<ProblemRecode> problems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
-            mAdapter.setProblems(problems);
-            mAdapter.notifyDataSetChanged();
+        if (mSearchAutoComplete != null && mSearchAutoComplete.isShown()) {
+            mSearchAutoComplete.setText("");
         }
+//        if(mAdapter == null) {
+//            mAdapter = new AnotherListAdapter(getActivity(),mProblems);
+//            mProblemsRecyclerView.setAdapter(mAdapter);
+//        }else{
+//            ArrayList<ProblemRecode> problems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
+//            mAdapter.setProblems(problems);
+//            mAdapter.notifyDataSetChanged();
+//        }
     }
-    private void createProblem(){
+
+    private void createProblem() {
         RequestBody body = new FormBody.Builder()
-                .add("intent","new_problem")
+                .add("intent", "new_problem")
                 .build();
         HttpUtil.sendPostRequest(HttpUtil.SERVLET_PROBLEM_RECODE, body, new Callback() {
             @Override
@@ -159,13 +208,13 @@ public class ProblemListFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (result.equals("false")){
+                        if (result.equals("false")) {
                             Toast.makeText(getActivity(), "新建记录失败！", Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             ProblemDataPackage problem = new ProblemDataPackage(result);
                             Intent intent = new Intent(getActivity(), ProblemRecodeActivity.class);
                             ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(problem);
-                            intent.putExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID,result);
+                            intent.putExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID, result);
                             startActivity(intent);
                         }
                     }
@@ -176,7 +225,7 @@ public class ProblemListFragment extends Fragment {
 
     }
 
-    private void changeAdapterData(RecodeCursorWrapper cursor){
+    private void changeAdapterData(RecodeCursorWrapper cursor) {
         ArrayList<ProblemRecode> problems = ProblemDataLab.getProblemDataLab(getActivity()).getProblems(cursor);
         mAdapter.setProblems(problems);
         mAdapter.notifyDataSetChanged();

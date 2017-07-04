@@ -24,6 +24,25 @@ public class StringFormatUtil {
         }
         return strings;
     }
+    public static ArrayList<String> getJsonStrings(String s) {
+        ArrayList<String> strings = new ArrayList<>();
+        if (s != null&&!s.equals("[]")) {
+            if (s.startsWith("[")) {
+                s = s.substring(1, s.length() - 1);
+            }
+            s.trim();
+            String split = "}";
+            String[] ss = s.split(split);
+            for (String s1 : ss) {
+                if(!s1.endsWith("}")) {
+                    s1 = s1+"}";
+                }
+                strings.add(s1);
+            }
+
+        }
+        return strings;
+    }
 
     public static String arrayListToString(ArrayList<String> strings) {
         if (strings == null || strings.size() == 0) {
