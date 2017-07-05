@@ -69,4 +69,13 @@ public class ProblemAnalysisFragment extends Fragment {
         mProblem.setDescription(reasonText.getText().toString());
         ProblemRecodeFragment1.getProblem().getAnalysis().setDescription(reasonText.getText().toString());
     }
+
+    public Recode getProblem() {
+        return mProblem;
+    }
+
+    public void setProblem(Recode problem) {
+        mProblem = problem;
+    }
+
 }

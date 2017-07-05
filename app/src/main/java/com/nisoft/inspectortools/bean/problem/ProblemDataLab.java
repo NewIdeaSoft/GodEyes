@@ -129,20 +129,23 @@ public class ProblemDataLab {
         cursor.moveToFirst();
         RecodeCursorWrapper cursorWrapper = new RecodeCursorWrapper(cursor);
         Recode recode = null;
-        switch (table) {
-            case RecodeTable.PROBLEM_NAME:
-                recode = cursorWrapper.getProblemRecode();
-                break;
-            case RecodeTable.PROGRAM_NAME:
-                recode = cursorWrapper.getRecode();
-                break;
-            case RecodeTable.RESULT_NAME:
-                recode = cursorWrapper.getImageRecode();
-                break;
-            case RecodeTable.ANALYSIS_NAME:
-                recode = cursorWrapper.getRecode();
-                break;
+        if (cursorWrapper.getCount()>0){
+            switch (table) {
+                case RecodeTable.PROBLEM_NAME:
+                    recode = cursorWrapper.getProblemRecode();
+                    break;
+                case RecodeTable.PROGRAM_NAME:
+                    recode = cursorWrapper.getRecode();
+                    break;
+                case RecodeTable.RESULT_NAME:
+                    recode = cursorWrapper.getImageRecode();
+                    break;
+                case RecodeTable.ANALYSIS_NAME:
+                    recode = cursorWrapper.getRecode();
+                    break;
+            }
         }
+
         cursorWrapper.close();
         return recode;
     }

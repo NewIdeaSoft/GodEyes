@@ -1,5 +1,6 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -26,8 +27,11 @@ import java.util.Date;
  */
 
 public class ProblemSimpleInfoFragment extends Fragment {
-    public static final int REQUEST_CODE_DISCOVERED_DATE = 11;
-    public static final int REQUEST_CODE_HANDLED_DATE = 12;
+    public static final int REQUEST_DISCOVER = 101;
+    public static final int REQUEST_DISCOVER_DESCRIPTION = 102;
+    public static final int REQUEST_DISCOVER_DATE = 103;
+    public static final int REQUEST_TITLE = 104;
+    public static final int REQUEST_DISCOVER_ADDRESS = 105;
     private ProblemRecode mProblem;
     private TextView mDiscoveredDate;
     private TextView mDiscover;
@@ -52,14 +56,15 @@ public class ProblemSimpleInfoFragment extends Fragment {
         mTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startEditTextActivity(REQUEST_TITLE
+                        ,mTitle.getText().toString());
             }
         });
         mDiscoveredDate = (TextView) view.findViewById(R.id.button_discovered_time);
         mDiscoveredDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog(REQUEST_CODE_DISCOVERED_DATE,new Date());
+                showDatePickerDialog(REQUEST_DISCOVER_DATE,new Date());
             }
         });
         mDiscover = (TextView) view.findViewById(R.id.tv_discover);
@@ -73,7 +78,7 @@ public class ProblemSimpleInfoFragment extends Fragment {
         mDiscoveredPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startEditTextActivity(ProblemRecodeFragment1.REQUEST_DISCOVER_DESCRIPTION,
+                startEditTextActivity(REQUEST_DISCOVER_DESCRIPTION,
                         mDiscoveredPosition.getText().toString());
             }
         });
@@ -115,6 +120,29 @@ public class ProblemSimpleInfoFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode!= Activity.RESULT_OK){
+            return;
+        }
+        switch (requestCode){
+            case REQUEST_DISCOVER:
+
+                break;
+            case REQUEST_DISCOVER_ADDRESS:
+                break;
+            case REQUEST_DISCOVER_DATE:
+                break;
+            case REQUEST_DISCOVER_DESCRIPTION:
+                break;
+            case REQUEST_TITLE:
+                String title = data.getStringExtra("content_edit");
+                mProblem.setTitle(title);
+                mTitle.setText(title);
+                break;
+        }
+    }
+
     private String dateFormat(Date date){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String dateString = format.format(date);
@@ -130,5 +158,13 @@ public class ProblemSimpleInfoFragment extends Fragment {
 
     public void setProblem(ProblemRecode recode){
         mProblem = recode;
+    }
+
+    public ProblemRecode getProblem() {
+        return mProblem;
+    }
+
+    public JobPicsAdapter getAdapter() {
+        return mAdapter;
     }
 }

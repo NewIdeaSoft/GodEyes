@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.bean.problem.Recode;
+import com.nisoft.inspectortools.bean.problem.ImageRecode;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 
 
@@ -20,7 +20,7 @@ import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 
 public class ProblemSolvedInfoFragment extends Fragment {
     private TextView mSolvedText;
-    private Recode mProblem;
+    private ImageRecode mProblem;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class ProblemSolvedInfoFragment extends Fragment {
 
             }
         });
-        mProblem = ProblemRecodeFragment1.getProblem().getProgram();
+        mProblem = ProblemRecodeFragment1.getProblem().getResultRecode();
         if(mProblem.getDescription()!=null) {
             mSolvedText.setText(mProblem.getDescription());
         }
@@ -59,5 +59,13 @@ public class ProblemSolvedInfoFragment extends Fragment {
     private void updateProblem(){
         mProblem.setDescription(mSolvedText.getText().toString());
         ProblemRecodeFragment1.getProblem().getProgram().setDescription(mSolvedText.getText().toString());
+    }
+
+    public ImageRecode getProblem() {
+        return mProblem;
+    }
+
+    public void setProblem(ImageRecode problem) {
+        mProblem = problem;
     }
 }
