@@ -1,6 +1,7 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,58 +11,56 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.nisoft.inspectortools.bean.problem.Recode;
+import com.nisoft.inspectortools.ui.base.DatePickerDialog;
+import com.nisoft.inspectortools.ui.base.EditTextActivity;
+
+import java.util.Date;
 
 /**
  * Created by NewIdeaSoft on 2017/7/2.
  */
 
-public class RecodeFragment extends Fragment {
+public abstract class RecodeFragment extends Fragment {
 
     private Recode mRecode;
 //    private int layoutResId;
 
 
-//    protected void init(){
+    protected abstract void init();
+    public abstract void updateData();
+//    public abstract void updateView() {
 //
 //    }
-//    public void updateData(){
+    protected abstract View initView(LayoutInflater inflater, @Nullable ViewGroup container);
 //
-//    }
-//    public void updateView() {
-//
-//    }
-//    protected View initView(){
-//        return null;
-//    }
-//
-//    @Override
-//    public void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        init();
-//    }
-//
-//    @Nullable
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-//        View view = initView();
-//        return view;
-//    }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        updateView();
-//    }
-
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        updateData();
-//    }
-    public void setRecode(Recode recode){
-        mRecode = recode;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        init();
     }
-    public Recode getRecode(){
-        return mRecode;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View view = initView(inflater, container);
+        return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        updateData();
+    }
+
+    protected void startEditTextActivity(int requestCode,String initText) {
+        Intent intent = new Intent(getActivity(), EditTextActivity.class);
+        intent .putExtra("initText",initText);
+        startActivityForResult(intent,requestCode);
+    }
+    protected void showDatePickerDialog(Fragment targetFragment,int requestCode,Date date){
+        FragmentManager fm = getFragmentManager();
+        DatePickerDialog dialog = DatePickerDialog.newInstance(-1,date);
+        dialog.setTargetFragment(targetFragment,requestCode);
+        dialog.show(fm,"date");
     }
 }

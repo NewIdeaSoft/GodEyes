@@ -25,8 +25,10 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
 import com.nisoft.inspectortools.bean.problem.ProblemDataPackage;
+import com.nisoft.inspectortools.bean.problem.Recode;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 import com.nisoft.inspectortools.service.FileUploadService;
+import com.nisoft.inspectortools.ui.strings.FilePath;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 import com.nisoft.inspectortools.utils.VolumeImageDownLoad;
@@ -52,14 +54,18 @@ public class ProblemRecodeFragment1 extends Fragment {
 
     private static ProblemDataPackage mProblemData;
     private ViewPager problemViewPager;
-    private ArrayList<Fragment> problemFragmentList;
-    private LinearLayout tab_problem_simple_info;
-    private LinearLayout tab_problem_detailed_info;
-    private LinearLayout tab_problem_reason_info;
-    private LinearLayout tab_problem_solved_info;
-    private String mFolderPath;
+    private ArrayList<RecodeFragment> problemFragmentList;
+    private LinearLayout tab_problem_info;
+    private LinearLayout tab_problem_reason;
+    private LinearLayout tab_problem_program;
+
+    private LinearLayout tab_problem_result;
+    private String mProblemFolderPath;
+    private String mResultFolderPath;
     private ProgressDialog mDialog;
-    private boolean mEditable;
+    private boolean mEditable = true;
+    private String mUserName;
+    private String mUserId;
 
     public static ProblemRecodeFragment1 newInstance(String problemId) {
         Bundle args = new Bundle();
@@ -106,16 +112,7 @@ public class ProblemRecodeFragment1 extends Fragment {
         problemViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                switch (position) {
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                }
+                problemFragmentList.get(position).updateData();
             }
 
             @Override
@@ -123,19 +120,19 @@ public class ProblemRecodeFragment1 extends Fragment {
                 switch (position) {
                     case 0:
                         resTabBackground();
-                        tab_problem_simple_info.setBackgroundResource(R.color.colorTabSelect);
+                        tab_problem_info.setBackgroundResource(R.color.colorTabSelect);
                         break;
                     case 1:
                         resTabBackground();
-                        tab_problem_detailed_info.setBackgroundResource(R.color.colorTabSelect);
+                        tab_problem_reason.setBackgroundResource(R.color.colorTabSelect);
                         break;
                     case 2:
                         resTabBackground();
-                        tab_problem_reason_info.setBackgroundResource(R.color.colorTabSelect);
+                        tab_problem_program.setBackgroundResource(R.color.colorTabSelect);
                         break;
                     case 3:
                         resTabBackground();
-                        tab_problem_solved_info.setBackgroundResource(R.color.colorTabSelect);
+                        tab_problem_result.setBackgroundResource(R.color.colorTabSelect);
                         break;
                 }
             }
@@ -145,40 +142,40 @@ public class ProblemRecodeFragment1 extends Fragment {
 
             }
         });
-        tab_problem_simple_info = (LinearLayout) view.findViewById(R.id.tab_problem_simple_info);
-        tab_problem_detailed_info = (LinearLayout) view.findViewById(R.id.tab_problem_detailed_info);
-        tab_problem_reason_info = (LinearLayout) view.findViewById(R.id.tab_problem_reason_info);
-        tab_problem_solved_info = (LinearLayout) view.findViewById(R.id.tab_problem_sovled_info);
+        tab_problem_info = (LinearLayout) view.findViewById(R.id.tab_problem_info);
+        tab_problem_reason = (LinearLayout) view.findViewById(R.id.tab_problem_reason);
+        tab_problem_program = (LinearLayout) view.findViewById(R.id.tab_problem_program);
+        tab_problem_result = (LinearLayout) view.findViewById(R.id.tab_problem_result);
 
-        tab_problem_simple_info.setOnClickListener(new View.OnClickListener() {
+        tab_problem_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resTabBackground();
-                tab_problem_simple_info.setBackgroundResource(R.color.colorTabSelect);
+                tab_problem_info.setBackgroundResource(R.color.colorTabSelect);
                 problemViewPager.setCurrentItem(0);
             }
         });
-        tab_problem_detailed_info.setOnClickListener(new View.OnClickListener() {
+        tab_problem_reason.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resTabBackground();
-                tab_problem_detailed_info.setBackgroundResource(R.color.colorTabSelect);
+                tab_problem_reason.setBackgroundResource(R.color.colorTabSelect);
                 problemViewPager.setCurrentItem(1);
             }
         });
-        tab_problem_reason_info.setOnClickListener(new View.OnClickListener() {
+        tab_problem_program.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resTabBackground();
-                tab_problem_reason_info.setBackgroundResource(R.color.colorTabSelect);
+                tab_problem_program.setBackgroundResource(R.color.colorTabSelect);
                 problemViewPager.setCurrentItem(2);
             }
         });
-        tab_problem_solved_info.setOnClickListener(new View.OnClickListener() {
+        tab_problem_result.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resTabBackground();
-                tab_problem_solved_info.setBackgroundResource(R.color.colorTabSelect);
+                tab_problem_result.setBackgroundResource(R.color.colorTabSelect);
                 problemViewPager.setCurrentItem(3);
             }
         });
@@ -196,13 +193,17 @@ public class ProblemRecodeFragment1 extends Fragment {
         problemFragmentList.add(new ProblemAnalysisFragment());
         problemFragmentList.add(new ProblemProgramFragment());
         problemFragmentList.add(new ProblemResultFragment());
+        mProblemFolderPath = FilePath.PROBLEM_DATA_PATH + mProblemData.getProblem().getTitle() +
+                "(" + mProblemData.getProblem().getRecodeId() + ")/问题描述/";
+        mResultFolderPath =FilePath.PROBLEM_DATA_PATH + mProblemData.getProblem().getTitle() +
+                "(" + mProblemData.getProblem().getRecodeId() + ")/处理结果/";
     }
 
     private void resTabBackground() {
-        tab_problem_simple_info.setBackgroundResource(R.color.colorTabBackgroung);
-        tab_problem_detailed_info.setBackgroundResource(R.color.colorTabBackgroung);
-        tab_problem_reason_info.setBackgroundResource(R.color.colorTabBackgroung);
-        tab_problem_solved_info.setBackgroundResource(R.color.colorTabBackgroung);
+        tab_problem_info.setBackgroundResource(R.color.colorTabBackgroung);
+        tab_problem_reason.setBackgroundResource(R.color.colorTabBackgroung);
+        tab_problem_program.setBackgroundResource(R.color.colorTabBackgroung);
+        tab_problem_result.setBackgroundResource(R.color.colorTabBackgroung);
     }
 
     @Override
@@ -262,7 +263,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                 downloadUrls.add(url);
             }
         }
-        new VolumeImageDownLoad(downloadUrls, mFolderPath
+        new VolumeImageDownLoad(downloadUrls, mProblemFolderPath
                 , new VolumeImageDownLoad.DownloadStateListener() {
             @Override
             public void onStart() {
@@ -298,7 +299,7 @@ public class ProblemRecodeFragment1 extends Fragment {
         Gson gson = new Gson();
         String jobJson = gson.toJson(mProblemData);
         RequestBody body = new FormBody.Builder()
-                .add("intent", "upload")
+                .add("intent", "update")
                 .add("job_json", jobJson)
                 .build();
 
@@ -325,7 +326,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                         if (result.equals("OK")) {
                             Toast.makeText(getActivity(), "数据上传完成，开始上传照片！", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), FileUploadService.class);
-                            intent.putExtra("folder_path", mFolderPath);
+                            intent.putExtra("folder_path", mProblemFolderPath);
                             intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
                             intent.putExtra("recode_type",mProblemData.getProblem().getType());
                             getActivity().startService(intent);

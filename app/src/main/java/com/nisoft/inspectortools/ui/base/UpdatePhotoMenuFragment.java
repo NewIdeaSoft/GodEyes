@@ -21,7 +21,6 @@ import android.widget.LinearLayout;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.typeinspect.WorkingFragment;
-import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeFragment;
 import com.nisoft.inspectortools.utils.FileUtil;
 
 import java.io.File;
@@ -99,9 +98,7 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
     }
 
     private void deletePicture() {
-        if (getTargetFragment()instanceof ProblemRecodeFragment){
-            ((ProblemRecodeFragment)getTargetFragment()).removeSelectedPic(position);
-        }else if (getTargetFragment()instanceof WorkingFragment){
+        if (getTargetFragment()instanceof WorkingFragment){
             ((WorkingFragment)getTargetFragment()).removeSelectedPic(position);
         }
     }
@@ -115,7 +112,6 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
             dir.mkdirs();
         }
         File outputImage = new File(dir, UUID.randomUUID().toString()+".jpg");
-//        File outputImage = new File(dir, position + ".jpg");
         path = null;
         if (outputImage.exists()) {
             outputImage.delete();

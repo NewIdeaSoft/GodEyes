@@ -13,11 +13,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.bean.problem.Problem;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
-import com.nisoft.inspectortools.bean.problem.ProblemLab;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
-import com.nisoft.inspectortools.db.problem.ProblemDbSchema;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemListActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeActivity;

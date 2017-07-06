@@ -1,81 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <!-- 使用一个ViewPager 和导航菜单栏管理 问题概要 问题详情 原因分析 和 处理结果4个布局-->
-        <!-- 导航菜单-->
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:id="@+id/tab_problem_simple_info">
+                android:id="@+id/tab_problem_info">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="问题描述"
-                    android:textSize="20dp"
-                    android:textAlignment="center"/>
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="#000000"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:id="@+id/tab_problem_reason_info">
+                android:id="@+id/tab_problem_reason">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="原因分析"
-                    android:textSize="20dp"
-                    android:textAlignment="center"/>
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="#000000"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:id="@+id/tab_problem_sovled_info">
+                android:id="@+id/tab_problem_program">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="处理方案"
-                    android:textSize="20dp"
-                    android:textAlignment="center"/>
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="#000000"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:id="@+id/tab_problem_detailed_info">
+                android:id="@+id/tab_problem_result">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="处理结果"
-                    android:textSize="20dp"
-                    android:textAlignment="center"/>
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="#000000"/>
             </LinearLayout>
         </LinearLayout>
         <!-- ViewPager -->
        <android.support.v4.view.ViewPager
            android:id="@+id/problem_info_viewpager"
            android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:layout_marginLeft="8dp"
-           android:layout_marginRight="8dp">
+           android:layout_height="match_parent">
        </android.support.v4.view.ViewPager>
     </LinearLayout>
 

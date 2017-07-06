@@ -19,7 +19,7 @@ public class ProblemRecodeActivity extends SingleFragmentActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0){
-            String title = ProblemRecodeFragment.getProblem().getTitle();
+            String title = ProblemRecodeFragment1.getProblem().getProblem().getTitle();
             if (title==null){
                 Snackbar.make(findViewById(R.id.fragment_content),"为输入主题，数据将无法保存，确定退出吗",Snackbar.LENGTH_LONG)
                         .setAction("确定", new View.OnClickListener() {

@@ -11,18 +11,19 @@
         android:orientation="horizontal"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="实施人："/>
+            android:text="方案制定者："/>
         <TextView
-            android:id="@+id/tv_program_executed_member"
+            android:id="@+id/tv_program_author"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/text_edit_hint"
             android:layout_marginLeft="8dp"
+            android:hint="@string/text_edit_hint"
             android:layout_weight="2"/>
     </LinearLayout>
     <LinearLayout
@@ -36,9 +37,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="完成时间："/>
+            android:text="制定时间："/>
         <TextView
-            android:id="@+id/tv_program_executed_time"
+            android:id="@+id/tv_program_design_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -49,12 +50,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        android:text="结果描述"
+        android:text="方案描述"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"/>
     <TextView
-        android:id="@+id/tv_problem_summary"
+        android:id="@+id/tv_problem_program_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
@@ -62,9 +63,4 @@
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"/>
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/result_image_recycler_view">
-    </android.support.v7.widget.RecyclerView>
 </LinearLayout>

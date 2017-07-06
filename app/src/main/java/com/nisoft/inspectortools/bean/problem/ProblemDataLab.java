@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.nisoft.inspectortools.db.ProblemsSQLiteOpenHelper;
+import com.nisoft.inspectortools.db.problem.ProblemsSQLiteOpenHelper;
 import com.nisoft.inspectortools.db.problem.RecodeCursorWrapper;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 
@@ -216,10 +216,18 @@ public class ProblemDataLab {
     }
 
     public void updateProblem(ProblemDataPackage problem) {
-        updateRecode(RecodeTable.PROBLEM_NAME, problem.getProblem());
-        updateRecode(RecodeTable.ANALYSIS_NAME, problem.getAnalysis());
-        updateRecode(RecodeTable.PROGRAM_NAME, problem.getProgram());
-        updateRecode(RecodeTable.RESULT_NAME, problem.getResultRecode());
+        if (problem.getProblem()!=null){
+            updateRecode(RecodeTable.PROBLEM_NAME, problem.getProblem());
+        }
+        if (problem.getAnalysis()!=null){
+        updateRecode(RecodeTable.ANALYSIS_NAME, problem.getAnalysis());}
+        if (problem.getProgram()!=null){
+            updateRecode(RecodeTable.PROGRAM_NAME, problem.getProgram());
+        }
+        if (problem.getResultRecode()!=null){
+            updateRecode(RecodeTable.RESULT_NAME, problem.getResultRecode());
+        }
+
     }
 
     public ArrayList<ProblemRecode> getProblems(RecodeCursorWrapper cursor) {
