@@ -18,7 +18,10 @@ import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
  * Created by NewIdeaSoft on 2017/4/26.
  */
 
-public class ProblemSolvedInfoFragment extends Fragment {
+public class ProblemResultFragment extends Fragment {
+    public static final int REQUEST_EXECUTOR = 401;
+    public static final int REQUEST_EXECUTE_DATE = 402;
+    public static final int REQUEST_EXECUTE_DESCRIPTION = 403;
     private TextView mSolvedText;
     private ImageRecode mProblem;
     @Nullable
@@ -39,15 +42,13 @@ public class ProblemSolvedInfoFragment extends Fragment {
         return view;
     }
 
-    public static ProblemSolvedInfoFragment newInstance(String problemId) {
+    public static ProblemResultFragment newInstance(String problemId) {
         Bundle args = new Bundle();
         args.putSerializable(RecodeTable.Cols.PROBLEM_ID,problemId);
-        ProblemSolvedInfoFragment fragment = new ProblemSolvedInfoFragment();
+        ProblemResultFragment fragment = new ProblemResultFragment();
         fragment.setArguments(args);
         return fragment;
     }
-
-
 
     @Override
     public void onPause() {

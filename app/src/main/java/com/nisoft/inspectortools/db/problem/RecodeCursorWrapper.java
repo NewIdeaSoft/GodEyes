@@ -18,7 +18,6 @@ import java.util.Date;
 public class RecodeCursorWrapper extends CursorWrapper {
     /**
      * Creates a cursor wrapper.
-     *
      * @param cursor The underlying cursor to wrap.
      */
     public RecodeCursorWrapper(Cursor cursor) {

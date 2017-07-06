@@ -18,6 +18,9 @@ import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
  */
 
 public class ProblemAnalysisFragment extends Fragment {
+    public static final int REQUEST_ANALYST = 201;
+    public static final int REQUEST_ANALYSIS_DATE = 202;
+    public static final int REQUEST_ANALYSIS_DESCRIPTION = 203;
     private TextView mAnalyserTextView;
     private TextView mAnalystDateTextView;
     private TextView reasonText;
@@ -42,8 +45,6 @@ public class ProblemAnalysisFragment extends Fragment {
             }
         });
         reasonText = (TextView) view.findViewById(R.id.edit_problem_reason_info);
-
-//        mProblem = ProblemLab.getProblemLab(getActivity()).getProblem((UUID) getArguments().getSerializable(ProblemTable.Cols.UUID));
         mProblem = ProblemRecodeFragment1.getProblem().getAnalysis();
         if (mProblem.getDescription() != null) {
             reasonText.setText(mProblem.getDescription());

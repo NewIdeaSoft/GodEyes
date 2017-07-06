@@ -1,104 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
         android:orientation="horizontal"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="4dp">
+        android:paddingRight="8dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/problem_title"/>
+            android:text="@string/problem_title"
+            android:textColor="#000000"
+            android:textSize="16dp"/>
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:hint="@string/text_edit_hint"
+            android:textColor="#000000"
+            android:textSize="16dp"/>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:layout_marginBottom="8dp">
+        android:paddingRight="8dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/problem_discovered_time"/>
+            android:text="@string/problem_discovered_time"
+            android:textColor="#000000"
+            android:textSize="16dp"/>
+
         <TextView
             android:id="@+id/button_discovered_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:hint="@string/text_date_hint"
+            android:textColor="#000000"
+            android:textSize="16dp"/>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:layout_marginBottom="8dp">
+        android:paddingRight="8dp">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/problem_discovered_position"/>
+            android:text="@string/problem_discovered_position"
+            android:textColor="#000000"
+            android:textSize="16dp"/>
+
         <TextView
             android:id="@+id/tv_discover_position"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:hint="@string/text_edit_hint"
+            android:textColor="#000000"
+            android:textSize="16dp"/>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:layout_marginBottom="8dp">
+        android:paddingRight="8dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/problem_discovered_people"/>
+            android:text="@string/problem_discovered_people"
+            android:textColor="#000000"
+            android:textSize="16dp"/>
         <TextView
             android:id="@+id/tv_discover"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:hint="@string/text_edit_hint"
+            android:textColor="#000000"
+            android:textSize="16dp"/>
     </LinearLayout>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:text="问题描述"
         android:textColor="#000000"
-        android:layout_marginBottom="8dp"/>
+        android:textSize="16dp"/>
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:id="@+id/tv_description"
-        android:textColor="#000000"
-        android:layout_marginBottom="8dp"/>
-    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/problem_images_recycler_view">
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:hint="@string/text_edit_hint"
+        android:textColor="#000000"
+        android:textSize="16dp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/problem_images_recycler_view"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>
 </LinearLayout>

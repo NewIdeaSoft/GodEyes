@@ -9,6 +9,9 @@ import com.nisoft.inspectortools.bean.problem.Recode;
  */
 
 public class ProblemProgramFragment extends Fragment {
+    public static final int REQUEST_PROGRAM_AUTHOR = 301;
+    public static final int REQUEST_PROGRAM_DATE = 302;
+    public static final int REQUEST_PROGRAM_DESCRIPTION = 303;
     private Recode mProgram;
 
     public Recode getProgram() {

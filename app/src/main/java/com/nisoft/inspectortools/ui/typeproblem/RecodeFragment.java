@@ -18,45 +18,50 @@ import com.nisoft.inspectortools.bean.problem.Recode;
 public class RecodeFragment extends Fragment {
 
     private Recode mRecode;
-    private int layoutResId;
+//    private int layoutResId;
 
 
-    protected void init(){
+//    protected void init(){
+//
+//    }
+//    public void updateData(){
+//
+//    }
+//    public void updateView() {
+//
+//    }
+//    protected View initView(){
+//        return null;
+//    }
+//
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        init();
+//    }
+//
+//    @Nullable
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+//        View view = initView();
+//        return view;
+//    }
 
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        updateView();
+//    }
+
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        updateData();
+//    }
+    public void setRecode(Recode recode){
+        mRecode = recode;
     }
-    public void updateData(){
-
+    public Recode getRecode(){
+        return mRecode;
     }
-    public void updateView() {
-
-    }
-    protected View initView(){
-        return null;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        init();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = initView();
-        return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateView();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        updateData();
-    }
-
 }

@@ -2,10 +2,12 @@
     <string name="app_name">工作记录</string>
     <string name="make_picture">拍摄照片</string>
     <string name="choose_picture">从相册选择照片</string>
-    <string name="problem_title">质量问题</string>
+    <string name="problem_title">问题主题:</string>
     <string name="problem_discovered_time">发现时间：</string>
     <string name="problem_discovered_position">发现地点：</string>
     <string name="problem_discovered_people">发现者：</string>
     <string name="problem_details_hint">点击输入问题详细描述</string>
     <string name="problem_reason_hint">点击输入对该问题的原因分析</string>
+    <string name="text_edit_hint">点击输入</string>
+    <string name="text_date_hint">点击选择时间</string>
 </resources>

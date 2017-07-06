@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.JobPicsAdapter;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
+import com.nisoft.inspectortools.bean.problem.Recode;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.base.EditTextActivity;
 
@@ -26,7 +27,7 @@ import java.util.Date;
  * Created by NewIdeaSoft on 2017/4/26.
  */
 
-public class ProblemSimpleInfoFragment extends Fragment {
+public class ProblemInfoFragment extends RecodeFragment {
     public static final int REQUEST_DISCOVER = 101;
     public static final int REQUEST_DISCOVER_DESCRIPTION = 102;
     public static final int REQUEST_DISCOVER_DATE = 103;
@@ -87,7 +88,7 @@ public class ProblemSimpleInfoFragment extends Fragment {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
         mImagesRecyclerView.setLayoutManager(layoutManager);
         String folder = ProblemRecodeFragment1.getProblem().getProblem().getImagesFolderPath();
-        mAdapter = new JobPicsAdapter(ProblemSimpleInfoFragment.this,R.layout.problem_image_item,folder);
+        mAdapter = new JobPicsAdapter(ProblemInfoFragment.this,R.layout.problem_image_item,folder);
         mImagesRecyclerView.setAdapter(mAdapter);
         return view;
     }
@@ -152,7 +153,7 @@ public class ProblemSimpleInfoFragment extends Fragment {
     private void showDatePickerDialog(int requestCode,Date date){
         FragmentManager fm = getFragmentManager();
         DatePickerDialog dialog = DatePickerDialog.newInstance(-1,date);
-        dialog.setTargetFragment(ProblemSimpleInfoFragment.this,requestCode);
+        dialog.setTargetFragment(ProblemInfoFragment.this,requestCode);
         dialog.show(fm,"date");
     }
 

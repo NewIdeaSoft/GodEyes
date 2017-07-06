@@ -1,7 +1,5 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
@@ -24,27 +22,17 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.adapter.JobPicsAdapter;
-import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
-import com.nisoft.inspectortools.bean.inspect.PicsLab;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
 import com.nisoft.inspectortools.bean.problem.ProblemDataPackage;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
-import com.nisoft.inspectortools.gson.RecodeDataPackage;
 import com.nisoft.inspectortools.service.FileUploadService;
-import com.nisoft.inspectortools.ui.base.DatePickerDialog;
-import com.nisoft.inspectortools.ui.typeinspect.WorkingFragment;
 import com.nisoft.inspectortools.utils.DialogUtil;
-import com.nisoft.inspectortools.utils.FileUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
-import com.nisoft.inspectortools.utils.StringFormatUtil;
 import com.nisoft.inspectortools.utils.VolumeImageDownLoad;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -57,15 +45,6 @@ import okhttp3.Response;
  */
 
 public class ProblemRecodeFragment1 extends Fragment {
-    public static final int REQUEST_ANALYST = 201;
-    public static final int REQUEST_ANALYSIS_DATE = 202;
-    public static final int REQUEST_ANALYSIS_DESCRIPTION = 203;
-    public static final int REQUEST_PROGRAM_AUTHOR = 301;
-    public static final int REQUEST_PROGRAM_DATE = 302;
-    public static final int REQUEST_PROGRAM_DESCRIPTION = 303;
-    public static final int REQUEST_EXECUTOR = 401;
-    public static final int REQUEST_EXECUTE_DATE = 402;
-    public static final int REQUEST_EXECUTE_DESCRIPTION = 403;
 
     public static final String TAG = "ProblemRecodeFragment1:";
 
@@ -74,10 +53,6 @@ public class ProblemRecodeFragment1 extends Fragment {
     private static ProblemDataPackage mProblemData;
     private ViewPager problemViewPager;
     private ArrayList<Fragment> problemFragmentList;
-    private ProblemSimpleInfoFragment mProblemFragment;
-    private ProblemAnalysisFragment mAnalysisFragment;
-    private ProblemProgramFragment mProgramFragment;
-    private ProblemSolvedInfoFragment mSolvedInfoFragment;
     private LinearLayout tab_problem_simple_info;
     private LinearLayout tab_problem_detailed_info;
     private LinearLayout tab_problem_reason_info;
@@ -133,16 +108,12 @@ public class ProblemRecodeFragment1 extends Fragment {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 switch (position) {
                     case 0:
-                        mProblemData.setProblem(mProblemFragment.getProblem());
                         break;
                     case 1:
-                        mProblemData.setAnalysis(mAnalysisFragment.getProblem());
                         break;
                     case 2:
-                        mProblemData.setProgram(mProgramFragment.getProgram());
                         break;
                     case 3:
-                        mProblemData.setResultRecode(mSolvedInfoFragment.getProblem());
                         break;
                 }
             }
@@ -221,14 +192,10 @@ public class ProblemRecodeFragment1 extends Fragment {
         mProblemData = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(mProblemId);
         Gson gson = new Gson();
         Log.e(TAG,gson.toJson(mProblemData));
-        mProblemFragment = new ProblemSimpleInfoFragment();
-        mAnalysisFragment = new ProblemAnalysisFragment();
-        mProgramFragment = new ProblemProgramFragment();
-        mSolvedInfoFragment = new ProblemSolvedInfoFragment();
-        problemFragmentList.add(mProblemFragment);
-        problemFragmentList.add(mAnalysisFragment);
-        problemFragmentList.add(mProgramFragment);
-        problemFragmentList.add(mSolvedInfoFragment);
+        problemFragmentList.add(new ProblemInfoFragment());
+        problemFragmentList.add(new ProblemAnalysisFragment());
+        problemFragmentList.add(new ProblemProgramFragment());
+        problemFragmentList.add(new ProblemResultFragment());
     }
 
     private void resTabBackground() {
@@ -241,7 +208,6 @@ public class ProblemRecodeFragment1 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
     @Override
@@ -288,7 +254,7 @@ public class ProblemRecodeFragment1 extends Fragment {
      * 同步服务器与本地记录
      */
     private void synchronizeRecode() {
-        ArrayList<String> urls = mProblemFragment.getAdapter().getPath();
+        ArrayList<String> urls = ((ProblemInfoFragment)problemFragmentList.get(0)).getAdapter().getPath();
         ArrayList<String> downloadUrls = new ArrayList<>();
         for (int i = 0; i < urls.size(); i++) {
             String url = urls.get(i);
