@@ -28,9 +28,10 @@ public class FileUploadService extends Service {
         String uploadUrl = intent.getStringExtra("folder_path");
         String companyId = intent.getStringExtra("company_id");
         String recodeType = intent.getStringExtra("recode_type");
+        String folderName = intent.getStringExtra("folder_name");
         Log.e("uploadUrl", uploadUrl);
         File folder = new File(uploadUrl);
-        FileUploadUtil.uploadFile(folder,companyId,recodeType);
+        FileUploadUtil.uploadFile(folder,companyId,recodeType,folderName);
         return super.onStartCommand(intent, flags, startId);
     }
 

@@ -47,14 +47,14 @@ public class RecodeCursorWrapper extends CursorWrapper {
         Date date = new Date(getLong(getColumnIndex(RecodeTable.Cols.DATE)));
         String descriptionText = getString(getColumnIndex(RecodeTable.Cols.DESCRIPTION_TEXT));
         long update_time = getLong(getColumnIndex(RecodeTable.Cols.UPDATE_TIME));
-        String folderPath = getString(getColumnIndex(RecodeTable.Cols.FOLDER_PATH));
+        String imagesString = getString(getColumnIndex(RecodeTable.Cols.IMAGES_NAME));
         ImageRecode recode = new ImageRecode(problemId);
         recode.setDate(date);
         recode.setAuthor(author);
         recode.setType(type);
         recode.setUpdateTime(update_time);
         recode.setDescription(descriptionText);
-        recode.setImagesFolderPath(folderPath);
+        recode.setImagesNameOnserver(StringFormatUtil.getStrings(imagesString));
         return recode;
     }
 
@@ -65,7 +65,7 @@ public class RecodeCursorWrapper extends CursorWrapper {
         Date date = new Date(getLong(getColumnIndex(RecodeTable.Cols.DATE)));
         String descriptionText = getString(getColumnIndex(RecodeTable.Cols.DESCRIPTION_TEXT));
         long update_time = getLong(getColumnIndex(RecodeTable.Cols.UPDATE_TIME));
-        String folderPath = getString(getColumnIndex(RecodeTable.Cols.FOLDER_PATH));
+        String imagesString = getString(getColumnIndex(RecodeTable.Cols.IMAGES_NAME));
         String suspects = getString(getColumnIndex(RecodeTable.Cols.SUSPECTS));
         String title = getString(getColumnIndex(RecodeTable.Cols.TITLE));
         String address = getString(getColumnIndex(RecodeTable.Cols.ADDRESS));
@@ -75,7 +75,7 @@ public class RecodeCursorWrapper extends CursorWrapper {
         recode.setType(type);
         recode.setUpdateTime(update_time);
         recode.setDescription(descriptionText);
-        recode.setImagesFolderPath(folderPath);
+        recode.setImagesNameOnserver(StringFormatUtil.getStrings(imagesString));
         recode.setAddress(address);
         recode.setSuspects(StringFormatUtil.getStrings(suspects));
         recode.setTitle(title);

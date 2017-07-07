@@ -1,24 +1,28 @@
 package com.nisoft.inspectortools.bean.problem;
 
+import java.util.ArrayList;
+
 /**
  * Created by NewIdeaSoft on 2017/7/1.
  */
 
 public class ImageRecode extends Recode {
-    private String mImagesFolderPath;
+    private ArrayList<String> mImagesNameOnserver;
 
     public ImageRecode() {
     }
+
+    
 
     public ImageRecode(String recodeId) {
         super(recodeId);
     }
 
-    public String getImagesFolderPath() {
-        return mImagesFolderPath;
+    public ArrayList<String> getImagesNameOnserver() {
+        return mImagesNameOnserver;
     }
 
-    public void setImagesFolderPath(String imagesFolderPath) {
-        mImagesFolderPath = imagesFolderPath;
+    public void setImagesNameOnserver(ArrayList<String> imagesNameOnserver) {
+        mImagesNameOnserver = imagesNameOnserver;
     }
 }

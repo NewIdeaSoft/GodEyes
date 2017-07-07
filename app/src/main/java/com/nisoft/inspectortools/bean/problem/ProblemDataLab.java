@@ -74,9 +74,9 @@ public class ProblemDataLab {
         values.put(RecodeTable.Cols.DATE, dateTime);
         values.put(RecodeTable.Cols.UPDATE_TIME, updateTime);
         if (recode instanceof ImageRecode) {
-            String folderPath = ((ImageRecode) recode).getImagesFolderPath();
+            ArrayList<String> folderPath = ((ImageRecode) recode).getImagesNameOnserver();
             if (folderPath != null) {
-                values.put(RecodeTable.Cols.FOLDER_PATH, folderPath);
+                values.put(RecodeTable.Cols.IMAGES_NAME, folderPath.toString());
             }
         }
         if (recode instanceof ProblemRecode) {

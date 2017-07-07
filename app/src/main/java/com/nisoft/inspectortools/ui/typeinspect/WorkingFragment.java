@@ -478,8 +478,8 @@ public class WorkingFragment extends Fragment {
                                 mDialog.dismiss();
                                 Toast.makeText(getActivity(), "记录加载完成！", Toast.LENGTH_SHORT).show();
                                 mAdapter = new JobPicsAdapter(WorkingFragment.this,
-                                        R.layout.inspect_image_item, mFolderPath);
-                                mAdapter.setRecode(sRecodePics);
+                                        R.layout.inspect_image_item,sRecodePics.getImagesName(),
+                                        sRecodePics.getType() + "/" + sRecodePics.getJobNum() + "/",mFolderPath);
                                 mAdapter.setEditable(true);
                                 if (!sRecodePics.getInspectorId()
                                         .equals(UserLab.getUserLab(getActivity()).getEmployee().getPhone())) {
@@ -536,6 +536,7 @@ public class WorkingFragment extends Fragment {
                             intent.putExtra("folder_path", sRecodePics.getPicFolderPath());
                             intent.putExtra("company_id",UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
                             intent.putExtra("recode_type",jobType);
+                            intent.putExtra("folder_name",sRecodePics.getJobNum());
                             getActivity().startService(intent);
                         } else {
                             Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();

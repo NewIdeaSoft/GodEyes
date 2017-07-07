@@ -21,6 +21,7 @@ public class RecodeDbSchema {
             public static final String SUSPECTS = "suspects";
             public static final String TITLE="title";
             public static final String ADDRESS = "address";
+            public static final String IMAGES_NAME = "images_name";
         }
     }
 }

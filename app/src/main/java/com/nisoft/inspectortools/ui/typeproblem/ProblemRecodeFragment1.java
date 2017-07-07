@@ -328,7 +328,8 @@ public class ProblemRecodeFragment1 extends Fragment {
                             Intent intent = new Intent(getActivity(), FileUploadService.class);
                             intent.putExtra("folder_path", mProblemFolderPath);
                             intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
-                            intent.putExtra("recode_type",mProblemData.getProblem().getType());
+                            intent.putExtra("recode_type","problem");
+                            intent.putExtra("folder_name",mProblemData.getProblem().getRecodeId()+"/problem");
                             getActivity().startService(intent);
                         } else {
                             Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();

@@ -16,6 +16,7 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
+import com.nisoft.inspectortools.ui.strings.FilePath;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemListActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeActivity;
 import com.nisoft.inspectortools.utils.FileUtil;
@@ -30,9 +31,12 @@ import java.util.ArrayList;
 public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDeleteAdapter.SwipeLeftViewHolder> {
     private Context mContext;
     private ProblemRecode mProblem;
+    private String mFolderPath;
     public SwipeLeftDeleteAdapter(Context context, ProblemRecode problem){
         mContext = context;
         mProblem = problem;
+        mFolderPath = FilePath.PROBLEM_DATA_PATH + mProblem.getTitle() +
+                "(" + mProblem.getRecodeId() + ")/问题描述/";
     }
     @Override
     public SwipeLeftViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -43,8 +47,8 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
     @Override
     public void onBindViewHolder(SwipeLeftViewHolder holder, int position) {
         if (position == 0){
-            String folderPath = mProblem.getImagesFolderPath();
-            ArrayList<String> imagePathList = FileUtil.getImagesPath(folderPath);
+
+            ArrayList<String> imagePathList = FileUtil.getImagesPath(mFolderPath);
             if (imagePathList!=null&&imagePathList.size()>0){
                 Glide.with(mContext).load(imagePathList.get(0)).into(holder.mProblemImageView);
             }
@@ -72,10 +76,9 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String folderPath = mProblem.getImagesFolderPath();
                     ProblemDataLab.getProblemDataLab(mContext.getApplicationContext()).delete(mProblem);
                     //删除照片文件，添加从相册复制文件到应用图片存储文件后启用，以免删除相册图片
-                    File file = new File(folderPath);
+                    File file = new File(mFolderPath);
                     file.delete();
                     (((ProblemListActivity)mContext).getFragmentManager().findFragmentById(R.id.fragment_content)).onResume();
                 }

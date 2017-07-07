@@ -49,8 +49,8 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
     private ArrayList<String> mPicsPath;
     private int mImageLayoutId;
     private String mRootPath;
-    private MaterialInspectRecode mRecode;
     private ArrayList<String> mImagesName;
+    private String mFolderPathOnServer;
     private boolean editable;
 
     private MediaScannerConnection conn;
@@ -66,20 +66,23 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         refreshPath();
     }
 
-    public JobPicsAdapter(Fragment fragment, int imageLayoutId, MaterialInspectRecode recode, String rootPath) {
+    public JobPicsAdapter(Fragment fragment, int imageLayoutId, ArrayList<String> imagesName, String folderPathOnServer, String rootPath) {
         mFragment = fragment;
         mContext = mFragment.getActivity();
         mImageLayoutId = imageLayoutId;
         mRootPath = rootPath;
-        mRecode = recode;
-        mImagesName = recode.getImagesName();
+        mImagesName = imagesName;
+        mFolderPathOnServer = folderPathOnServer;
         resetPath();
     }
 
-    public void setRecode(MaterialInspectRecode recode) {
-        mRecode = recode;
-        mImagesName = recode.getImagesName();
-        resetPath();
+
+    public void setImagesName(ArrayList<String> imagesName) {
+        mImagesName = imagesName;
+    }
+
+    public void setFolderPathOnServer(String folderPathOnServer) {
+        mFolderPathOnServer = folderPathOnServer;
     }
 
     public void refreshPath() {
@@ -124,9 +127,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
             } else {
                 imagesUrl.add(RECODE_FOLDER_ADDRESS +
                         UserLab.getUserLab(mContext).getEmployee().getCompanyId() + "/" +
-                        mRecode.getType() + "/" +
-                        mRecode.getJobNum() + "/"
-                        + name);
+                        mFolderPathOnServer + name);
             }
         }
         for (String name : localImageFilesName) {

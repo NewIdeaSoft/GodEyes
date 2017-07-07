@@ -28,9 +28,7 @@ public abstract class RecodeFragment extends Fragment {
 
     protected abstract void init();
     public abstract void updateData();
-//    public abstract void updateView() {
-//
-//    }
+//    public abstract void updateView();
     protected abstract View initView(LayoutInflater inflater, @Nullable ViewGroup container);
 //
     @Override

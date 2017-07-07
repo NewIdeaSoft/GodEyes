@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 
 
@@ -25,7 +24,7 @@ public class ProblemsSQLiteOpenHelper extends SQLiteOpenHelper {
             + RecodeTable.Cols.DATE + ","
             + RecodeTable.Cols.SUSPECTS + ","
             + RecodeTable.Cols.TYPE + ","
-            + RecodeTable.Cols.FOLDER_PATH + ","
+            + RecodeTable.Cols.IMAGES_NAME + ","
             + RecodeTable.Cols.UPDATE_TIME + ","
             + RecodeTable.Cols.DESCRIPTION_TEXT + ")";
     private static final String CREATE_ANALYSIS = "create table " + RecodeTable.ANALYSIS_NAME +
@@ -52,7 +51,7 @@ public class ProblemsSQLiteOpenHelper extends SQLiteOpenHelper {
             + RecodeTable.Cols.AUTHOR + ","
             + RecodeTable.Cols.DATE + ","
             + RecodeTable.Cols.UPDATE_TIME + ","
-            + RecodeTable.Cols.FOLDER_PATH + ","
+            + RecodeTable.Cols.IMAGES_NAME + ","
             + RecodeTable.Cols.DESCRIPTION_TEXT + ")";
 
     public ProblemsSQLiteOpenHelper(Context context) {

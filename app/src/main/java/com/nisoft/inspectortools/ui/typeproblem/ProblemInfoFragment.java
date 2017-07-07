@@ -68,7 +68,14 @@ public class ProblemInfoFragment extends RecodeFragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
+        Date updateDate = new Date();
+        long updateTime = updateDate.getTime();
+        mProblem.setUpdateTime(updateTime);
         switch (requestCode) {
+            case 1:
+                mAdapter.resetPath();
+                mAdapter.notifyDataSetChanged();
+                break;
             case REQUEST_DISCOVER:
                 String discover = data.getStringExtra("content_edit");
                 mProblem.setAuthor(discover);
@@ -150,7 +157,7 @@ public class ProblemInfoFragment extends RecodeFragment {
         mDiscoveredPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startEditTextActivity(REQUEST_DISCOVER_DESCRIPTION,
+                startEditTextActivity(REQUEST_DISCOVER_ADDRESS,
                         mDiscoveredPosition.getText().toString());
             }
         });
@@ -165,7 +172,9 @@ public class ProblemInfoFragment extends RecodeFragment {
         updateView();
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         mImagesRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new JobPicsAdapter(ProblemInfoFragment.this, R.layout.problem_image_item, mFolderPath);
+        mAdapter = new JobPicsAdapter(ProblemInfoFragment.this,
+                R.layout.problem_image_item,mProblem.getImagesNameOnserver(),
+                "problem/"+mProblem.getRecodeId()+"/problem/",mFolderPath);
         mAdapter.setEditable(true);
         mImagesRecyclerView.setAdapter(mAdapter);
         return view;
