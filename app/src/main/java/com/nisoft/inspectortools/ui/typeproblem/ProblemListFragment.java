@@ -150,19 +150,21 @@ public class ProblemListFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
                 Log.e("listJson:", result);
-
-                Gson gson = new Gson();
-                ProblemListDataPackage recodeData = gson.fromJson(result, ProblemListDataPackage.class);
-                ArrayList<ProblemRecode> recodes = recodeData.getProblemRecodes();
-                for (ProblemRecode recode1 : recodes) {
-                    for (ProblemRecode recode2 : mProblems) {
-                        if (recode1.getRecodeId().equals(recode2.getRecodeId())) {
-                            break;
+                if (!result.equals("zero")) {
+                    Gson gson = new Gson();
+                    ProblemListDataPackage recodeData = gson.fromJson(result, ProblemListDataPackage.class);
+                    ArrayList<ProblemRecode> recodes = recodeData.getProblemRecodes();
+                    for (ProblemRecode recode1 : recodes) {
+                        for (ProblemRecode recode2 : mProblems) {
+                            if (recode1.getRecodeId().equals(recode2.getRecodeId())) {
+                                break;
+                            }
+                            ProblemDataLab.getProblemDataLab(getActivity()).updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
                         }
-                        ProblemDataLab.getProblemDataLab(getActivity()).updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
                     }
+                    mProblems = recodes;
+
                 }
-                mProblems = recodes;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
