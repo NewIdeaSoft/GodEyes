@@ -66,7 +66,9 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         refreshPath();
     }
 
-    public JobPicsAdapter(Fragment fragment, int imageLayoutId, ArrayList<String> imagesName, String folderPathOnServer, String rootPath) {
+    public JobPicsAdapter(Fragment fragment, int imageLayoutId,
+                          ArrayList<String> imagesName,
+                          String folderPathOnServer, String rootPath) {
         mFragment = fragment;
         mContext = mFragment.getActivity();
         mImageLayoutId = imageLayoutId;
@@ -74,15 +76,6 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         mImagesName = imagesName;
         mFolderPathOnServer = folderPathOnServer;
         resetPath();
-    }
-
-
-    public void setImagesName(ArrayList<String> imagesName) {
-        mImagesName = imagesName;
-    }
-
-    public void setFolderPathOnServer(String folderPathOnServer) {
-        mFolderPathOnServer = folderPathOnServer;
     }
 
     public void refreshPath() {

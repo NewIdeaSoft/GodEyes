@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,6 +122,7 @@ public class ProblemInfoFragment extends RecodeFragment {
         mProblem = ProblemRecodeFragment1.getProblem().getProblem();
         mFolderPath = FilePath.PROBLEM_DATA_PATH + mProblem.getTitle() +
                 "(" + mProblem.getRecodeId() + ")/问题描述/";
+        Log.e("JobPicsAdapter:",mFolderPath+"");
     }
 
     @Override
@@ -173,8 +175,10 @@ public class ProblemInfoFragment extends RecodeFragment {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         mImagesRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new JobPicsAdapter(ProblemInfoFragment.this,
-                R.layout.problem_image_item,mProblem.getImagesNameOnserver(),
-                "problem/"+mProblem.getRecodeId()+"/problem/",mFolderPath);
+                R.layout.problem_image_item,
+                mProblem.getImagesNameOnServer(),
+                "problem/"+mProblem.getRecodeId()+"/problem/",
+                mFolderPath);
         mAdapter.setEditable(true);
         mImagesRecyclerView.setAdapter(mAdapter);
         return view;

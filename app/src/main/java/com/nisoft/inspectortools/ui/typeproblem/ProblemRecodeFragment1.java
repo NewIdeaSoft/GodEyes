@@ -23,8 +23,10 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.UserLab;
+import com.nisoft.inspectortools.bean.problem.ImageRecode;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
 import com.nisoft.inspectortools.bean.problem.ProblemDataPackage;
+import com.nisoft.inspectortools.bean.problem.ProblemRecode;
 import com.nisoft.inspectortools.bean.problem.Recode;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 import com.nisoft.inspectortools.service.FileUploadService;
@@ -179,6 +181,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                 problemViewPager.setCurrentItem(3);
             }
         });
+        downloadRecode();
         return view;
     }
 
@@ -378,10 +381,9 @@ public class ProblemRecodeFragment1 extends Fragment {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
-                        Log.e(TAG, result);
+                        Log.e("download:", result);
                         Gson gson = new Gson();
                         ProblemDataPackage serviceRecode = gson.fromJson(result, ProblemDataPackage.class);
-                        final String inspector = serviceRecode.getProblem().getAuthor();
                         mProblemData = findLaterRecode(localProblemData, serviceRecode);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -393,11 +395,19 @@ public class ProblemRecodeFragment1 extends Fragment {
                     }
                 });
     }
-    private ProblemDataPackage findLaterRecode(ProblemDataPackage recode1
-            , ProblemDataPackage recode2) {
-        if (recode1.getProblem().getUpdateTime() > recode2.getProblem().getUpdateTime()) {
-            return recode1;
+    private ProblemDataPackage findLaterRecode(ProblemDataPackage localProblemData
+            , ProblemDataPackage serviceRecode) {
+        if (localProblemData.getProblem().getUpdateTime() > serviceRecode.getProblem().getUpdateTime()) {
+            ProblemRecode problemRecode = localProblemData.getProblem();
+            ImageRecode resultRecode = localProblemData.getResultRecode();
+            ArrayList<String> problemImagesName = serviceRecode.getProblem().getImagesNameOnServer();
+            ArrayList<String> resultImagesName = serviceRecode.getResultRecode().getImagesNameOnServer();
+            problemRecode.setImagesNameOnserver(problemImagesName);
+            resultRecode.setImagesNameOnserver(resultImagesName);
+            localProblemData.setProblem(problemRecode);
+            localProblemData.setResultRecode(resultRecode);
+            return localProblemData;
         }
-        return recode2;
+        return serviceRecode;
     }
 }
