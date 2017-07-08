@@ -317,4 +317,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         this.editable = editable;
     }
 
+    public void setRootPath(String rootPath) {
+        mRootPath = rootPath;
+    }
 }

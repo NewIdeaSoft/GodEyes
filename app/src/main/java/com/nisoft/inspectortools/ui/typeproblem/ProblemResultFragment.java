@@ -1,8 +1,12 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +14,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.adapter.JobPicsAdapter;
 import com.nisoft.inspectortools.bean.problem.ImageRecode;
-import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
+import com.nisoft.inspectortools.ui.base.DatePickerDialog;
+import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.Date;
 
@@ -28,6 +34,9 @@ public class ProblemResultFragment extends RecodeFragment {
     private TextView mHandlerTextView;
     private TextView mDateTextView;
     private ImageRecode mProblem;
+    private RecyclerView mResultRecyclerView;
+    private JobPicsAdapter mAdapter;
+    private String mFolderPath;
 
     @Override
     public void onPause() {
@@ -46,6 +55,8 @@ public class ProblemResultFragment extends RecodeFragment {
     @Override
     protected void init() {
         mProblem = ProblemRecodeFragment1.getProblem().getResultRecode();
+        mFolderPath = ProblemRecodeFragment1.getResultFolderPath();
+        Log.e("JobPicsAdapter:",mFolderPath);
     }
 
     @Override
@@ -63,9 +74,6 @@ public class ProblemResultFragment extends RecodeFragment {
                 startEditTextActivity(REQUEST_EXECUTE_DESCRIPTION,mSolvedText.getText().toString());
             }
         });
-        if(mProblem.getDescription()!=null) {
-            mSolvedText.setText(mProblem.getDescription());
-        }
 
         mDateTextView = (TextView) view.findViewById(R.id.tv_program_executed_time);
         mDateTextView.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +94,52 @@ public class ProblemResultFragment extends RecodeFragment {
                 startEditTextActivity(REQUEST_EXECUTOR,mHandlerTextView.getText().toString());
             }
         });
+        mResultRecyclerView = (RecyclerView) view.findViewById(R.id.result_image_recycler_view);
+        updateView();
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        mResultRecyclerView.setLayoutManager(layoutManager);
+        mAdapter = new JobPicsAdapter(ProblemResultFragment.this,
+                R.layout.inspect_image_item,
+                mProblem.getImagesNameOnServer(),
+                "problem/"+mProblem.getRecodeId()+"/result/",
+                mFolderPath);
+        mAdapter.setEditable(true);
+        mResultRecyclerView.setAdapter(mAdapter);
         return view;
+    }
+    private void updateView(){
+        if (mProblem.getAuthor()!=null){
+            mHandlerTextView.setText(mProblem.getAuthor());
+        }
+        if (mProblem.getDate()!=null){
+            mDateTextView.setText(StringFormatUtil.dateFormat(mProblem.getDate()));
+        }
+        if (mProblem.getDescription()!=null){
+            mSolvedText.setText(mProblem.getDescription());
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode!= Activity.RESULT_OK){
+            return;
+        }
+        mProblem.setUpdateTime(new Date().getTime());
+        switch(requestCode){
+            case 1:
+                mAdapter.resetPath();
+                mAdapter.notifyDataSetChanged();
+                break;
+            case REQUEST_EXECUTOR:
+                break;
+            case REQUEST_EXECUTE_DATE:
+                Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
+                mProblem.setDate(date);
+                break;
+            case REQUEST_EXECUTE_DESCRIPTION:
+                String description = data.getStringExtra("content_edit");
+                mProblem.setDescription(description);
+                break;
+        }
+        updateView();
     }
 }

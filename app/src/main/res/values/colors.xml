@@ -4,6 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorPrimaryLight">#FF0000</color>
-    <color name="colorTabSelect">#FF59E166</color>
-    <color name="colorTabBackgroung">#FFFFFF</color>
+    <color name="colorTabSelect">#FFFFFF</color>
+    <color name="colorTabBackgroung">#CCCCCC</color>
 </resources>

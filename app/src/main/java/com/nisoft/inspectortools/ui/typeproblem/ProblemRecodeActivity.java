@@ -1,11 +1,6 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Fragment;
-import android.support.design.widget.Snackbar;
-import android.view.KeyEvent;
-import android.view.View;
-
-import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
 import com.nisoft.inspectortools.ui.base.SingleFragmentActivity;
 

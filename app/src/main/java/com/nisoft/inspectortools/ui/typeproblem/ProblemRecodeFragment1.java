@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -27,7 +28,6 @@ import com.nisoft.inspectortools.bean.problem.ImageRecode;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
 import com.nisoft.inspectortools.bean.problem.ProblemDataPackage;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
-import com.nisoft.inspectortools.bean.problem.Recode;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 import com.nisoft.inspectortools.service.FileUploadService;
 import com.nisoft.inspectortools.ui.strings.FilePath;
@@ -54,21 +54,27 @@ public class ProblemRecodeFragment1 extends Fragment {
 
     private String mProblemId;
 
-    private static ProblemDataPackage mProblemData;
+    private static ProblemDataPackage sProblemData;
     private ViewPager problemViewPager;
     private ArrayList<RecodeFragment> problemFragmentList;
     private LinearLayout tab_problem_info;
     private LinearLayout tab_problem_reason;
     private LinearLayout tab_problem_program;
     private LinearLayout tab_problem_result;
+    private LinearLayout line_problem_info;
+    private LinearLayout line_problem_reason;
+    private LinearLayout line_problem_program;
+    private LinearLayout line_problem_result;
+    private TextView text_problem_info;
+    private TextView text_problem_reason;
+    private TextView text_problem_program;
+    private TextView text_problem_result;
 
     private FragmentStatePagerAdapter mPagerAdapter;
-    private String mProblemFolderPath;
-    private String mResultFolderPath;
+    private static String sProblemFolderPath;
+    private static String sResultFolderPath;
     private ProgressDialog mDialog;
     private boolean mEditable = true;
-    private String mUserName;
-    private String mUserId;
 
     public static ProblemRecodeFragment1 newInstance(String problemId) {
         Bundle args = new Bundle();
@@ -93,8 +99,8 @@ public class ProblemRecodeFragment1 extends Fragment {
     private View initView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_problem_recode1, container, false);
         setHasOptionsMenu(true);
-        if (mProblemData.getProblem().getTitle() != null) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mProblemData.getProblem().getTitle());
+        if (sProblemData.getProblem().getTitle() != null) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(sProblemData.getProblem().getTitle());
         } else {
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("新增记录");
         }
@@ -129,19 +135,23 @@ public class ProblemRecodeFragment1 extends Fragment {
                 switch (position) {
                     case 0:
                         resTabBackground();
-                        tab_problem_info.setBackgroundResource(R.color.colorTabSelect);
+                        line_problem_info.setBackgroundResource(R.color.colorTabSelect);
+                        text_problem_info.setTextColor(getResources().getColor(R.color.colorTabSelect));
                         break;
                     case 1:
                         resTabBackground();
-                        tab_problem_reason.setBackgroundResource(R.color.colorTabSelect);
+                        line_problem_reason.setBackgroundResource(R.color.colorTabSelect);
+                        text_problem_reason.setTextColor(getResources().getColor(R.color.colorTabSelect));
                         break;
                     case 2:
                         resTabBackground();
-                        tab_problem_program.setBackgroundResource(R.color.colorTabSelect);
+                        line_problem_program.setBackgroundResource(R.color.colorTabSelect);
+                        text_problem_program.setTextColor(getResources().getColor(R.color.colorTabSelect));
                         break;
                     case 3:
                         resTabBackground();
-                        tab_problem_result.setBackgroundResource(R.color.colorTabSelect);
+                        line_problem_result.setBackgroundResource(R.color.colorTabSelect);
+                        text_problem_result.setTextColor(getResources().getColor(R.color.colorTabSelect));
                         break;
                 }
             }
@@ -155,12 +165,21 @@ public class ProblemRecodeFragment1 extends Fragment {
         tab_problem_reason = (LinearLayout) view.findViewById(R.id.tab_problem_reason);
         tab_problem_program = (LinearLayout) view.findViewById(R.id.tab_problem_program);
         tab_problem_result = (LinearLayout) view.findViewById(R.id.tab_problem_result);
+        line_problem_info = (LinearLayout) view.findViewById(R.id.line_problem_info);
+        line_problem_reason = (LinearLayout) view.findViewById(R.id.line_problem_reason);
+        line_problem_program = (LinearLayout) view.findViewById(R.id.line_problem_program);
+        line_problem_result = (LinearLayout) view.findViewById(R.id.line_problem_result);
+        text_problem_info = (TextView) view.findViewById(R.id.text_problem_info);
+        text_problem_reason= (TextView) view.findViewById(R.id.text_problem_reason);
+        text_problem_program= (TextView) view.findViewById(R.id.text_problem_program);
+        text_problem_result= (TextView) view.findViewById(R.id.text_problem_result);
 
         tab_problem_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resTabBackground();
-                tab_problem_info.setBackgroundResource(R.color.colorTabSelect);
+                line_problem_info.setBackgroundResource(R.color.colorTabSelect);
+                text_problem_info.setTextColor(getResources().getColor(R.color.colorTabSelect));
                 problemViewPager.setCurrentItem(0);
             }
         });
@@ -168,7 +187,8 @@ public class ProblemRecodeFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 resTabBackground();
-                tab_problem_reason.setBackgroundResource(R.color.colorTabSelect);
+                line_problem_reason.setBackgroundResource(R.color.colorTabSelect);
+                text_problem_reason.setTextColor(getResources().getColor(R.color.colorTabSelect));
                 problemViewPager.setCurrentItem(1);
             }
         });
@@ -176,7 +196,8 @@ public class ProblemRecodeFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 resTabBackground();
-                tab_problem_program.setBackgroundResource(R.color.colorTabSelect);
+                line_problem_program.setBackgroundResource(R.color.colorTabSelect);
+                text_problem_program.setTextColor(getResources().getColor(R.color.colorTabSelect));
                 problemViewPager.setCurrentItem(2);
             }
         });
@@ -184,7 +205,8 @@ public class ProblemRecodeFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 resTabBackground();
-                tab_problem_result.setBackgroundResource(R.color.colorTabSelect);
+                line_problem_result.setBackgroundResource(R.color.colorTabSelect);
+                text_problem_result.setTextColor(getResources().getColor(R.color.colorTabSelect));
                 problemViewPager.setCurrentItem(3);
             }
         });
@@ -196,20 +218,24 @@ public class ProblemRecodeFragment1 extends Fragment {
         problemFragmentList = new ArrayList<>();
         mProblemId = getArguments().getString(RecodeTable.Cols.PROBLEM_ID);
         Log.e(TAG, mProblemId);
-        mProblemData = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(mProblemId);
+        sProblemData = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(mProblemId);
         Gson gson = new Gson();
-        Log.e(TAG,gson.toJson(mProblemData));
-        mProblemFolderPath = FilePath.PROBLEM_DATA_PATH + mProblemData.getProblem().getTitle() +
-                "(" + mProblemData.getProblem().getRecodeId() + ")/问题描述/";
-        mResultFolderPath =FilePath.PROBLEM_DATA_PATH + mProblemData.getProblem().getTitle() +
-                "(" + mProblemData.getProblem().getRecodeId() + ")/处理结果/";
+        Log.e(TAG,gson.toJson(sProblemData));
+        sProblemFolderPath = FilePath.PROBLEM_DATA_PATH + sProblemData.getProblem().getTitle() +
+                "(" + sProblemData.getProblem().getRecodeId() + ")/问题描述/";
+        sResultFolderPath =FilePath.PROBLEM_DATA_PATH + sProblemData.getProblem().getTitle() +
+                "(" + sProblemData.getProblem().getRecodeId() + ")/处理结果/";
     }
 
     private void resTabBackground() {
-        tab_problem_info.setBackgroundResource(R.color.colorTabBackgroung);
-        tab_problem_reason.setBackgroundResource(R.color.colorTabBackgroung);
-        tab_problem_program.setBackgroundResource(R.color.colorTabBackgroung);
-        tab_problem_result.setBackgroundResource(R.color.colorTabBackgroung);
+        line_problem_info.setBackgroundResource(R.color.colorTabBackgroung);
+        line_problem_reason.setBackgroundResource(R.color.colorTabBackgroung);
+        line_problem_program.setBackgroundResource(R.color.colorTabBackgroung);
+        line_problem_result.setBackgroundResource(R.color.colorTabBackgroung);
+        text_problem_info.setTextColor(getResources().getColor(R.color.colorTabBackgroung));
+        text_problem_reason.setTextColor(getResources().getColor(R.color.colorTabBackgroung));
+        text_problem_program.setTextColor(getResources().getColor(R.color.colorTabBackgroung));
+        text_problem_result.setTextColor(getResources().getColor(R.color.colorTabBackgroung));
     }
 
     @Override
@@ -220,7 +246,7 @@ public class ProblemRecodeFragment1 extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(mProblemData);
+        ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(sProblemData);
     }
 
 
@@ -269,7 +295,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                 downloadUrls.add(url);
             }
         }
-        new VolumeImageDownLoad(downloadUrls, mProblemFolderPath
+        new VolumeImageDownLoad(downloadUrls, sProblemFolderPath
                 , new VolumeImageDownLoad.DownloadStateListener() {
             @Override
             public void onStart() {
@@ -301,9 +327,9 @@ public class ProblemRecodeFragment1 extends Fragment {
     }
 
     private void uploadProblem() {
-        ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(mProblemData);
+        ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(sProblemData);
         Gson gson = new Gson();
-        String jobJson = gson.toJson(mProblemData);
+        String jobJson = gson.toJson(sProblemData);
         RequestBody body = new FormBody.Builder()
                 .add("intent", "update")
                 .add("job_json", jobJson)
@@ -332,10 +358,10 @@ public class ProblemRecodeFragment1 extends Fragment {
                         if (result.equals("OK")) {
                             Toast.makeText(getActivity(), "数据上传完成，开始上传照片！", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), FileUploadService.class);
-                            intent.putExtra("folder_path", mProblemFolderPath);
+                            intent.putExtra("folder_path", sProblemFolderPath);
                             intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
                             intent.putExtra("recode_type","problem");
-                            intent.putExtra("folder_name",mProblemData.getProblem().getRecodeId()+"/problem");
+                            intent.putExtra("folder_name", sProblemData.getProblem().getRecodeId()+"/problem");
                             getActivity().startService(intent);
                         } else {
                             Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
@@ -348,10 +374,13 @@ public class ProblemRecodeFragment1 extends Fragment {
     }
 
     public static ProblemDataPackage getProblem() {
-        if (mProblemData == null) {
-            mProblemData = new ProblemDataPackage();
+        if (sProblemData == null) {
+            sProblemData = new ProblemDataPackage();
         }
-        return mProblemData;
+        return sProblemData;
+    }
+    public static void setProblemData(ProblemDataPackage problemData){
+        sProblemData = problemData;
     }
     private void downloadRecode() {
         ProblemDataPackage localRecode = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(mProblemId);
@@ -387,7 +416,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                         Log.e("download:", result);
                         Gson gson = new Gson();
                         ProblemDataPackage serviceRecode = gson.fromJson(result, ProblemDataPackage.class);
-                        mProblemData = findLaterRecode(localProblemData, serviceRecode);
+                        sProblemData = findLaterRecode(localProblemData, serviceRecode);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -423,5 +452,21 @@ public class ProblemRecodeFragment1 extends Fragment {
         problemFragmentList.set(2,new ProblemProgramFragment());
         problemFragmentList.set(3,new ProblemResultFragment());
         mPagerAdapter.notifyDataSetChanged();
+    }
+
+    public static String getProblemFolderPath() {
+        return sProblemFolderPath;
+    }
+
+    public static void setProblemFolderPath(String problemFolderPath) {
+        sProblemFolderPath = problemFolderPath;
+    }
+
+    public static String getResultFolderPath() {
+        return sResultFolderPath;
+    }
+
+    public static void setResultFolderPath(String resultFolderPath) {
+        sResultFolderPath = resultFolderPath;
     }
 }

@@ -1,7 +1,9 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -13,11 +15,15 @@ import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.JobPicsAdapter;
+import com.nisoft.inspectortools.bean.problem.ProblemDataPackage;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.strings.FilePath;
+import com.nisoft.inspectortools.utils.DialogUtil;
+import com.nisoft.inspectortools.utils.FileUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
+import java.io.File;
 import java.util.Date;
 
 /**
@@ -98,11 +104,50 @@ public class ProblemInfoFragment extends RecodeFragment {
                 mDescriptionTextView.setText(description);
                 break;
             case REQUEST_TITLE:
-                String title = data.getStringExtra("content_edit");
+                final String title = data.getStringExtra("content_edit");
                 mProblem.setTitle(title);
-                mTitle.setText(title);
+                final String oldProblemFolderPath = ProblemRecodeFragment1.getProblemFolderPath();
+                final String oldResultFolderPath = ProblemRecodeFragment1.getProblemFolderPath();
+                final String newProblemFolderPath = FilePath.PROBLEM_DATA_PATH + mProblem.getTitle() +
+                        "(" + mProblem.getRecodeId() + ")/问题描述/";
+                final String newResultFolderPath = FilePath.PROBLEM_DATA_PATH + mProblem.getTitle() +
+                        "(" + mProblem.getRecodeId() + ")/处理结果/";
+                new AsyncTask<Void,Void,Boolean>(){
+                    ProgressDialog dialog = new ProgressDialog(getActivity());
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        dialog.setMessage("正在准备文件");
+                        dialog.show();
+                    }
+
+                    @Override
+                    protected Boolean doInBackground(Void... params) {
+                        File oldProblemFolder = new File(oldProblemFolderPath);
+                        File newProblemFolder = new File(newProblemFolderPath);
+                        File oldResultFolder = new File(oldResultFolderPath);
+                        File newResultFolder = new File(newResultFolderPath);
+                        return oldProblemFolder.renameTo(newProblemFolder) && oldResultFolder.renameTo(newResultFolder);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean success) {
+                        super.onPostExecute(success);
+                        if (success){
+                            ProblemRecodeFragment1.setProblemFolderPath(newProblemFolderPath);
+                            ProblemRecodeFragment1.setResultFolderPath(newResultFolderPath);
+                            mFolderPath = newProblemFolderPath;
+                            mAdapter.setRootPath(mFolderPath);
+                            mAdapter.resetPath();
+                            mAdapter.notifyDataSetChanged();
+                            mTitle.setText(title);
+                        }
+                        dialog.dismiss();
+                    }
+                }.execute();
                 break;
         }
+        updateData();
     }
 
     public void setProblem(ProblemRecode recode) {
@@ -120,14 +165,15 @@ public class ProblemInfoFragment extends RecodeFragment {
     @Override
     protected void init() {
         mProblem = ProblemRecodeFragment1.getProblem().getProblem();
-        mFolderPath = FilePath.PROBLEM_DATA_PATH + mProblem.getTitle() +
-                "(" + mProblem.getRecodeId() + ")/问题描述/";
+        mFolderPath = ProblemRecodeFragment1.getProblemFolderPath();
         Log.e("JobPicsAdapter:",mFolderPath+"");
     }
 
     @Override
     public void updateData() {
-        ProblemRecodeFragment1.getProblem().setProblem(mProblem);
+        ProblemDataPackage problem = ProblemRecodeFragment1.getProblem();
+        problem.setProblem(mProblem);
+        ProblemRecodeFragment1.setProblemData(problem);
     }
 
     @Override
@@ -172,10 +218,10 @@ public class ProblemInfoFragment extends RecodeFragment {
         });
         mImagesRecyclerView = (RecyclerView) view.findViewById(R.id.problem_images_recycler_view);
         updateView();
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mImagesRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new JobPicsAdapter(ProblemInfoFragment.this,
-                R.layout.problem_image_item,
+                R.layout.inspect_image_item,
                 mProblem.getImagesNameOnServer(),
                 "problem/"+mProblem.getRecodeId()+"/problem/",
                 mFolderPath);

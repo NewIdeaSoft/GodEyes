@@ -1,5 +1,7 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,8 @@ import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.problem.Recode;
+import com.nisoft.inspectortools.ui.base.DatePickerDialog;
+import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.Date;
 
@@ -76,10 +80,38 @@ public class ProblemAnalysisFragment extends RecodeFragment {
                 startEditTextActivity(REQUEST_ANALYSIS_DESCRIPTION, reasonText.getText().toString());
             }
         });
-
-        if (mProblem.getDescription() != null) {
+        updateView();
+        return view;
+    }
+    private void updateView(){
+        if (mProblem.getAuthor()!=null){
+            mAnalyserTextView.setText(mProblem.getAuthor());
+        }
+        if (mProblem.getDate()!=null){
+            mAnalystDateTextView.setText(StringFormatUtil.dateFormat(mProblem.getDate()));
+        }
+        if (mProblem.getDescription()!=null){
             reasonText.setText(mProblem.getDescription());
         }
-        return view;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode!= Activity.RESULT_OK){
+            return;
+        }
+        mProblem.setUpdateTime(new Date().getTime());
+        switch(requestCode){
+            case REQUEST_ANALYST:
+                break;
+            case REQUEST_ANALYSIS_DATE:
+                Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
+                mProblem.setDate(date);
+                break;
+            case REQUEST_ANALYSIS_DESCRIPTION:
+                String description = data.getStringExtra("content_edit");
+                mProblem.setDescription(description);
+                break;
+        }
+        updateView();
     }
 }

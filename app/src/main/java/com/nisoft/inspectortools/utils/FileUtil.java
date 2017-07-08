@@ -25,23 +25,23 @@ public class FileUtil {
      * @param resPath 源文件路径
      * @param targetPath 目标路径
      */
-    public static void moveFile(String resPath,String targetPath){
+    public static void moveFile(String resPath, String targetPath) {
         try {
             File file = new File(resPath);
             File targetFile = new File(targetPath);
-            if (targetFile.exists()){
+            if (targetFile.exists()) {
                 targetFile.delete();
             }
 
-            if (file.exists()){
+            if (file.exists()) {
                 int byteSum = 0;
                 int byteRead = 0;
                 InputStream in = new FileInputStream(file);
                 OutputStream out = new FileOutputStream(targetPath);
                 byte[] buffer = new byte[1024];
-                while((byteRead = in.read(buffer))!=-1){
+                while ((byteRead = in.read(buffer)) != -1) {
                     byteSum += byteRead;
-                    out.write(buffer,0,byteRead);
+                    out.write(buffer, 0, byteRead);
                 }
 
                 file.delete();
@@ -50,9 +50,10 @@ public class FileUtil {
             e.printStackTrace();
         }
     }
-    public static void writeStringToFile(String data,String filePath){
+
+    public static void writeStringToFile(String data, String filePath) {
         File file = new File(filePath);
-        if(file.exists()) {
+        if (file.exists()) {
             file.delete();
         }
         FileWriter writer;
@@ -67,7 +68,7 @@ public class FileUtil {
         }
     }
 
-    public static void openImageFile(String path, Context context){
+    public static void openImageFile(String path, Context context) {
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(Intent.ACTION_VIEW);
@@ -80,6 +81,7 @@ public class FileUtil {
             context.startActivity(intent);
         }
     }
+
     public static String getFileExpandedName(String name) {
         String expandedName = "";
         int index = -1;
@@ -90,14 +92,14 @@ public class FileUtil {
         return expandedName;
     }
 
-    public static ArrayList<String> getAllImagesName(String folderPath){
+    public static ArrayList<String> getAllImagesName(String folderPath) {
         ArrayList<String> imagesName = new ArrayList<>();
         File file = new File(folderPath);
-        if (!file.exists()){
+        if (!file.exists()) {
             return null;
         }
         String[] picsName = file.list();
-        if (picsName==null||picsName.length==0){
+        if (picsName == null || picsName.length == 0) {
             return null;
         }
         for (int i = 0; i < picsName.length; i++) {
@@ -111,12 +113,12 @@ public class FileUtil {
     }
 
     public static ArrayList<String> getAllFilesPath(String localFolder
-            ,String serviceAddress
-            ,ArrayList<String> allFilesNameOnServer){
+            , String serviceAddress
+            , ArrayList<String> allFilesNameOnServer) {
 
         ArrayList<String> filesUrl = new ArrayList<>();
         ArrayList<String> localFilesName = getAllImagesName(localFolder);
-        if (localFilesName==null){
+        if (localFilesName == null) {
             for (String name : allFilesNameOnServer) {
                 filesUrl.add(serviceAddress + name);
             }
@@ -138,24 +140,25 @@ public class FileUtil {
         return filesUrl;
     }
 
-    public static ArrayList<String> getImagesPath(String folderPath){
-        if (folderPath==null||folderPath.equals("")){
+    public static ArrayList<String> getImagesPath(String folderPath) {
+        if (folderPath == null || folderPath.equals("")) {
             return null;
         }
         File file = new File(folderPath);
-        if(!file.exists()) {
+        if (!file.exists()) {
             file.mkdirs();
         }
-        String [] files = file.list();
+        String[] files = file.list();
         ArrayList<String> pathList = null;
-        if(files!=null&&files.length>0) {
+        if (files != null && files.length > 0) {
             pathList = new ArrayList<>();
             for (String fileName : files) {
-                if(fileName.endsWith("jpg")||fileName.endsWith("bmp")||fileName.endsWith("png")) {
-                    pathList.add(folderPath+"/"+fileName);
+                if (fileName.endsWith("jpg") || fileName.endsWith("bmp") || fileName.endsWith("png")) {
+                    pathList.add(folderPath + "/" + fileName);
                 }
             }
         }
         return pathList;
     }
+
 }
