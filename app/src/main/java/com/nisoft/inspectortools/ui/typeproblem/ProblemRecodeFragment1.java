@@ -60,8 +60,9 @@ public class ProblemRecodeFragment1 extends Fragment {
     private LinearLayout tab_problem_info;
     private LinearLayout tab_problem_reason;
     private LinearLayout tab_problem_program;
-
     private LinearLayout tab_problem_result;
+
+    private FragmentStatePagerAdapter mPagerAdapter;
     private String mProblemFolderPath;
     private String mResultFolderPath;
     private ProgressDialog mDialog;
@@ -99,8 +100,12 @@ public class ProblemRecodeFragment1 extends Fragment {
         }
         mDialog = new ProgressDialog(getActivity());
         problemViewPager = (ViewPager) view.findViewById(R.id.problem_info_viewpager);
+        problemFragmentList.add(new ProblemInfoFragment());
+        problemFragmentList.add(new ProblemAnalysisFragment());
+        problemFragmentList.add(new ProblemProgramFragment());
+        problemFragmentList.add(new ProblemResultFragment());
         FragmentManager fm = getFragmentManager();
-        problemViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {
+        mPagerAdapter = new FragmentStatePagerAdapter(fm) {
             @Override
             public Fragment getItem(int position) {
                 return problemFragmentList.get(position);
@@ -110,7 +115,9 @@ public class ProblemRecodeFragment1 extends Fragment {
             public int getCount() {
                 return problemFragmentList.size();
             }
-        });
+        };
+        problemViewPager.setAdapter(mPagerAdapter);
+
         problemViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -192,10 +199,6 @@ public class ProblemRecodeFragment1 extends Fragment {
         mProblemData = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(mProblemId);
         Gson gson = new Gson();
         Log.e(TAG,gson.toJson(mProblemData));
-        problemFragmentList.add(new ProblemInfoFragment());
-        problemFragmentList.add(new ProblemAnalysisFragment());
-        problemFragmentList.add(new ProblemProgramFragment());
-        problemFragmentList.add(new ProblemResultFragment());
         mProblemFolderPath = FilePath.PROBLEM_DATA_PATH + mProblemData.getProblem().getTitle() +
                 "(" + mProblemData.getProblem().getRecodeId() + ")/问题描述/";
         mResultFolderPath =FilePath.PROBLEM_DATA_PATH + mProblemData.getProblem().getTitle() +
@@ -388,8 +391,10 @@ public class ProblemRecodeFragment1 extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                setProblemFragmentList();
                                 mDialog.dismiss();
                                 Toast.makeText(getActivity(), "记录加载完成！", Toast.LENGTH_SHORT).show();
+
                             }
                         });
                     }
@@ -401,6 +406,7 @@ public class ProblemRecodeFragment1 extends Fragment {
             ProblemRecode problemRecode = localProblemData.getProblem();
             ImageRecode resultRecode = localProblemData.getResultRecode();
             ArrayList<String> problemImagesName = serviceRecode.getProblem().getImagesNameOnServer();
+            Log.e("localProblemData:",problemImagesName.toString());
             ArrayList<String> resultImagesName = serviceRecode.getResultRecode().getImagesNameOnServer();
             problemRecode.setImagesNameOnserver(problemImagesName);
             resultRecode.setImagesNameOnserver(resultImagesName);
@@ -408,6 +414,14 @@ public class ProblemRecodeFragment1 extends Fragment {
             localProblemData.setResultRecode(resultRecode);
             return localProblemData;
         }
+        Log.e("serviceRecode:",serviceRecode.getProblem().getImagesNameOnServer().toString());
         return serviceRecode;
+    }
+    private void setProblemFragmentList(){
+        problemFragmentList.set(0,new ProblemInfoFragment());
+        problemFragmentList.set(1,new ProblemAnalysisFragment());
+        problemFragmentList.set(2,new ProblemProgramFragment());
+        problemFragmentList.set(3,new ProblemResultFragment());
+        mPagerAdapter.notifyDataSetChanged();
     }
 }

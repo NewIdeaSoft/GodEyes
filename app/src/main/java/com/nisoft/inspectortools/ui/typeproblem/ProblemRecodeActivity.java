@@ -15,23 +15,4 @@ public class ProblemRecodeActivity extends SingleFragmentActivity {
         String problemID = getIntent().getStringExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID);
         return ProblemRecodeFragment1.newInstance(problemID);
     }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0){
-            String title = ProblemRecodeFragment1.getProblem().getProblem().getTitle();
-            if (title==null){
-                Snackbar.make(findViewById(R.id.fragment_content),"为输入主题，数据将无法保存，确定退出吗",Snackbar.LENGTH_LONG)
-                        .setAction("确定", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                finish();
-                            }
-                        }).show();
-                return true;
-            }
-
-        }
-        return super.onKeyDown(keyCode, event);
-    }
 }

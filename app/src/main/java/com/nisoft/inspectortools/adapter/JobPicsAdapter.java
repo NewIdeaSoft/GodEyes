@@ -103,32 +103,37 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         if (!dir.exists()) {
             dir.mkdirs();
         }
+
         ArrayList<String> localImageFilesName = new ArrayList<>();
+        mPicsPath = new ArrayList<>();
         String[] picsName = dir.list();
         for (int i = 0; i < picsName.length; i++) {
             String[] strings = picsName[i].split("\\.");
             String type = strings[strings.length - 1];
-            if (type.equals("jpg") || type.equals("bmp")) {
+            if (type.equals("jpg") || type.equals("bmp")||type.equals("png")) {
                 localImageFilesName.add(picsName[i]);
+                mPicsPath.add(mRootPath + picsName[i]);
             }
         }
-        ArrayList<String> imagesUrl = new ArrayList<>();
+        if (mImagesName!=null) {
+            ArrayList<String> imagesUrl = new ArrayList<>();
         Log.e("mImagesName", mImagesName.toString());
-        for (String name : mImagesName) {
-            if (localImageFilesName.indexOf(name) >= 0) {
-                imagesUrl.add(mRootPath + name);
-            } else {
-                imagesUrl.add(RECODE_FOLDER_ADDRESS +
-                        UserLab.getUserLab(mContext).getEmployee().getCompanyId() + "/" +
-                        mFolderPathOnServer + name);
+            for (String name : mImagesName) {
+                if (localImageFilesName.indexOf(name) >= 0) {
+                    imagesUrl.add(mRootPath + name);
+                } else {
+                    imagesUrl.add(RECODE_FOLDER_ADDRESS +
+                            UserLab.getUserLab(mContext).getEmployee().getCompanyId() + "/" +
+                            mFolderPathOnServer + name);
+                }
             }
-        }
-        for (String name : localImageFilesName) {
-            if (mImagesName.indexOf(name) < 0) {
-                imagesUrl.add(mRootPath + name);
+            for (String name : localImageFilesName) {
+                if (mImagesName.indexOf(name) < 0) {
+                    imagesUrl.add(mRootPath + name);
+                }
             }
+            mPicsPath = imagesUrl;
         }
-        mPicsPath = imagesUrl;
         Log.e("imagePath", mPicsPath.toString());
     }
 
