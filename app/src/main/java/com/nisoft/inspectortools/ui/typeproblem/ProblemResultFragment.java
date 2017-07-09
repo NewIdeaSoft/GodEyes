@@ -1,9 +1,7 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -15,6 +13,8 @@ import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.JobPicsAdapter;
+import com.nisoft.inspectortools.bean.org.Employee;
+import com.nisoft.inspectortools.bean.org.OrgLab;
 import com.nisoft.inspectortools.bean.problem.ImageRecode;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
@@ -91,7 +91,7 @@ public class ProblemResultFragment extends RecodeFragment {
         mHandlerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startEditTextActivity(REQUEST_EXECUTOR,mHandlerTextView.getText().toString());
+                showContactsDialog(REQUEST_EXECUTOR);
             }
         });
         mResultRecyclerView = (RecyclerView) view.findViewById(R.id.result_image_recycler_view);
@@ -109,7 +109,10 @@ public class ProblemResultFragment extends RecodeFragment {
     }
     private void updateView(){
         if (mProblem.getAuthor()!=null){
-            mHandlerTextView.setText(mProblem.getAuthor());
+            Employee discover = OrgLab.getOrgLab(getActivity()).findEmployeeById(mProblem.getAuthor());
+            if(discover!=null) {
+                mHandlerTextView.setText(discover.getName());
+            }
         }
         if (mProblem.getDate()!=null){
             mDateTextView.setText(StringFormatUtil.dateFormat(mProblem.getDate()));
@@ -130,6 +133,8 @@ public class ProblemResultFragment extends RecodeFragment {
                 mAdapter.notifyDataSetChanged();
                 break;
             case REQUEST_EXECUTOR:
+                String discoverId = data.getStringExtra("author_id");
+                mProblem.setAuthor(discoverId);
                 break;
             case REQUEST_EXECUTE_DATE:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);

@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.bean.org.Employee;
+import com.nisoft.inspectortools.bean.org.OrgLab;
 import com.nisoft.inspectortools.bean.problem.Recode;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
@@ -56,7 +58,7 @@ public class ProblemProgramFragment extends RecodeFragment {
         mAuthorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showContactsDialog(REQUEST_PROGRAM_AUTHOR);
             }
         });
         mDateTextView.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +89,8 @@ public class ProblemProgramFragment extends RecodeFragment {
         mProgram.setUpdateTime(new Date().getTime());
         switch(requestCode){
             case REQUEST_PROGRAM_AUTHOR:
+                String discoverId = data.getStringExtra("author_id");
+                mProgram.setAuthor(discoverId);
                 break;
             case REQUEST_PROGRAM_DATE:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
@@ -101,7 +105,10 @@ public class ProblemProgramFragment extends RecodeFragment {
     }
     private void updateView(){
         if (mProgram.getAuthor()!=null){
-            mAuthorTextView.setText(mProgram.getAuthor());
+            Employee discover = OrgLab.getOrgLab(getActivity()).findEmployeeById(mProgram.getAuthor());
+            if(discover!=null) {
+                mAuthorTextView.setText(discover.getName());
+            }
         }
         if (mProgram.getDate()!=null){
             mDateTextView.setText(StringFormatUtil.dateFormat(mProgram.getDate()));

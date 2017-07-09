@@ -11,14 +11,14 @@ import okhttp3.RequestBody;
  */
 
 public class HttpUtil {
-    public static final String ADRESS_MAIN = "http://47.93.191.62:8080/InspectorToolsServer/";
-    public static final String SERVLET_LOGIN = ADRESS_MAIN + "LoginServlet";
-    public static final String SERVLET_UPLOAD = ADRESS_MAIN + "FileUploadServlet";
-    public static final String SERVLET_MEMBER_INFO = ADRESS_MAIN + "MemberInfoServlet";
-    public static final String SERVLET_MATERIAL_RECODE = HttpUtil.ADRESS_MAIN + "MaterialInspectServlet";
-    public static final String SERVLET_PROBLEM_RECODE = HttpUtil.ADRESS_MAIN + "ProblemRecodeServlet";
-    public static final String SERVLET_JOBINFO = ADRESS_MAIN + "JobInfoServlet";
-    public static final String SERVLET_DOWNLOAD_LAN_CHI = ADRESS_MAIN + "chi-sim";
+    public static final String ADDRESS_MAIN = "http://47.93.191.62:8080/InspectorToolsServer/";
+    public static final String SERVLET_LOGIN = ADDRESS_MAIN + "LoginServlet";
+    public static final String SERVLET_UPLOAD = ADDRESS_MAIN + "FileUploadServlet";
+    public static final String SERVLET_MEMBER_INFO = ADDRESS_MAIN + "MemberInfoServlet";
+    public static final String SERVLET_MATERIAL_RECODE = HttpUtil.ADDRESS_MAIN + "MaterialInspectServlet";
+    public static final String SERVLET_PROBLEM_RECODE = HttpUtil.ADDRESS_MAIN + "ProblemRecodeServlet";
+    public static final String SERVLET_JOBINFO = ADDRESS_MAIN + "JobInfoServlet";
+    public static final String SERVLET_DOWNLOAD_LAN_CHI = ADDRESS_MAIN + "chi-sim";
 
     //本地服务器地址："http://192.168.31.189:8080/InspectorToolsServer/"
 

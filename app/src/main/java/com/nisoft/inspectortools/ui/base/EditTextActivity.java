@@ -343,7 +343,7 @@ public class EditTextActivity extends AppCompatActivity {
     }
 
     private long downloadLan(){
-        String address = HttpUtil.ADRESS_MAIN+"chi_sim.traineddata";
+        String address = HttpUtil.ADDRESS_MAIN +"chi_sim.traineddata";
         DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(address));
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);

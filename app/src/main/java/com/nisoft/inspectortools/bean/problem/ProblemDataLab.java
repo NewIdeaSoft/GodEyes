@@ -56,6 +56,7 @@ public class ProblemDataLab {
         String problemId = recode.getRecodeId();
         String type = recode.getType();
         String description = recode.getDescription();
+        String authorId = recode.getAuthor();
         Date date = recode.getDate();
         if (date == null) {
             date = new Date();
@@ -70,6 +71,9 @@ public class ProblemDataLab {
         }
         if (description != null) {
             values.put(RecodeTable.Cols.DESCRIPTION_TEXT, description);
+        }
+        if(authorId!=null) {
+            values.put(RecodeTable.Cols.AUTHOR,authorId);
         }
         values.put(RecodeTable.Cols.DATE, dateTime);
         values.put(RecodeTable.Cols.UPDATE_TIME, updateTime);
@@ -235,6 +239,7 @@ public class ProblemDataLab {
         ArrayList<ProblemRecode> problems = new ArrayList<>();
         while (!cursor.isAfterLast()) {
             problems.add(cursor.getProblemRecode());
+            cursor.moveToNext();
         }
         cursor.close();
         return problems;

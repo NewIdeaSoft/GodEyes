@@ -18,10 +18,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.service.UpdateDataService;
 import com.nisoft.inspectortools.ui.typeinspect.JobListActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemListActivity;
-
-import java.util.ArrayList;
 
 import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.KEY_SELECTED_TYPE;
 import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.RECODE_TYPE_CHI;
@@ -60,6 +59,7 @@ public class ChooseRecodeTypeFragment extends Fragment {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 11);
         }
+        updateEmployeeData();
         return view;
     }
     @Override
@@ -74,5 +74,16 @@ public class ChooseRecodeTypeFragment extends Fragment {
             default:
                 break;
         }
+    }
+    private void updateEmployeeData(){
+        Intent intent = new Intent(getActivity(), UpdateDataService.class);
+        getActivity().startService(intent);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Intent intent = new Intent(getActivity(), UpdateDataService.class);
+        getActivity().stopService(intent);
     }
 }

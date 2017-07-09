@@ -15,12 +15,14 @@ import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.JobPicsAdapter;
+import com.nisoft.inspectortools.bean.org.Employee;
+import com.nisoft.inspectortools.bean.org.OrgLab;
+import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
 import com.nisoft.inspectortools.bean.problem.ProblemDataPackage;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
+import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.strings.FilePath;
-import com.nisoft.inspectortools.utils.DialogUtil;
-import com.nisoft.inspectortools.utils.FileUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.io.File;
@@ -60,7 +62,10 @@ public class ProblemInfoFragment extends RecodeFragment {
             mDiscoveredDate.setText(StringFormatUtil.dateFormat(mProblem.getDate()));
         }
         if (mProblem.getAuthor() != null) {
-            mDiscover.setText(mProblem.getAuthor());
+            Employee discover = OrgLab.getOrgLab(getActivity()).findEmployeeById(mProblem.getAuthor());
+            if(discover!=null) {
+                mDiscover.setText(discover.getName());
+            }
         }
         if (mProblem.getAddress() != null) {
             mDiscoveredPosition.setText(mProblem.getAddress());
@@ -84,8 +89,9 @@ public class ProblemInfoFragment extends RecodeFragment {
                 mAdapter.notifyDataSetChanged();
                 break;
             case REQUEST_DISCOVER:
-                String discover = data.getStringExtra("content_edit");
-                mProblem.setAuthor(discover);
+                String discover = data.getStringExtra("author_name");
+                String discoverId = data.getStringExtra("author_id");
+                mProblem.setAuthor(discoverId);
                 mDiscover.setText(discover);
                 break;
             case REQUEST_DISCOVER_ADDRESS:
@@ -174,6 +180,7 @@ public class ProblemInfoFragment extends RecodeFragment {
         ProblemDataPackage problem = ProblemRecodeFragment1.getProblem();
         problem.setProblem(mProblem);
         ProblemRecodeFragment1.setProblemData(problem);
+        ProblemDataLab.getProblemDataLab(getActivity()).updateRecode(RecodeTable.PROBLEM_NAME,mProblem);
     }
 
     @Override
@@ -198,7 +205,7 @@ public class ProblemInfoFragment extends RecodeFragment {
         mDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showContactsDialog(REQUEST_DISCOVER);
             }
         });
         mDiscoveredPosition = (TextView) view.findViewById(R.id.tv_discover_position);

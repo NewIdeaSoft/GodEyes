@@ -8,9 +8,9 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.nisoft.inspectortools.bean.problem.Recode;
+import com.nisoft.inspectortools.ui.base.ChooseAuthorDialog;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.base.EditTextActivity;
 
@@ -61,4 +61,12 @@ public abstract class RecodeFragment extends Fragment {
         dialog.setTargetFragment(targetFragment,requestCode);
         dialog.show(fm,"date");
     }
+
+    protected void showContactsDialog(int requestCode){
+        FragmentManager fm = getFragmentManager();
+        ChooseAuthorDialog dialog = new ChooseAuthorDialog();
+        dialog.setTargetFragment(this,requestCode);
+        dialog.show(fm,"date");
+    }
+
 }

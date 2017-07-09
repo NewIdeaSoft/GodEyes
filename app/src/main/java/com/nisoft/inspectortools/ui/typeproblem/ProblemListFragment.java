@@ -159,7 +159,10 @@ public class ProblemListFragment extends Fragment {
                             if (recode1.getRecodeId().equals(recode2.getRecodeId())) {
                                 break;
                             }
-                            ProblemDataLab.getProblemDataLab(getActivity()).updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
+                            if(mProblems.indexOf(recode2)==mProblems.size()-1) {
+                                ProblemDataLab.getProblemDataLab(getActivity()).updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
+                            }
+
                         }
                     }
                     mProblems = recodes;

@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.bean.org.Employee;
+import com.nisoft.inspectortools.bean.org.OrgLab;
 import com.nisoft.inspectortools.bean.problem.Recode;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
@@ -59,7 +61,7 @@ public class ProblemAnalysisFragment extends RecodeFragment {
         mAnalyserTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startEditTextActivity(REQUEST_ANALYST, mAnalyserTextView.getText().toString());
+                showContactsDialog(REQUEST_ANALYST);
             }
         });
         mAnalystDateTextView = (TextView) view.findViewById(R.id.tv_analyser_time);
@@ -85,7 +87,10 @@ public class ProblemAnalysisFragment extends RecodeFragment {
     }
     private void updateView(){
         if (mProblem.getAuthor()!=null){
-            mAnalyserTextView.setText(mProblem.getAuthor());
+            Employee discover = OrgLab.getOrgLab(getActivity()).findEmployeeById(mProblem.getAuthor());
+            if(discover!=null) {
+                mAnalyserTextView.setText(discover.getName());
+            }
         }
         if (mProblem.getDate()!=null){
             mAnalystDateTextView.setText(StringFormatUtil.dateFormat(mProblem.getDate()));
@@ -102,6 +107,8 @@ public class ProblemAnalysisFragment extends RecodeFragment {
         mProblem.setUpdateTime(new Date().getTime());
         switch(requestCode){
             case REQUEST_ANALYST:
+                String discoverId = data.getStringExtra("author_id");
+                mProblem.setAuthor(discoverId);
                 break;
             case REQUEST_ANALYSIS_DATE:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);

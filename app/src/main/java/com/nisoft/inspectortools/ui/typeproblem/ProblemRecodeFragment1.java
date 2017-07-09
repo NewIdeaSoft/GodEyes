@@ -106,61 +106,7 @@ public class ProblemRecodeFragment1 extends Fragment {
         }
         mDialog = new ProgressDialog(getActivity());
         problemViewPager = (ViewPager) view.findViewById(R.id.problem_info_viewpager);
-        problemFragmentList.add(new ProblemInfoFragment());
-        problemFragmentList.add(new ProblemAnalysisFragment());
-        problemFragmentList.add(new ProblemProgramFragment());
-        problemFragmentList.add(new ProblemResultFragment());
-        FragmentManager fm = getFragmentManager();
-        mPagerAdapter = new FragmentStatePagerAdapter(fm) {
-            @Override
-            public Fragment getItem(int position) {
-                return problemFragmentList.get(position);
-            }
 
-            @Override
-            public int getCount() {
-                return problemFragmentList.size();
-            }
-        };
-        problemViewPager.setAdapter(mPagerAdapter);
-
-        problemViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                problemFragmentList.get(position).updateData();
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                switch (position) {
-                    case 0:
-                        resTabBackground();
-                        line_problem_info.setBackgroundResource(R.color.colorTabSelect);
-                        text_problem_info.setTextColor(getResources().getColor(R.color.colorTabSelect));
-                        break;
-                    case 1:
-                        resTabBackground();
-                        line_problem_reason.setBackgroundResource(R.color.colorTabSelect);
-                        text_problem_reason.setTextColor(getResources().getColor(R.color.colorTabSelect));
-                        break;
-                    case 2:
-                        resTabBackground();
-                        line_problem_program.setBackgroundResource(R.color.colorTabSelect);
-                        text_problem_program.setTextColor(getResources().getColor(R.color.colorTabSelect));
-                        break;
-                    case 3:
-                        resTabBackground();
-                        line_problem_result.setBackgroundResource(R.color.colorTabSelect);
-                        text_problem_result.setTextColor(getResources().getColor(R.color.colorTabSelect));
-                        break;
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
         tab_problem_info = (LinearLayout) view.findViewById(R.id.tab_problem_info);
         tab_problem_reason = (LinearLayout) view.findViewById(R.id.tab_problem_reason);
         tab_problem_program = (LinearLayout) view.findViewById(R.id.tab_problem_program);
@@ -447,11 +393,61 @@ public class ProblemRecodeFragment1 extends Fragment {
         return serviceRecode;
     }
     private void setProblemFragmentList(){
-        problemFragmentList.set(0,new ProblemInfoFragment());
-        problemFragmentList.set(1,new ProblemAnalysisFragment());
-        problemFragmentList.set(2,new ProblemProgramFragment());
-        problemFragmentList.set(3,new ProblemResultFragment());
-        mPagerAdapter.notifyDataSetChanged();
+        problemFragmentList.add(new ProblemInfoFragment());
+        problemFragmentList.add(new ProblemAnalysisFragment());
+        problemFragmentList.add(new ProblemProgramFragment());
+        problemFragmentList.add(new ProblemResultFragment());
+        FragmentManager fm = getFragmentManager();
+        mPagerAdapter = new FragmentStatePagerAdapter(fm) {
+            @Override
+            public Fragment getItem(int position) {
+                return problemFragmentList.get(position);
+            }
+
+            @Override
+            public int getCount() {
+                return problemFragmentList.size();
+            }
+        };
+        problemViewPager.setAdapter(mPagerAdapter);
+
+        problemViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                problemFragmentList.get(position).updateData();
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        resTabBackground();
+                        line_problem_info.setBackgroundResource(R.color.colorTabSelect);
+                        text_problem_info.setTextColor(getResources().getColor(R.color.colorTabSelect));
+                        break;
+                    case 1:
+                        resTabBackground();
+                        line_problem_reason.setBackgroundResource(R.color.colorTabSelect);
+                        text_problem_reason.setTextColor(getResources().getColor(R.color.colorTabSelect));
+                        break;
+                    case 2:
+                        resTabBackground();
+                        line_problem_program.setBackgroundResource(R.color.colorTabSelect);
+                        text_problem_program.setTextColor(getResources().getColor(R.color.colorTabSelect));
+                        break;
+                    case 3:
+                        resTabBackground();
+                        line_problem_result.setBackgroundResource(R.color.colorTabSelect);
+                        text_problem_result.setTextColor(getResources().getColor(R.color.colorTabSelect));
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     public static String getProblemFolderPath() {
