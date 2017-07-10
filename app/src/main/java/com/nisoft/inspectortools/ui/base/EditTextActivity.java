@@ -150,7 +150,7 @@ public class EditTextActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             String contentEdit = mAuthorEdit.getText().toString();
-            if(!contentEdit.equals(initText)){
+            if(!contentEdit.equals(initText)&&!contentEdit.equals("")){
                 Intent intent = new Intent();
                 intent.putExtra("content_edit", contentEdit);
                 int content_position = getIntent().getIntExtra("content_position", -1);

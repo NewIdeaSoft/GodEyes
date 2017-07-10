@@ -17,7 +17,17 @@ import okhttp3.Response;
  */
 
 public class FileUploadUtil {
-    public static void uploadFile(File folder,String companyId,String recodeType,String folderName){
+    public interface OnUploadCompleted{
+        void onFailed();
+        void onFinish();
+    }
+    private OnUploadCompleted mOnUploadCompleted;
+
+    public FileUploadUtil(OnUploadCompleted onUploadCompleted) {
+        mOnUploadCompleted = onUploadCompleted;
+    }
+
+    public void uploadFile(File folder, String companyId, String recodeType, String folderName){
         File [] files = folder.listFiles();
         if(files!=null&&files.length>0) {
             MultipartBody.Builder builder = new MultipartBody.Builder()
@@ -38,15 +48,17 @@ public class FileUploadUtil {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Log.e("upload:","failure");
+                    mOnUploadCompleted.onFailed();
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     Log.e("upload:","completed!");
+                    mOnUploadCompleted.onFinish();
                 }
             });
         }else{
-            return;
+            mOnUploadCompleted.onFinish();
         }
     }
 }

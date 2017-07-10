@@ -24,6 +24,8 @@ import com.nisoft.inspectortools.utils.FileUtil;
 import java.io.File;
 import java.util.ArrayList;
 
+import okhttp3.RequestBody;
+
 /**
  * Created by Administrator on 2017/5/18.
  */

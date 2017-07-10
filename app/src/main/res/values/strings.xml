@@ -10,4 +10,6 @@
     <string name="problem_reason_hint">点击输入对该问题的原因分析</string>
     <string name="text_edit_hint">点击输入</string>
     <string name="text_date_hint">点击选择时间</string>
+    <string name="problem_type">问题类别:</string>
+    <string name="text_choose_hint">点击选择</string>
 </resources>

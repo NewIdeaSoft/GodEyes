@@ -57,4 +57,11 @@ public class StringFormatUtil {
         String dateString = format.format(date);
         return dateString;
     }
+
+    public static String correctString(String s){
+        if (s.equals("null")){
+            s="";
+        }
+        return s;
+    }
 }

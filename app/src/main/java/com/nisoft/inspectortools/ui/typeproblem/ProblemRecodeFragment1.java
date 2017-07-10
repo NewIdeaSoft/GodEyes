@@ -237,7 +237,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                 downloadUrls.add(url);
             }
         }
-        new VolumeImageDownLoad(downloadUrls, sProblemFolderPath
+        new VolumeImageDownLoad(downloadUrls, sProblemFolderPath+"问题描述/"
                 , new VolumeImageDownLoad.DownloadStateListener() {
             @Override
             public void onStart() {
@@ -301,7 +301,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                         if (result.equals("OK")) {
                             Toast.makeText(getActivity(), "数据上传完成，开始上传照片！", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), FileUploadService.class);
-                            intent.putExtra("folder_path", sProblemFolderPath);
+                            intent.putExtra("folder_path", sProblemFolderPath+"/problem/");
                             intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
                             intent.putExtra("recode_type","problem");
                             intent.putExtra("folder_name", sProblemData.getProblem().getRecodeId()+"/problem");

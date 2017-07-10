@@ -17,4 +17,7 @@ public class RecodeTypesStrings {
             "material/purchased_parts",
             "problem"
     };
+    public static final String[] PROBLEM_TYPE_CHI = {
+            "质量","安全","管理","其他"
+    };
 }

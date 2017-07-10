@@ -9,6 +9,7 @@ import android.util.Log;
 import com.nisoft.inspectortools.db.problem.ProblemsSQLiteOpenHelper;
 import com.nisoft.inspectortools.db.problem.RecodeCursorWrapper;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
+import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,15 +65,19 @@ public class ProblemDataLab {
         long dateTime = date.getTime();
         long updateTime = recode.getUpdateTime();
         if (problemId != null) {
+            problemId = StringFormatUtil.correctString(problemId);
             values.put(RecodeTable.Cols.PROBLEM_ID, problemId);
         }
         if (type != null) {
+            type = StringFormatUtil.correctString(type);
             values.put(RecodeTable.Cols.TYPE, type);
         }
         if (description != null) {
+            description = StringFormatUtil.correctString(description);
             values.put(RecodeTable.Cols.DESCRIPTION_TEXT, description);
         }
         if(authorId!=null) {
+            authorId = StringFormatUtil.correctString(authorId);
             values.put(RecodeTable.Cols.AUTHOR,authorId);
         }
         values.put(RecodeTable.Cols.DATE, dateTime);
@@ -91,9 +96,11 @@ public class ProblemDataLab {
                 String address = ((ProblemRecode) recode).getAddress();
                 String title = ((ProblemRecode) recode).getTitle();
                 if (title != null) {
+                    title = StringFormatUtil.correctString(title);
                     values.put(RecodeTable.Cols.TITLE, title);
                 }
                 if (address != null) {
+                    address = StringFormatUtil.correctString(address);
                     values.put(RecodeTable.Cols.ADDRESS, address);
                 }
             }

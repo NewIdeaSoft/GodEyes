@@ -31,7 +31,18 @@ public class FileUploadService extends Service {
         String folderName = intent.getStringExtra("folder_name");
         Log.e("uploadUrl", uploadUrl);
         File folder = new File(uploadUrl);
-        FileUploadUtil.uploadFile(folder,companyId,recodeType,folderName);
+        FileUploadUtil uploadUtil = new FileUploadUtil(new FileUploadUtil.OnUploadCompleted() {
+            @Override
+            public void onFailed() {
+                stopSelf();
+            }
+
+            @Override
+            public void onFinish() {
+                stopSelf();
+            }
+        });
+        uploadUtil.uploadFile(folder,companyId,recodeType,folderName);
         return super.onStartCommand(intent, flags, startId);
     }
 

@@ -13,6 +13,7 @@ public class OrgDbSchema {
             public static final String WORK_NUM = "work_num";
             public static final String ORG_CODE = "org_code";
             public static final String STATION_CODE = "station_code";
+            public static final String COMPANY_ID = "company_id";
         }
     }
     public static class OrgTable{

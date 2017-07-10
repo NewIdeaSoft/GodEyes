@@ -1,12 +1,14 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,7 @@ public class ProblemInfoFragment extends RecodeFragment {
     public static final int REQUEST_DISCOVER_DATE = 103;
     public static final int REQUEST_TITLE = 104;
     public static final int REQUEST_DISCOVER_ADDRESS = 105;
+    public static final int REQUEST_TYPE = 106;
     private ProblemRecode mProblem;
     private TextView mDiscoveredDate;
     private TextView mDiscover;
@@ -47,6 +50,7 @@ public class ProblemInfoFragment extends RecodeFragment {
     private RecyclerView mImagesRecyclerView;
     private JobPicsAdapter mAdapter;
     private String mFolderPath;
+    private TextView mTypeTextView;
 
 
     @Override
@@ -55,6 +59,9 @@ public class ProblemInfoFragment extends RecodeFragment {
     }
 
     public void updateView() {
+        if (mProblem.getType()!=null){
+            mTypeTextView.setText(mProblem.getType());
+        }
         if (mProblem.getTitle() != null) {
             mTitle.setText(mProblem.getTitle());
         }
@@ -80,7 +87,7 @@ public class ProblemInfoFragment extends RecodeFragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        final Date updateDate = new Date();
+        Date updateDate = new Date();
         long updateTime = updateDate.getTime();
         mProblem.setUpdateTime(updateTime);
         switch (requestCode) {
@@ -109,6 +116,11 @@ public class ProblemInfoFragment extends RecodeFragment {
                 mProblem.setDescription(description);
                 mDescriptionTextView.setText(description);
                 break;
+            case REQUEST_TYPE:
+                String type = data.getStringExtra("type");
+                mProblem.setType(type);
+                mTypeTextView.setText(type);
+                break;
             case REQUEST_TITLE:
                 final String title = data.getStringExtra("content_edit");
                 final String oldProblemFolderPath = ProblemRecodeFragment1.getProblemFolderPath();
@@ -118,6 +130,7 @@ public class ProblemInfoFragment extends RecodeFragment {
                     ProgressDialog dialog = new ProgressDialog(getActivity());
                     @Override
                     protected void onPreExecute() {
+                        super.onPreExecute();
                         dialog.setMessage("正在准备文件");
                         dialog.show();
                     }
@@ -138,6 +151,7 @@ public class ProblemInfoFragment extends RecodeFragment {
 
                     @Override
                     protected void onPostExecute(Boolean success) {
+                        super.onPostExecute(success);
                         if (success){
                             ProblemRecodeFragment1.setProblemFolderPath();
                             mFolderPath = newProblemFolderPath;
@@ -172,6 +186,7 @@ public class ProblemInfoFragment extends RecodeFragment {
     protected void init() {
         mProblem = ProblemRecodeFragment1.getProblem().getProblem();
         mFolderPath = ProblemRecodeFragment1.getProblemFolderPath()+"问题描述/";
+        Log.e("JobPicsAdapter:",mFolderPath+"");
     }
 
     @Override
@@ -185,6 +200,13 @@ public class ProblemInfoFragment extends RecodeFragment {
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container) {
         View view = inflater.inflate(R.layout.fragment_problem_simple_info, container, false);
+        mTypeTextView = (TextView) view.findViewById(R.id.tv_type);
+        mTypeTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTypePickerDialog(REQUEST_TYPE);
+            }
+        });
         mTitle = (TextView) view.findViewById(R.id.tv_title);
         mTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,5 +256,12 @@ public class ProblemInfoFragment extends RecodeFragment {
         mAdapter.setEditable(true);
         mImagesRecyclerView.setAdapter(mAdapter);
         return view;
+    }
+
+    private void showTypePickerDialog(int requestCode) {
+        FragmentManager fm = getFragmentManager();
+        ProblemTypeDialog dialog = new ProblemTypeDialog();
+        dialog.setTargetFragment(this,requestCode);
+        dialog.show(fm,"type");
     }
 }
