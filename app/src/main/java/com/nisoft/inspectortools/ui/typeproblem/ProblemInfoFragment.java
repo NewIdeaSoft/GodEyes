@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +80,7 @@ public class ProblemInfoFragment extends RecodeFragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        Date updateDate = new Date();
+        final Date updateDate = new Date();
         long updateTime = updateDate.getTime();
         mProblem.setUpdateTime(updateTime);
         switch (requestCode) {
@@ -119,7 +118,6 @@ public class ProblemInfoFragment extends RecodeFragment {
                     ProgressDialog dialog = new ProgressDialog(getActivity());
                     @Override
                     protected void onPreExecute() {
-                        super.onPreExecute();
                         dialog.setMessage("正在准备文件");
                         dialog.show();
                     }
@@ -140,7 +138,6 @@ public class ProblemInfoFragment extends RecodeFragment {
 
                     @Override
                     protected void onPostExecute(Boolean success) {
-                        super.onPostExecute(success);
                         if (success){
                             ProblemRecodeFragment1.setProblemFolderPath();
                             mFolderPath = newProblemFolderPath;
@@ -149,6 +146,7 @@ public class ProblemInfoFragment extends RecodeFragment {
                             mAdapter.notifyDataSetChanged();
                             mProblem.setTitle(title);
                             mTitle.setText(title);
+                            updateData();
                         }
                         dialog.dismiss();
                     }
@@ -174,7 +172,6 @@ public class ProblemInfoFragment extends RecodeFragment {
     protected void init() {
         mProblem = ProblemRecodeFragment1.getProblem().getProblem();
         mFolderPath = ProblemRecodeFragment1.getProblemFolderPath()+"问题描述/";
-        Log.e("JobPicsAdapter:",mFolderPath+"");
     }
 
     @Override

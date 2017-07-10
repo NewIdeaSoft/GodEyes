@@ -1,6 +1,5 @@
 package com.nisoft.inspectortools.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -167,7 +166,7 @@ public class FileUtil {
         }
         if (file.isDirectory()){
             File [] files = file.listFiles();
-            if (files==null||files.length==0){
+            if (files.length==0){
                 file.delete();
             }else {
                 for (File file1 : files){
@@ -175,7 +174,7 @@ public class FileUtil {
                 }
                 deleteFile(file);
             }
-        }else {
+        }else if(!file.isDirectory()){
             file.delete();
         }
 
