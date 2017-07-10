@@ -55,7 +55,7 @@ public class ProblemResultFragment extends RecodeFragment {
     @Override
     protected void init() {
         mProblem = ProblemRecodeFragment1.getProblem().getResultRecode();
-        mFolderPath = ProblemRecodeFragment1.getResultFolderPath();
+        mFolderPath = ProblemRecodeFragment1.getProblemFolderPath()+"处理结果/";
         Log.e("JobPicsAdapter:",mFolderPath);
     }
 

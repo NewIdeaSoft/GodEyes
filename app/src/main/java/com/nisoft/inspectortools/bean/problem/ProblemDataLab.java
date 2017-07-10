@@ -205,7 +205,6 @@ public class ProblemDataLab {
             RecodeCursorWrapper cursorWrapper = queryRecode(table,
                     RecodeTable.Cols.PROBLEM_ID + "=?",
                     new String[]{recode.getRecodeId()});
-            Log.e("TAG", cursorWrapper.getCount() + "");
             if (cursorWrapper.getCount() > 0) {
                 mDatabase.update(table, contentValues,
                         RecodeTable.Cols.PROBLEM_ID + "=?",

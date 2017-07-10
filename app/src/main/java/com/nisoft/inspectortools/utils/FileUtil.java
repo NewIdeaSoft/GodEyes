@@ -146,7 +146,7 @@ public class FileUtil {
         }
         File file = new File(folderPath);
         if (!file.exists()) {
-            file.mkdirs();
+            return null;
         }
         String[] files = file.list();
         ArrayList<String> pathList = null;
@@ -159,6 +159,26 @@ public class FileUtil {
             }
         }
         return pathList;
+    }
+
+    public static void deleteFile(File file){
+        if (!file.exists()){
+            return;
+        }
+        if (file.isDirectory()){
+            File [] files = file.listFiles();
+            if (files==null||files.length==0){
+                file.delete();
+            }else {
+                for (File file1 : files){
+                    deleteFile(file1);
+                }
+                deleteFile(file);
+            }
+        }else {
+            file.delete();
+        }
+
     }
 
 }

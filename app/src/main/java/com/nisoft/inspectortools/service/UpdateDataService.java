@@ -32,7 +32,7 @@ public class UpdateDataService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String org_id = intent.getStringExtra("org_id");
+//        String org_id = intent.getStringExtra("org_id");
         downloadData();
         return super.onStartCommand(intent, flags, startId);
     }

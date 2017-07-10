@@ -73,10 +73,8 @@ public class OrgLab {
             if (cursor.getCount() > 0) {
                 int i = mDataBase.update(EmployeeTable.NAME, values,
                         EmployeeTable.Cols.PHONE + "=?", new String[]{employee.getPhone()});
-                Log.e("Update:", i + "");
             } else {
                 long j = mDataBase.insert(EmployeeTable.NAME, null, values);
-                Log.e("Insert:", j + "");
             }
             cursor.close();
         }

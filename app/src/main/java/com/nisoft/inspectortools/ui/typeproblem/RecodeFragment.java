@@ -47,7 +47,6 @@ public abstract class RecodeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        updateData();
     }
 
     protected void startEditTextActivity(int requestCode,String initText) {

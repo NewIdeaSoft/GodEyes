@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.bean.problem.ImageRecode;
@@ -72,7 +73,6 @@ public class ProblemRecodeFragment1 extends Fragment {
 
     private FragmentStatePagerAdapter mPagerAdapter;
     private static String sProblemFolderPath;
-    private static String sResultFolderPath;
     private ProgressDialog mDialog;
     private boolean mEditable = true;
 
@@ -165,12 +165,9 @@ public class ProblemRecodeFragment1 extends Fragment {
         mProblemId = getArguments().getString(RecodeTable.Cols.PROBLEM_ID);
         Log.e(TAG, mProblemId);
         sProblemData = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(mProblemId);
-        Gson gson = new Gson();
-        Log.e(TAG,gson.toJson(sProblemData));
-        sProblemFolderPath = FilePath.PROBLEM_DATA_PATH + sProblemData.getProblem().getTitle() +
-                "(" + sProblemData.getProblem().getRecodeId() + ")/问题描述/";
-        sResultFolderPath =FilePath.PROBLEM_DATA_PATH + sProblemData.getProblem().getTitle() +
-                "(" + sProblemData.getProblem().getRecodeId() + ")/处理结果/";
+//        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+//        Log.e(TAG,gson.toJson(sProblemData));
+        setProblemFolderPath();
     }
 
     private void resTabBackground() {
@@ -192,7 +189,6 @@ public class ProblemRecodeFragment1 extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(sProblemData);
     }
 
 
@@ -274,8 +270,9 @@ public class ProblemRecodeFragment1 extends Fragment {
 
     private void uploadProblem() {
         ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(sProblemData);
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
         String jobJson = gson.toJson(sProblemData);
+        Log.e("sProblemData",jobJson);
         RequestBody body = new FormBody.Builder()
                 .add("intent", "update")
                 .add("job_json", jobJson)
@@ -311,6 +308,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                             getActivity().startService(intent);
                         } else {
                             Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+                            Log.e("uploadProblem",result);
                         }
                     }
                 });
@@ -360,7 +358,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
                         Log.e("download:", result);
-                        Gson gson = new Gson();
+                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
                         ProblemDataPackage serviceRecode = gson.fromJson(result, ProblemDataPackage.class);
                         sProblemData = findLaterRecode(localProblemData, serviceRecode);
                         getActivity().runOnUiThread(new Runnable() {
@@ -414,7 +412,6 @@ public class ProblemRecodeFragment1 extends Fragment {
         problemViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                problemFragmentList.get(position).updateData();
             }
 
             @Override
@@ -454,15 +451,9 @@ public class ProblemRecodeFragment1 extends Fragment {
         return sProblemFolderPath;
     }
 
-    public static void setProblemFolderPath(String problemFolderPath) {
-        sProblemFolderPath = problemFolderPath;
+    public static void setProblemFolderPath() {
+        sProblemFolderPath  = FilePath.PROBLEM_DATA_PATH + sProblemData.getProblem().getTitle() +
+                "(" + sProblemData.getProblem().getRecodeId() + ")/";
     }
 
-    public static String getResultFolderPath() {
-        return sResultFolderPath;
-    }
-
-    public static void setResultFolderPath(String resultFolderPath) {
-        sResultFolderPath = resultFolderPath;
-    }
 }

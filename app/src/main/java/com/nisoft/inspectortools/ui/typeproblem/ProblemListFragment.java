@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.AnotherListAdapter;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
@@ -151,22 +152,27 @@ public class ProblemListFragment extends Fragment {
                 String result = response.body().string();
                 Log.e("listJson:", result);
                 if (!result.equals("zero")) {
-                    Gson gson = new Gson();
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
                     ProblemListDataPackage recodeData = gson.fromJson(result, ProblemListDataPackage.class);
                     ArrayList<ProblemRecode> recodes = recodeData.getProblemRecodes();
                     for (ProblemRecode recode1 : recodes) {
                         for (ProblemRecode recode2 : mProblems) {
                             if (recode1.getRecodeId().equals(recode2.getRecodeId())) {
+                                if(recode1.getUpdateTime()>recode2.getUpdateTime()){
+                                    ProblemDataLab.getProblemDataLab(getActivity())
+                                            .updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
+                                }else{
+                                    recodes.set(recodes.indexOf(recode1),recode2);
+                                }
                                 break;
                             }
                             if(mProblems.indexOf(recode2)==mProblems.size()-1) {
-                                ProblemDataLab.getProblemDataLab(getActivity()).updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
+                                ProblemDataLab.getProblemDataLab(getActivity())
+                                        .updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
                             }
-
                         }
                     }
                     mProblems = recodes;
-
                 }
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
