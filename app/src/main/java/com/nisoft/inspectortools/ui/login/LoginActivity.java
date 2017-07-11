@@ -18,6 +18,7 @@ import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeActivity;
 import com.nisoft.inspectortools.utils.DialogUtil;
+import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
@@ -141,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
                                 company.setOrgCode(companyId);
                                 company.setOrgName(companyName);
                                 company.setOrgStructure(StringFormatUtil.getStrings(structure));
-                                Gson gson = new Gson();
+                                Gson gson = GsonUtil.getDateFormatGson();
                                 String json = gson.toJson(company);
                                 Log.e("LoginActivity",json);
                                 intent.putExtra("company_json",json);
@@ -157,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
                         }else if(responseText.equals("error:3")){
                             Toast.makeText(LoginActivity.this, "登陆失败：系统错误！", Toast.LENGTH_SHORT).show();
                         }else{
-                            Gson gson = new Gson();
+                            Gson gson = GsonUtil.getDateFormatGson();
                             Employee employee = gson.fromJson(responseText,Employee.class);
                             editor.putString("phone", phone);
                             editor.putString("password", password);

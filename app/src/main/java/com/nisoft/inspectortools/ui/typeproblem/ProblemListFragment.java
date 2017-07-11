@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.AnotherListAdapter;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
@@ -31,6 +30,7 @@ import com.nisoft.inspectortools.db.problem.RecodeCursorWrapper;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
 import com.nisoft.inspectortools.gson.ProblemListDataPackage;
 import com.nisoft.inspectortools.utils.DialogUtil;
+import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.IOException;
@@ -152,7 +152,7 @@ public class ProblemListFragment extends Fragment {
                 String result = response.body().string();
                 Log.e("listJson:", result);
                 if (!result.equals("zero")) {
-                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+                    Gson gson = GsonUtil.getDateFormatGson();
                     ProblemListDataPackage recodeData = gson.fromJson(result, ProblemListDataPackage.class);
                     ArrayList<ProblemRecode> recodes = recodeData.getProblemRecodes();
                     for (ProblemRecode recode1 : recodes) {

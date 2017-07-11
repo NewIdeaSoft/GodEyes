@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.bean.problem.ImageRecode;
@@ -33,6 +32,7 @@ import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 import com.nisoft.inspectortools.service.FileUploadService;
 import com.nisoft.inspectortools.ui.strings.FilePath;
 import com.nisoft.inspectortools.utils.DialogUtil;
+import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 import com.nisoft.inspectortools.utils.VolumeImageDownLoad;
 
@@ -270,7 +270,7 @@ public class ProblemRecodeFragment1 extends Fragment {
 
     private void uploadProblem() {
         ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(sProblemData);
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+        Gson gson = GsonUtil.getDateFormatGson();
         String jobJson = gson.toJson(sProblemData);
         Log.e("sProblemData",jobJson);
         RequestBody body = new FormBody.Builder()
@@ -358,7 +358,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
                         Log.e("download:", result);
-                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+                        Gson gson = GsonUtil.getDateFormatGson();
                         ProblemDataPackage serviceRecode = gson.fromJson(result, ProblemDataPackage.class);
                         sProblemData = findLaterRecode(localProblemData, serviceRecode);
                         getActivity().runOnUiThread(new Runnable() {

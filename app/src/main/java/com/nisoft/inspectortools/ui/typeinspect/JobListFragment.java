@@ -29,6 +29,7 @@ import com.nisoft.inspectortools.bean.inspect.PicsLab;
 import com.nisoft.inspectortools.db.inspect.PicsCursorWrapper;
 import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 import com.nisoft.inspectortools.utils.DialogUtil;
+import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
@@ -321,7 +322,7 @@ public class JobListFragment extends Fragment {
 
     private void uploadJob(MaterialInspectRecode recode) {
         PicsLab.getPicsLab(getActivity()).updatePics(recode, recode.getJobNum());
-        Gson gson = new Gson();
+        Gson gson = GsonUtil.getDateFormatGson();
         String jobJson = gson.toJson(recode);
         RequestBody body = new FormBody.Builder()
                 .add("intent", "upload")

@@ -41,6 +41,7 @@ public class OrgCursorWrapper extends CursorWrapper {
         orgInfo.setOrgName(getString(getColumnIndex(OrgTable.Cols.ORG_NAME)));
         orgInfo.setOrgLevel(getInt(getColumnIndex(OrgTable.Cols.ORG_LEVEL)));
         orgInfo.setParentOrgId(getString(getColumnIndex(OrgTable.Cols.PARENT_CODE)));
+        orgInfo.setCompanyId(getString(getColumnIndex(OrgTable.Cols.COMPANY_ID)));
         return orgInfo;
     }
 }

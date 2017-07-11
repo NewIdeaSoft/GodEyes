@@ -21,6 +21,7 @@ import com.nisoft.inspectortools.bean.org.Company;
 import com.nisoft.inspectortools.gson.RegisterDataPackage;
 import com.nisoft.inspectortools.utils.CheckUserInfoUtil;
 import com.nisoft.inspectortools.utils.DialogUtil;
+import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.IOException;
@@ -94,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
                 Log.e("result",result);
-                Gson gson = new Gson();
+                Gson gson = GsonUtil.getDateFormatGson();
                 mAllCompanies = gson.fromJson(result, RegisterDataPackage.class).getCompanies();
                 Log.e("mAllCompanies",mAllCompanies.size()+"");
                 Log.e("FirstName:",mAllCompanies.get(0).getOrgName());
@@ -152,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
         final Company company = mAllCompanies.get(mSpinner.getSelectedItemPosition());
         final String companyId = company.getOrgCode();
 
-        final String json = (new Gson()).toJson(company);
+        final String json = GsonUtil.getDateFormatGson().toJson(company);
         RequestBody body = new FormBody.Builder()
                 .add("username",phone)
                 .add("password",password)

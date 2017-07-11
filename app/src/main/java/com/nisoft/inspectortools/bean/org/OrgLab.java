@@ -61,7 +61,7 @@ public class OrgLab {
         if (employee.getPositionsId() != null) {
             values.put(EmployeeTable.Cols.STATION_CODE, employee.getPositionsId().toString());
         }
-
+        values.put(EmployeeTable.Cols.COMPANY_ID,employee.getCompanyId());
         return values;
     }
     public ContentValues getContentValues(OrgInfo orgInfo){
@@ -70,6 +70,7 @@ public class OrgLab {
         values.put(OrgTable.Cols.ORG_NAME,orgInfo.getOrgName());
         values.put(OrgTable.Cols.ORG_LEVEL,orgInfo.getOrgLevel());
         values.put(OrgTable.Cols.PARENT_CODE,orgInfo.getParentOrgId());
+        values.put(OrgTable.Cols.COMPANY_ID,orgInfo.getCompanyId());
         return values;
     }
 

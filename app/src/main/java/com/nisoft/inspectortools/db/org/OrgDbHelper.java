@@ -26,6 +26,7 @@ public class OrgDbHelper extends SQLiteOpenHelper {
             OrgTable.Cols.ORG_CODE+" unique,"+
             OrgTable.Cols.ORG_NAME+","+
             OrgTable.Cols.PARENT_CODE+","+
+            OrgTable.Cols.COMPANY_ID+","+
             OrgTable.Cols.ORG_LEVEL+")";
     public OrgDbHelper(Context context, int version) {
         super(context, NAME, null, version);

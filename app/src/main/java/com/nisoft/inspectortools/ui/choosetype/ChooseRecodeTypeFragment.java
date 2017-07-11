@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.service.UpdateDataService;
 import com.nisoft.inspectortools.ui.typeinspect.JobListActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemListActivity;
@@ -77,6 +78,7 @@ public class ChooseRecodeTypeFragment extends Fragment {
     }
     private void updateEmployeeData(){
         Intent intent = new Intent(getActivity(), UpdateDataService.class);
+        intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
         getActivity().startService(intent);
     }
 

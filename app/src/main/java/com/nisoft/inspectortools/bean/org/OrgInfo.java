@@ -9,6 +9,7 @@ public class OrgInfo {
     private String mOrgName;
     private int mOrgLevel;
     private String mParentOrgId;
+    private String mCompanyId;
 
 
 
@@ -42,5 +43,13 @@ public class OrgInfo {
 
     public void setParentOrgId(String parentOrgId) {
         mParentOrgId = parentOrgId;
+    }
+
+    public String getCompanyId() {
+        return mCompanyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        mCompanyId = companyId;
     }
 }

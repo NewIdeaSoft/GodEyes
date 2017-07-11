@@ -35,6 +35,7 @@ import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.base.EditTextActivity;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.FileUtil;
+import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 import com.nisoft.inspectortools.utils.VolumeImageDownLoad;
@@ -467,7 +468,7 @@ public class WorkingFragment extends Fragment {
                     public void onResponse(Call call, Response response) throws IOException {
                         String result = response.body().string();
                         Log.e("workingFragment:", result);
-                        Gson gson = new Gson();
+                        Gson gson = GsonUtil.getDateFormatGson();
                         RecodeDataPackage dataPackage = gson.fromJson(result, RecodeDataPackage.class);
                         MaterialInspectRecode serviceRecode = dataPackage.getRecode();
                         final String inspector = dataPackage.getName();
@@ -503,7 +504,7 @@ public class WorkingFragment extends Fragment {
      */
     private void uploadJob() {
         PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics, sRecodePics.getJobNum());
-        Gson gson = new Gson();
+        Gson gson = GsonUtil.getDateFormatGson();
         String jobJson = gson.toJson(sRecodePics);
         RequestBody body = new FormBody.Builder()
                 .add("intent", "upload")

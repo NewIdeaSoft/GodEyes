@@ -23,6 +23,7 @@ public class OrgDbSchema {
             public static final String ORG_NAME = "org_name";
             public static final String PARENT_CODE = "parent_code";
             public static final String ORG_LEVEL = "org_level";
+            public static final String COMPANY_ID = "company_id";
         }
     }
 }

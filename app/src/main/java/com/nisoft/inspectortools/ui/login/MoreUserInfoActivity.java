@@ -25,6 +25,7 @@ import com.nisoft.inspectortools.gson.EmployeeDataPackage;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.gson.OrgListPackage;
 import com.nisoft.inspectortools.utils.DialogUtil;
+import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         String json = getIntent().getStringExtra("company_json");
         Log.e("MoreUserInfoActivity", json+"");
         if (json != null){
-            Gson gson = new Gson();
+            Gson gson = GsonUtil.getDateFormatGson();
             mCompany = gson.fromJson(json, Company.class);
         }
         mOrgsForChoose = new ArrayList<>();
@@ -133,7 +134,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                         if (result.equals("error!")) {
                             Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
                         } else {
-                            Gson gson = new Gson();
+                            Gson gson = GsonUtil.getDateFormatGson();
                             mCompany = gson.fromJson(result,Company.class);
                             if (mCompany!=null){
                                 SharedPreferences sp = getSharedPreferences("company",MODE_PRIVATE);
@@ -193,7 +194,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                         if (result.equals("false")) {
                             Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
                         } else {
-                            Gson gson = new Gson();
+                            Gson gson = GsonUtil.getDateFormatGson();
                             EmployeeDataPackage dataPackage = gson.fromJson(result, EmployeeDataPackage.class);
                             mEmployee = dataPackage.getEmployee();
                             mOrgInfo = dataPackage.getOrgInfo();
@@ -231,7 +232,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                 break;
             }
         }
-        Gson gson = new Gson();
+        Gson gson = GsonUtil.getDateFormatGson();
         String json = gson.toJson(mEmployee);
         RequestBody body = new FormBody.Builder()
                 .add("employee", json)
@@ -369,7 +370,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 Log.e("OrgListPackage", result);
-                                Gson gson = new Gson();
+                                Gson gson = GsonUtil.getDateFormatGson();
                                 OrgListPackage orgListPackage = gson.fromJson(result, OrgListPackage.class);
                                 mOrgsForChoose.set(parentLevel + 1, orgListPackage.getOrgInfos());
                                 mOrgInfoAdapter.notifyDataSetChanged();
