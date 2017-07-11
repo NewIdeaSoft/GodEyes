@@ -28,7 +28,8 @@
         </activity>
         <activity
             android:name=".ui.typeproblem.ProblemRecodeActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/ProblemRecodeActivityTheme">
         </activity>
         <activity
             android:name=".ui.base.EditTextActivity"

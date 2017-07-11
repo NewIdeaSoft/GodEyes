@@ -6,9 +6,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,11 +20,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.UserLab;
@@ -52,7 +58,7 @@ import okhttp3.Response;
 public class ProblemRecodeFragment1 extends Fragment {
 
     public static final String TAG = "ProblemRecodeFragment1:";
-
+    public static final String BING_IMAGE_URL = "http://cn.bing.com/az/hprichbg/rb/WesternGhats_ROW14519592458_1920x1080.jpg";
     private String mProblemId;
 
     private static ProblemDataPackage sProblemData;
@@ -70,6 +76,8 @@ public class ProblemRecodeFragment1 extends Fragment {
     private TextView text_problem_reason;
     private TextView text_problem_program;
     private TextView text_problem_result;
+
+    private NestedScrollView mScrollView;
 
     private FragmentStatePagerAdapter mPagerAdapter;
     private static String sProblemFolderPath;
@@ -99,11 +107,27 @@ public class ProblemRecodeFragment1 extends Fragment {
     private View initView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_problem_recode1, container, false);
         setHasOptionsMenu(true);
-        if (sProblemData.getProblem().getTitle() != null) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(sProblemData.getProblem().getTitle());
-        } else {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("新增记录");
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+//        if (sProblemData.getProblem().getTitle() != null) {
+//            toolbar.setTitle(sProblemData.getProblem().getTitle());
+//        } else {
+//            toolbar.setTitle("新增记录");
+//        }
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar!=null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        String title = sProblemData.getProblem().getTitle();
+        if (title != null) {
+            collapsingToolbar.setTitle(title);
+        } else {
+            collapsingToolbar.setTitle("新增记录");
+        }
+        ImageView imageView = (ImageView) view.findViewById(R.id.iv_bing);
+        Glide.with(getActivity()).load(BING_IMAGE_URL).into(imageView);
+        mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
         mDialog = new ProgressDialog(getActivity());
         problemViewPager = (ViewPager) view.findViewById(R.id.problem_info_viewpager);
 
@@ -201,6 +225,9 @@ public class ProblemRecodeFragment1 extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                break;
             case R.id.data_push:
                 //将实体 格式化为字符串
 //                String data = m.toString();
