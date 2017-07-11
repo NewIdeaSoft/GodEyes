@@ -158,15 +158,15 @@ public class ProblemListFragment extends Fragment {
                     for (ProblemRecode recode1 : recodes) {
                         for (ProblemRecode recode2 : mProblems) {
                             if (recode1.getRecodeId().equals(recode2.getRecodeId())) {
-                                if(recode1.getUpdateTime()>recode2.getUpdateTime()){
+                                if (recode1.getUpdateTime() > recode2.getUpdateTime()) {
                                     ProblemDataLab.getProblemDataLab(getActivity())
                                             .updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
-                                }else{
-                                    recodes.set(recodes.indexOf(recode1),recode2);
+                                } else {
+                                    recodes.set(recodes.indexOf(recode1), recode2);
                                 }
                                 break;
                             }
-                            if(mProblems.indexOf(recode2)==mProblems.size()-1) {
+                            if (mProblems.indexOf(recode2) == mProblems.size() - 1) {
                                 ProblemDataLab.getProblemDataLab(getActivity())
                                         .updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
                             }
@@ -193,14 +193,14 @@ public class ProblemListFragment extends Fragment {
         if (mSearchAutoComplete != null && mSearchAutoComplete.isShown()) {
             mSearchAutoComplete.setText("");
         }
-//        if(mAdapter == null) {
-//            mAdapter = new AnotherListAdapter(getActivity(),mProblems);
-//            mProblemsRecyclerView.setAdapter(mAdapter);
-//        }else{
-//            ArrayList<ProblemRecode> problems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
-//            mAdapter.setProblems(problems);
-//            mAdapter.notifyDataSetChanged();
-//        }
+        if(mAdapter == null) {
+            mAdapter = new AnotherListAdapter(getActivity(),mProblems);
+            mProblemsRecyclerView.setAdapter(mAdapter);
+        }else{
+            ArrayList<ProblemRecode> problems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
+            mAdapter.setProblems(problems);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private void createProblem() {

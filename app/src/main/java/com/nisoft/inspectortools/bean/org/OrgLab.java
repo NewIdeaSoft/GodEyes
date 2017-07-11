@@ -61,16 +61,17 @@ public class OrgLab {
         if (employee.getPositionsId() != null) {
             values.put(EmployeeTable.Cols.STATION_CODE, employee.getPositionsId().toString());
         }
-        values.put(EmployeeTable.Cols.COMPANY_ID,employee.getCompanyId());
+        values.put(EmployeeTable.Cols.COMPANY_ID, employee.getCompanyId());
         return values;
     }
-    public ContentValues getContentValues(OrgInfo orgInfo){
+
+    public ContentValues getContentValues(OrgInfo orgInfo) {
         ContentValues values = new ContentValues();
-        values.put(OrgTable.Cols.ORG_CODE,orgInfo.getOrgId());
-        values.put(OrgTable.Cols.ORG_NAME,orgInfo.getOrgName());
-        values.put(OrgTable.Cols.ORG_LEVEL,orgInfo.getOrgLevel());
-        values.put(OrgTable.Cols.PARENT_CODE,orgInfo.getParentOrgId());
-        values.put(OrgTable.Cols.COMPANY_ID,orgInfo.getCompanyId());
+        values.put(OrgTable.Cols.ORG_CODE, orgInfo.getOrgId());
+        values.put(OrgTable.Cols.ORG_NAME, orgInfo.getOrgName());
+        values.put(OrgTable.Cols.ORG_LEVEL, orgInfo.getOrgLevel());
+        values.put(OrgTable.Cols.PARENT_CODE, orgInfo.getParentOrgId());
+        values.put(OrgTable.Cols.COMPANY_ID, orgInfo.getCompanyId());
         return values;
     }
 
@@ -89,7 +90,7 @@ public class OrgLab {
         }
     }
 
-    public void updateOrgInfo(OrgInfo org){
+    public void updateOrgInfo(OrgInfo org) {
         ContentValues values = getContentValues(org);
         if (values.size() > 0) {
             OrgCursorWrapper cursor = query(OrgTable.NAME,
@@ -112,7 +113,8 @@ public class OrgLab {
             updateEmployee(employee);
         }
     }
-    public void updateOrgs(ArrayList<OrgInfo> orgInfos){
+
+    public void updateOrgs(ArrayList<OrgInfo> orgInfos) {
         if (orgInfos == null || orgInfos.size() == 0) {
             return;
         }
@@ -120,6 +122,7 @@ public class OrgLab {
             updateOrgInfo(org);
         }
     }
+
     public Employee findEmployeeById(String phone) {
         OrgCursorWrapper cursor = query(EmployeeTable.NAME, EmployeeTable.Cols.PHONE + "=?", new String[]{phone}, null);
         Employee employee = null;
@@ -130,7 +133,8 @@ public class OrgLab {
         cursor.close();
         return employee;
     }
-    public OrgInfo findOrgInfoById(String org_code){
+
+    public OrgInfo findOrgInfoById(String org_code) {
         OrgCursorWrapper cursor = query(OrgTable.NAME, OrgTable.Cols.ORG_CODE + "=?", new String[]{org_code}, null);
         OrgInfo org = null;
         if (cursor.getCount() > 0) {
@@ -141,13 +145,13 @@ public class OrgLab {
         return org;
     }
 
-    public ArrayList<OrgInfo> findOrgsByParent(String parentId){
+    public ArrayList<OrgInfo> findOrgsByParent(String parentId) {
         OrgCursorWrapper cursor = query(OrgTable.NAME, OrgTable.Cols.PARENT_CODE + "=?", new String[]{parentId}, null);
         ArrayList<OrgInfo> orgs = new ArrayList<>();
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
-            while(!cursor.isAfterLast()){
-                OrgInfo org =  cursor.getOrgInfo();
+            while (!cursor.isAfterLast()) {
+                OrgInfo org = cursor.getOrgInfo();
                 orgs.add(org);
                 cursor.moveToNext();
             }

@@ -34,7 +34,7 @@ import java.util.Date;
  * Created by NewIdeaSoft on 2017/4/26.
  */
 
-public class ProblemInfoFragment extends RecodeFragment {
+public abstract class ProblemInfoFragment extends RecodeFragment {
     public static final int REQUEST_DISCOVER = 101;
     public static final int REQUEST_DISCOVER_DESCRIPTION = 102;
     public static final int REQUEST_DISCOVER_DATE = 103;
@@ -59,7 +59,7 @@ public class ProblemInfoFragment extends RecodeFragment {
     }
 
     public void updateView() {
-        if (mProblem.getType()!=null){
+        if (mProblem.getType() != null) {
             mTypeTextView.setText(mProblem.getType());
         }
         if (mProblem.getTitle() != null) {
@@ -70,7 +70,7 @@ public class ProblemInfoFragment extends RecodeFragment {
         }
         if (mProblem.getAuthor() != null) {
             Employee discover = OrgLab.getOrgLab(getActivity()).findEmployeeById(mProblem.getAuthor());
-            if(discover!=null) {
+            if (discover != null) {
                 mDiscover.setText(discover.getName());
             }
         }
@@ -126,8 +126,9 @@ public class ProblemInfoFragment extends RecodeFragment {
                 final String oldProblemFolderPath = ProblemRecodeFragment1.getProblemFolderPath();
                 final String newProblemFolderPath = FilePath.PROBLEM_DATA_PATH + title +
                         "(" + mProblem.getRecodeId() + ")/";
-                new AsyncTask<Void,Void,Boolean>(){
+                new AsyncTask<Void, Void, Boolean>() {
                     ProgressDialog dialog = new ProgressDialog(getActivity());
+
                     @Override
                     protected void onPreExecute() {
                         super.onPreExecute();
@@ -139,11 +140,11 @@ public class ProblemInfoFragment extends RecodeFragment {
                     protected Boolean doInBackground(Void... params) {
                         File oldProblemFolder = new File(oldProblemFolderPath);
                         File newProblemFolder = new File(newProblemFolderPath);
-                        if(newProblemFolder.exists()){
+                        if (newProblemFolder.exists()) {
                             FileUtil.deleteFile(newProblemFolder);
                         }
                         boolean result = oldProblemFolder.renameTo(newProblemFolder);
-                        if (result){
+                        if (result) {
                             FileUtil.deleteFile(oldProblemFolder);
                         }
                         return result;
@@ -152,7 +153,7 @@ public class ProblemInfoFragment extends RecodeFragment {
                     @Override
                     protected void onPostExecute(Boolean success) {
                         super.onPostExecute(success);
-                        if (success){
+                        if (success) {
                             ProblemRecodeFragment1.setProblemFolderPath();
                             mFolderPath = newProblemFolderPath;
                             mAdapter.setRootPath(mFolderPath);
@@ -160,6 +161,7 @@ public class ProblemInfoFragment extends RecodeFragment {
                             mAdapter.notifyDataSetChanged();
                             mProblem.setTitle(title);
                             mTitle.setText(title);
+                            onTitleChanged(title);
                             updateData();
                         }
                         dialog.dismiss();
@@ -170,12 +172,12 @@ public class ProblemInfoFragment extends RecodeFragment {
         updateData();
     }
 
-    public void setProblem(ProblemRecode recode) {
-        mProblem = recode;
-    }
-
     public ProblemRecode getProblem() {
         return mProblem;
+    }
+
+    public void setProblem(ProblemRecode recode) {
+        mProblem = recode;
     }
 
     public JobPicsAdapter getAdapter() {
@@ -185,8 +187,8 @@ public class ProblemInfoFragment extends RecodeFragment {
     @Override
     protected void init() {
         mProblem = ProblemRecodeFragment1.getProblem().getProblem();
-        mFolderPath = ProblemRecodeFragment1.getProblemFolderPath()+"问题描述/";
-        Log.e("JobPicsAdapter:",mFolderPath+"");
+        mFolderPath = ProblemRecodeFragment1.getProblemFolderPath() + "问题描述/";
+        Log.e("JobPicsAdapter:", mFolderPath + "");
     }
 
     @Override
@@ -194,7 +196,7 @@ public class ProblemInfoFragment extends RecodeFragment {
         ProblemDataPackage problem = ProblemRecodeFragment1.getProblem();
         problem.setProblem(mProblem);
         ProblemRecodeFragment1.setProblemData(problem);
-        ProblemDataLab.getProblemDataLab(getActivity()).updateRecode(RecodeTable.PROBLEM_NAME,mProblem);
+        ProblemDataLab.getProblemDataLab(getActivity()).updateRecode(RecodeTable.PROBLEM_NAME, mProblem);
     }
 
     @Override
@@ -251,7 +253,7 @@ public class ProblemInfoFragment extends RecodeFragment {
         mAdapter = new JobPicsAdapter(ProblemInfoFragment.this,
                 R.layout.inspect_image_item,
                 mProblem.getImagesNameOnServer(),
-                "problem/"+mProblem.getRecodeId()+"/problem/",
+                "problem/" + mProblem.getRecodeId() + "/problem/",
                 mFolderPath);
         mAdapter.setEditable(true);
         mImagesRecyclerView.setAdapter(mAdapter);
@@ -261,7 +263,8 @@ public class ProblemInfoFragment extends RecodeFragment {
     private void showTypePickerDialog(int requestCode) {
         FragmentManager fm = getFragmentManager();
         ProblemTypeDialog dialog = new ProblemTypeDialog();
-        dialog.setTargetFragment(this,requestCode);
-        dialog.show(fm,"type");
+        dialog.setTargetFragment(this, requestCode);
+        dialog.show(fm, "type");
     }
+    public abstract void onTitleChanged(String newTitle);
 }

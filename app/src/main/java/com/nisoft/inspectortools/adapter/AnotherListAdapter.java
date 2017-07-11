@@ -20,21 +20,23 @@ import java.util.ArrayList;
 public class AnotherListAdapter extends RecyclerView.Adapter<AnotherListAdapter.ProblemViewHolder> {
     private ArrayList<ProblemRecode> mProblems;
     private Context mContext;
-    public AnotherListAdapter(Context context, ArrayList<ProblemRecode> problems){
+
+    public AnotherListAdapter(Context context, ArrayList<ProblemRecode> problems) {
         mContext = context;
         mProblems = problems;
     }
+
     @Override
     public ProblemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_new,parent,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_new, parent, false);
         return new ProblemViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ProblemViewHolder holder, int position) {
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.HORIZONTAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         holder.mRecyclerView.setLayoutManager(layoutManager);
-        SwipeLeftDeleteAdapter adapter = new SwipeLeftDeleteAdapter(mContext,mProblems.get(position));
+        SwipeLeftDeleteAdapter adapter = new SwipeLeftDeleteAdapter(mContext, mProblems.get(position));
         holder.mRecyclerView.setAdapter(adapter);
     }
 
@@ -43,15 +45,16 @@ public class AnotherListAdapter extends RecyclerView.Adapter<AnotherListAdapter.
         return mProblems.size();
     }
 
-    static class ProblemViewHolder extends RecyclerView.ViewHolder{
+    public void setProblems(ArrayList<ProblemRecode> mProblems) {
+        this.mProblems = mProblems;
+    }
+
+    static class ProblemViewHolder extends RecyclerView.ViewHolder {
         RecyclerView mRecyclerView;
+
         public ProblemViewHolder(View itemView) {
             super(itemView);
             mRecyclerView = (RecyclerView) itemView.findViewById(R.id.problem_list_item);
         }
-    }
-
-    public void setProblems(ArrayList<ProblemRecode> mProblems) {
-        this.mProblems = mProblems;
     }
 }

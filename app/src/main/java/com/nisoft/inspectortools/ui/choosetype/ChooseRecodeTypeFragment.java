@@ -45,13 +45,13 @@ public class ChooseRecodeTypeFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent;
-                if (position < 3){
+                if (position < 3) {
                     intent = new Intent(getActivity(), JobListActivity.class);
-                    intent.putExtra(KEY_SELECTED_TYPE,position);
+                    intent.putExtra(KEY_SELECTED_TYPE, position);
                     startActivity(intent);
-                }else if (position==3){
+                } else if (position == 3) {
                     intent = new Intent(getActivity(), ProblemListActivity.class);
-                    intent.putExtra(KEY_SELECTED_TYPE,position);
+                    intent.putExtra(KEY_SELECTED_TYPE, position);
                     startActivity(intent);
                 }
 
@@ -63,6 +63,7 @@ public class ChooseRecodeTypeFragment extends Fragment {
         updateEmployeeData();
         return view;
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -76,7 +77,8 @@ public class ChooseRecodeTypeFragment extends Fragment {
                 break;
         }
     }
-    private void updateEmployeeData(){
+
+    private void updateEmployeeData() {
         Intent intent = new Intent(getActivity(), UpdateDataService.class);
         intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
         getActivity().startService(intent);

@@ -8,8 +8,8 @@ import android.content.Context;
  */
 
 public class DialogUtil {
-    public static void showProgressDialog(Context context,ProgressDialog dialog,String message){
-        if (dialog==null){
+    public static void showProgressDialog(Context context, ProgressDialog dialog, String message) {
+        if (dialog == null) {
             dialog = new ProgressDialog(context);
         }
         dialog.setMessage(message);

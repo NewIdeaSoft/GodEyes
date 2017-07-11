@@ -57,17 +57,19 @@ public class EditTextActivity extends AppCompatActivity {
     private static final int CHOOSE_PHOTO = 1;
     private static final int TAKE_PHOTO = 2;
     private static final int CROP_PHOTO = 3;
+    private static final String APPID = "59363ca2";
+    private static final String CROP_CACHE_DIR =
+            Environment.getExternalStorageDirectory().getAbsolutePath() + "/工作相册/cache";
     private EditText mAuthorEdit;
     private ImageButton mSpeechButton;
     private ImageButton mCameraButton;
-    private static final String APPID = "59363ca2";
     private RecognizerDialogListener mRecognizerDialogListener;
     private ProgressDialog mDialog;
-    private static final String CROP_CACHE_DIR =
-            Environment.getExternalStorageDirectory().getAbsolutePath() + "/工作相册/cache";
     private DownloadManagerReceiver mReceiver;
     private long lanDownloadId;
     private String initText;
+    private String photoPath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +119,7 @@ public class EditTextActivity extends AppCompatActivity {
                 if (!new File(TESS_BASE_PATH + "tessdata/",
                         DEFAULT_LANGUAGE + ".traineddata").exists()) {
                     showLanDownloadDialog();
-                }else{
+                } else {
                     showCameraDialog();
                 }
             }
@@ -150,7 +152,7 @@ public class EditTextActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             String contentEdit = mAuthorEdit.getText().toString();
-            if(!contentEdit.equals(initText)&&!contentEdit.equals("")){
+            if (!contentEdit.equals(initText) && !contentEdit.equals("")) {
                 Intent intent = new Intent();
                 intent.putExtra("content_edit", contentEdit);
                 int content_position = getIntent().getIntExtra("content_position", -1);
@@ -158,7 +160,7 @@ public class EditTextActivity extends AppCompatActivity {
                     intent.putExtra("content_position", content_position);
                 }
                 setResult(Activity.RESULT_OK, intent);
-            }else {
+            } else {
                 setResult(Activity.RESULT_CANCELED);
             }
 
@@ -172,8 +174,6 @@ public class EditTextActivity extends AppCompatActivity {
         intent.setType("image/*");
         startActivityForResult(intent, CHOOSE_PHOTO);
     }
-
-    private String photoPath;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -276,7 +276,7 @@ public class EditTextActivity extends AppCompatActivity {
                 }).show();
     }
 
-    private void showLanDownloadDialog(){
+    private void showLanDownloadDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("下载语言包")
                 .setMessage("没有文字识别所需的语言包，约50M，是否开始下载？")
@@ -284,7 +284,7 @@ public class EditTextActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mReceiver = new DownloadManagerReceiver();
-                        registerReceiver(mReceiver,new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                        registerReceiver(mReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                         mCameraButton.setClickable(false);
                         lanDownloadId = downloadLan();
                     }
@@ -342,8 +342,8 @@ public class EditTextActivity extends AppCompatActivity {
         startActivityForResult(intent, requestCode);
     }
 
-    private long downloadLan(){
-        String address = HttpUtil.ADDRESS_MAIN +"chi_sim.traineddata";
+    private long downloadLan() {
+        String address = HttpUtil.ADDRESS_MAIN + "chi_sim.traineddata";
         DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(address));
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
@@ -355,14 +355,14 @@ public class EditTextActivity extends AppCompatActivity {
         return downloadId;
     }
 
-    class DownloadManagerReceiver extends BroadcastReceiver{
+    class DownloadManagerReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             long completeDownloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-            if(completeDownloadId == lanDownloadId){
+            if (completeDownloadId == lanDownloadId) {
                 mCameraButton.setClickable(true);
-                if (mReceiver!=null){
+                if (mReceiver != null) {
                     unregisterReceiver(mReceiver);
                 }
             }

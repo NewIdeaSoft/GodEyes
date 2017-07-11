@@ -24,8 +24,6 @@ import com.nisoft.inspectortools.utils.FileUtil;
 import java.io.File;
 import java.util.ArrayList;
 
-import okhttp3.RequestBody;
-
 /**
  * Created by Administrator on 2017/5/18.
  */
@@ -34,30 +32,32 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
     private Context mContext;
     private ProblemRecode mProblem;
     private String mFolderPath;
-    public SwipeLeftDeleteAdapter(Context context, ProblemRecode problem){
+
+    public SwipeLeftDeleteAdapter(Context context, ProblemRecode problem) {
         mContext = context;
         mProblem = problem;
         mFolderPath = FilePath.PROBLEM_DATA_PATH + mProblem.getTitle() +
                 "(" + mProblem.getRecodeId() + ")/问题描述/";
     }
+
     @Override
     public SwipeLeftViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.problems_list_item,parent,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.problems_list_item, parent, false);
         return new SwipeLeftViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(SwipeLeftViewHolder holder, int position) {
-        if (position == 0){
+        if (position == 0) {
 
             ArrayList<String> imagePathList = FileUtil.getImagesPath(mFolderPath);
-            if (imagePathList!=null&&imagePathList.size()>0){
+            if (imagePathList != null && imagePathList.size() > 0) {
                 Glide.with(mContext).load(imagePathList.get(0)).into(holder.mProblemImageView);
             }
-            if (mProblem.getTitle()!=null){
+            if (mProblem.getTitle() != null) {
                 holder.mProblemTitle.setText(mProblem.getTitle());
             }
-            if (mProblem.getDescription()!=null){
+            if (mProblem.getDescription() != null) {
                 holder.mProblemDetailedInfo.setText(mProblem.getDescription());
             }
 
@@ -65,16 +65,16 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ProblemRecodeActivity.class);
-                    intent.putExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID,mProblem.getRecodeId());
+                    intent.putExtra(RecodeDbSchema.RecodeTable.Cols.PROBLEM_ID, mProblem.getRecodeId());
                     mContext.startActivity(intent);
                 }
             });
 
-        }else if (position == 1){
-            holder.mCardView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+        } else if (position == 1) {
+            holder.mCardView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
             holder.mParent.removeAllViews();
-            TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.delete_problem,holder.mParent,false);
+            TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.delete_problem, holder.mParent, false);
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -82,7 +82,7 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
                     //删除照片文件，添加从相册复制文件到应用图片存储文件后启用，以免删除相册图片
                     File file = new File(mFolderPath);
                     file.delete();
-                    (((ProblemListActivity)mContext).getFragmentManager().findFragmentById(R.id.fragment_content)).onResume();
+                    (((ProblemListActivity) mContext).getFragmentManager().findFragmentById(R.id.fragment_content)).onResume();
                 }
             });
             holder.mParent.addView(textView);
@@ -94,12 +94,13 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
         return 2;
     }
 
-    static class SwipeLeftViewHolder extends RecyclerView.ViewHolder{
+    static class SwipeLeftViewHolder extends RecyclerView.ViewHolder {
         LinearLayout mParent;
         CardView mCardView;
         ImageView mProblemImageView;
         TextView mProblemTitle;
         TextView mProblemDetailedInfo;
+
         public SwipeLeftViewHolder(View itemView) {
             super(itemView);
             mCardView = (CardView) itemView;

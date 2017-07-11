@@ -28,25 +28,26 @@ public class LargePhotoFragment extends DialogFragment {
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
 
-    public static LargePhotoFragment newInstance(int position,ArrayList<String> pathList){
+    public LargePhotoFragment() {
+    }
+
+    public static LargePhotoFragment newInstance(int position, ArrayList<String> pathList) {
         Bundle args = new Bundle();
-        args.putInt(SELECTED_POSITION,position);
-        args.putStringArrayList(IMAGE_PATH_LIST,pathList);
+        args.putInt(SELECTED_POSITION, position);
+        args.putStringArrayList(IMAGE_PATH_LIST, pathList);
         LargePhotoFragment fragment = new LargePhotoFragment();
         fragment.setArguments(args);
-        fragment.setStyle(DialogFragment.STYLE_NO_TITLE,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        fragment.setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         return fragment;
-    }
-    public LargePhotoFragment(){
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_large_photo,container);
+        View view = inflater.inflate(R.layout.dialog_large_photo, container);
         ArrayList<String> photosPath = getArguments().getStringArrayList(IMAGE_PATH_LIST);
         mFragments = new ArrayList<>();
-        for(int i = 0; i < photosPath.size(); i++) {
+        for (int i = 0; i < photosPath.size(); i++) {
             mFragments.add(PhotoFragment.newInstance(photosPath.get(i)));
         }
         mViewPager = (ViewPager) view.findViewById(R.id.pager_large_photo);
@@ -67,12 +68,12 @@ public class LargePhotoFragment extends DialogFragment {
     }
 
 
-
-    class FragmentPagerAdapter extends FragmentStatePagerAdapter{
+    class FragmentPagerAdapter extends FragmentStatePagerAdapter {
 
         public FragmentPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
         @Override
         public int getCount() {
             return mFragments.size();

@@ -14,7 +14,6 @@ import com.nisoft.inspectortools.db.problem.RecodeDbSchema.RecodeTable;
 public class ProblemsSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;
     private static final String DATABASE_NAME = "problem.db";
-    private Context mContext;
     private static final String CREATE_PROBLEM = "create table " + RecodeTable.PROBLEM_NAME +
             "(id integer primary key autoincrement,"
             + RecodeTable.Cols.PROBLEM_ID + " unique,"
@@ -53,6 +52,7 @@ public class ProblemsSQLiteOpenHelper extends SQLiteOpenHelper {
             + RecodeTable.Cols.UPDATE_TIME + ","
             + RecodeTable.Cols.IMAGES_NAME + ","
             + RecodeTable.Cols.DESCRIPTION_TEXT + ")";
+    private Context mContext;
 
     public ProblemsSQLiteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);

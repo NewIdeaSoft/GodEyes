@@ -19,15 +19,15 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         setContentView(R.layout.fragment_container);
         FragmentManager fm = getFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragment_content);
-        if (fragment == null){
+        if (fragment == null) {
             fragment = createFragment();
-            fm.beginTransaction().add(R.id.fragment_content,fragment).commit();
+            fm.beginTransaction().add(R.id.fragment_content, fragment).commit();
         }
     }
 
     @Override
     protected void onResume() {
-        if(getRequestedOrientation()!= ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
+        if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 

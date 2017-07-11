@@ -12,7 +12,6 @@ public class OrgInfo {
     private String mCompanyId;
 
 
-
     public String getOrgName() {
         return mOrgName;
     }

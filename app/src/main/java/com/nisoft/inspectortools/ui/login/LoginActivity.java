@@ -3,8 +3,8 @@ package com.nisoft.inspectortools.ui.login;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         editor = sp.edit();
         String remPhone = sp.getString("phone", "");
         String remPassword = sp.getString("password", "");
-        if (!remPhone.equals("")&&!remPassword.equals("")){
+        if (!remPhone.equals("") && !remPassword.equals("")) {
             checkUser(remPhone, remPassword);
         }
         mPhoneEditText = (EditText) findViewById(R.id.edit_phone);
@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                 .add("password", password)
                 .add("intent", "login")
                 .build();
-        DialogUtil.showProgressDialog(this,mDialog,"正在登陆...");
+        DialogUtil.showProgressDialog(this, mDialog, "正在登陆...");
         HttpUtil.sendPostRequest(HttpUtil.SERVLET_LOGIN, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -123,49 +123,49 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 final String responseText = response.body().string();
-                Log.e("TAG",responseText);
+                Log.e("TAG", responseText);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mDialog.dismiss();
-                        if (responseText.equals("non_info")){
+                        if (responseText.equals("non_info")) {
                             editor.putString("phone", phone);
                             editor.putString("password", password);
                             editor.commit();
-                            Intent intent = new Intent(LoginActivity.this,MoreUserInfoActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, MoreUserInfoActivity.class);
                             Company company = new Company();
-                            SharedPreferences spCompany = getSharedPreferences("company",MODE_PRIVATE);
-                            if (spCompany.getString("phone","").equals(phone)){
-                                String companyName = spCompany.getString("company_name","");
-                                String companyId=spCompany.getString("company_code","");
-                                String structure = spCompany.getString("company_structure","");
+                            SharedPreferences spCompany = getSharedPreferences("company", MODE_PRIVATE);
+                            if (spCompany.getString("phone", "").equals(phone)) {
+                                String companyName = spCompany.getString("company_name", "");
+                                String companyId = spCompany.getString("company_code", "");
+                                String structure = spCompany.getString("company_structure", "");
                                 company.setOrgCode(companyId);
                                 company.setOrgName(companyName);
                                 company.setOrgStructure(StringFormatUtil.getStrings(structure));
                                 Gson gson = GsonUtil.getDateFormatGson();
                                 String json = gson.toJson(company);
-                                Log.e("LoginActivity",json);
-                                intent.putExtra("company_json",json);
+                                Log.e("LoginActivity", json);
+                                intent.putExtra("company_json", json);
                             }
 
-                            intent.putExtra("phone",phone);
+                            intent.putExtra("phone", phone);
                             startActivity(intent);
                             finish();
-                        }else if(responseText.equals("error:1")){
+                        } else if (responseText.equals("error:1")) {
                             Toast.makeText(LoginActivity.this, "登陆失败：密码错误！", Toast.LENGTH_SHORT).show();
-                        }else if(responseText.equals("error:2")){
+                        } else if (responseText.equals("error:2")) {
                             Toast.makeText(LoginActivity.this, "登陆失败：用户不存在！", Toast.LENGTH_SHORT).show();
-                        }else if(responseText.equals("error:3")){
+                        } else if (responseText.equals("error:3")) {
                             Toast.makeText(LoginActivity.this, "登陆失败：系统错误！", Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             Gson gson = GsonUtil.getDateFormatGson();
-                            Employee employee = gson.fromJson(responseText,Employee.class);
+                            Employee employee = gson.fromJson(responseText, Employee.class);
                             editor.putString("phone", phone);
                             editor.putString("password", password);
-                            editor.putString("employee",responseText);
+                            editor.putString("employee", responseText);
                             editor.commit();
                             UserLab.getUserLab(LoginActivity.this).setEmployee(employee);
-                            Intent intent = new Intent(LoginActivity.this,ChooseRecodeTypeActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, ChooseRecodeTypeActivity.class);
                             startActivity(intent);
                             finish();
                         }

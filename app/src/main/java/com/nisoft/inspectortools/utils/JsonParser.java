@@ -37,11 +37,9 @@ public class JsonParser {
             JSONArray words = joResult.getJSONArray("ws");
             for (int i = 0; i < words.length(); i++) {
                 JSONArray items = words.getJSONObject(i).getJSONArray("cw");
-                for(int j = 0; j < items.length(); j++)
-                {
+                for (int j = 0; j < items.length(); j++) {
                     JSONObject obj = items.getJSONObject(j);
-                    if(obj.getString("w").contains("nomatch"))
-                    {
+                    if (obj.getString("w").contains("nomatch")) {
                         ret.append("没有匹配结果!");
                         return ret.toString();
                     }

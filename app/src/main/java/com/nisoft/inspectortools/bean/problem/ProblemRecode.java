@@ -14,16 +14,18 @@ public class ProblemRecode extends ImageRecode {
 
     public ProblemRecode() {
     }
+
     public ProblemRecode(String recodeId) {
         super(recodeId);
     }
 
     public ProblemRecode(String recodeId, String type, String author, Date date, String description, long updateTime, ArrayList<String> imagesName, String adress, ArrayList<String> suspects, String title) {
-        super(recodeId, type, author, date, description, updateTime,imagesName);
+        super(recodeId, type, author, date, description, updateTime, imagesName);
         mAddress = adress;
         mSuspects = suspects;
         mTitle = title;
     }
+
     public String getAddress() {
         return mAddress;
     }

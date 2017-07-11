@@ -22,20 +22,21 @@ public class OrgCursorWrapper extends CursorWrapper {
     public OrgCursorWrapper(Cursor cursor) {
         super(cursor);
     }
-    public Employee getEmployee(){
+
+    public Employee getEmployee() {
         Employee employee = new Employee();
         employee.setPhone(getString(getColumnIndex(EmployeeTable.Cols.PHONE)));
         employee.setName(StringFormatUtil.correctString(getString(getColumnIndex(EmployeeTable.Cols.NAME))));
         employee.setWorkNum(StringFormatUtil.correctString(getString(getColumnIndex(EmployeeTable.Cols.WORK_NUM))));
         employee.setOrgId(StringFormatUtil.correctString(getString(getColumnIndex(EmployeeTable.Cols.ORG_CODE))));
-        if(getString(getColumnIndex(EmployeeTable.Cols.STATION_CODE))!=null) {
+        if (getString(getColumnIndex(EmployeeTable.Cols.STATION_CODE)) != null) {
             employee.setPositionsId(StringFormatUtil.getStrings(getString(getColumnIndex(EmployeeTable.Cols.STATION_CODE))));
         }
         employee.setCompanyId(getString(getColumnIndex(EmployeeTable.Cols.COMPANY_ID)));
         return employee;
     }
 
-    public OrgInfo getOrgInfo(){
+    public OrgInfo getOrgInfo() {
         OrgInfo orgInfo = new OrgInfo();
         orgInfo.setOrgId(getString(getColumnIndex(OrgTable.Cols.ORG_CODE)));
         orgInfo.setOrgName(getString(getColumnIndex(OrgTable.Cols.ORG_NAME)));

@@ -18,12 +18,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.ui.base.UpdatePhotoMenuFragment;
-import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 
 import java.io.File;
@@ -34,7 +31,6 @@ import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -43,18 +39,16 @@ import okhttp3.Response;
 
 public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHolder> {
     public static final String RECODE_FOLDER_ADDRESS = "http://47.93.191.62:8080/InspectorToolsServer/recode/";
+    private static final String FILE_TYPE = MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpg");
     private Fragment mFragment;
     private Context mContext;
-
     private ArrayList<String> mPicsPath;
     private int mImageLayoutId;
     private String mRootPath;
     private ArrayList<String> mImagesName;
     private String mFolderPathOnServer;
     private boolean editable;
-
     private MediaScannerConnection conn;
-    private static final String FILE_TYPE = MimeTypeMap.getSingleton().getMimeTypeFromExtension("jpg");
     private String scanPath;
     private ProgressDialog mProgressDialog;
 
@@ -80,7 +74,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
 
     public void refreshPath() {
         mPicsPath = new ArrayList<>();
-        if (mRootPath==null||mRootPath==""){
+        if (mRootPath == null || mRootPath == "") {
             return;
         }
         File file = new File(mRootPath);
@@ -92,7 +86,7 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         for (int i = 0; i < picsName.length; i++) {
             String[] strings = picsName[i].split("\\.");
             String type = strings[strings.length - 1];
-            if (type.equals("jpg") || type.equals("bmp")||type.equals("png")) {
+            if (type.equals("jpg") || type.equals("bmp") || type.equals("png")) {
                 mPicsPath.add(mRootPath + picsName[i]);
             }
         }
@@ -110,14 +104,14 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         for (int i = 0; i < picsName.length; i++) {
             String[] strings = picsName[i].split("\\.");
             String type = strings[strings.length - 1];
-            if (type.equals("jpg") || type.equals("bmp")||type.equals("png")) {
+            if (type.equals("jpg") || type.equals("bmp") || type.equals("png")) {
                 localImageFilesName.add(picsName[i]);
                 mPicsPath.add(mRootPath + picsName[i]);
             }
         }
-        if (mImagesName!=null) {
+        if (mImagesName != null) {
             ArrayList<String> imagesUrl = new ArrayList<>();
-        Log.e("mImagesName", mImagesName.toString());
+            Log.e("mImagesName", mImagesName.toString());
             for (String name : mImagesName) {
                 if (localImageFilesName.indexOf(name) >= 0) {
                     imagesUrl.add(mRootPath + name);
@@ -297,15 +291,6 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
         conn.connect();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView mPicImage;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            mPicImage = (ImageView) itemView;
-        }
-    }
-
     private boolean isHttpUrl(String url) {
         if (url.startsWith("http")) {
             return true;
@@ -319,5 +304,14 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
 
     public void setRootPath(String rootPath) {
         mRootPath = rootPath;
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView mPicImage;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            mPicImage = (ImageView) itemView;
+        }
     }
 }

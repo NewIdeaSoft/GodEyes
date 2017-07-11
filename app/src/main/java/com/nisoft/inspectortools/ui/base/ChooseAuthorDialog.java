@@ -33,21 +33,21 @@ public class ChooseAuthorDialog extends DialogFragment {
     private ContactAdapter mAdapter;
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_contacts,container,false);
+        View view = inflater.inflate(R.layout.dialog_contacts, container, false);
 //        this.setStyle(DialogFragment.STYLE_NO_TITLE,android.R.style.Theme_DeviceDefault_DialogWhenLarge);
         mEmployees = OrgLab.getOrgLab(getActivity()).getEmployees();
-        Log.e("mEmployees.size()",""+mEmployees.size());
+        Log.e("mEmployees.size()", "" + mEmployees.size());
         mAdapter = new ContactAdapter();
         mContactsRecyclerView = (RecyclerView) view.findViewById(R.id.rv_contacts);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         mContactsRecyclerView.setLayoutManager(layoutManager);
         mContactsRecyclerView.setAdapter(mAdapter);
         return view;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -59,10 +59,10 @@ public class ChooseAuthorDialog extends DialogFragment {
         }
     }
 
-    class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder>{
+    class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
         @Override
         public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.contacts_item,null);
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.contacts_item, null);
             ContactViewHolder holder = new ContactViewHolder(view);
             return holder;
         }
@@ -76,9 +76,9 @@ public class ChooseAuthorDialog extends DialogFragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent();
-                    intent.putExtra("author_name",employee.getName());
-                    intent.putExtra("author_id",employee.getPhone());
-                    getTargetFragment().onActivityResult(getTargetRequestCode(),Activity.RESULT_OK,intent);
+                    intent.putExtra("author_name", employee.getName());
+                    intent.putExtra("author_id", employee.getPhone());
+                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                     ChooseAuthorDialog.this.dismiss();
                 }
             });
@@ -88,11 +88,13 @@ public class ChooseAuthorDialog extends DialogFragment {
         public int getItemCount() {
             return mEmployees.size();
         }
-        class ContactViewHolder extends RecyclerView.ViewHolder{
+
+        class ContactViewHolder extends RecyclerView.ViewHolder {
             LinearLayout linearLayout;
             TextView nameTextView;
             TextView phoneTextView;
             TextView orgTextView;
+
             public ContactViewHolder(View itemView) {
                 super(itemView);
                 linearLayout = (LinearLayout) itemView;

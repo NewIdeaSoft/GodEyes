@@ -55,8 +55,8 @@ public class ProblemResultFragment extends RecodeFragment {
     @Override
     protected void init() {
         mProblem = ProblemRecodeFragment1.getProblem().getResultRecode();
-        mFolderPath = ProblemRecodeFragment1.getProblemFolderPath()+"处理结果/";
-        Log.e("JobPicsAdapter:",mFolderPath);
+        mFolderPath = ProblemRecodeFragment1.getProblemFolderPath() + "处理结果/";
+        Log.e("JobPicsAdapter:", mFolderPath);
     }
 
     @Override
@@ -66,12 +66,12 @@ public class ProblemResultFragment extends RecodeFragment {
 
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container) {
-        View view = inflater.inflate(R.layout.fragment_problem_sovled_info,container,false);
+        View view = inflater.inflate(R.layout.fragment_problem_sovled_info, container, false);
         mSolvedText = (TextView) view.findViewById(R.id.tv_problem_summary);
         mSolvedText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startEditTextActivity(REQUEST_EXECUTE_DESCRIPTION,mSolvedText.getText().toString());
+                startEditTextActivity(REQUEST_EXECUTE_DESCRIPTION, mSolvedText.getText().toString());
             }
         });
 
@@ -80,10 +80,10 @@ public class ProblemResultFragment extends RecodeFragment {
             @Override
             public void onClick(View v) {
                 Date date = mProblem.getDate();
-                if (date ==null){
+                if (date == null) {
                     date = new Date();
                 }
-                showDatePickerDialog(ProblemResultFragment.this,REQUEST_EXECUTE_DATE,date);
+                showDatePickerDialog(ProblemResultFragment.this, REQUEST_EXECUTE_DATE, date);
             }
         });
 
@@ -101,33 +101,35 @@ public class ProblemResultFragment extends RecodeFragment {
         mAdapter = new JobPicsAdapter(ProblemResultFragment.this,
                 R.layout.inspect_image_item,
                 mProblem.getImagesNameOnServer(),
-                "problem/"+mProblem.getRecodeId()+"/result/",
+                "problem/" + mProblem.getRecodeId() + "/result/",
                 mFolderPath);
         mAdapter.setEditable(true);
         mResultRecyclerView.setAdapter(mAdapter);
         return view;
     }
-    private void updateView(){
-        if (mProblem.getAuthor()!=null){
+
+    private void updateView() {
+        if (mProblem.getAuthor() != null) {
             Employee discover = OrgLab.getOrgLab(getActivity()).findEmployeeById(mProblem.getAuthor());
-            if(discover!=null) {
+            if (discover != null) {
                 mHandlerTextView.setText(discover.getName());
             }
         }
-        if (mProblem.getDate()!=null){
+        if (mProblem.getDate() != null) {
             mDateTextView.setText(StringFormatUtil.dateFormat(mProblem.getDate()));
         }
-        if (mProblem.getDescription()!=null){
+        if (mProblem.getDescription() != null) {
             mSolvedText.setText(mProblem.getDescription());
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode!= Activity.RESULT_OK){
+        if (resultCode != Activity.RESULT_OK) {
             return;
         }
         mProblem.setUpdateTime(new Date().getTime());
-        switch(requestCode){
+        switch (requestCode) {
             case 1:
                 mAdapter.resetPath();
                 mAdapter.notifyDataSetChanged();

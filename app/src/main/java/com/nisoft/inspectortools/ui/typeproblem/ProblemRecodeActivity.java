@@ -1,6 +1,7 @@
 package com.nisoft.inspectortools.ui.typeproblem;
 
 import android.app.Fragment;
+
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
 import com.nisoft.inspectortools.ui.base.SingleFragmentActivity;
 

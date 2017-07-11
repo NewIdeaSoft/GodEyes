@@ -16,17 +16,19 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            android:fitsSystemWindows="true">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
             <ImageView
+                android:id="@+id/iv_bing"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/iv_bing"
+                android:layout_marginBottom="2dp"
+                android:fitsSystemWindows="true"
                 android:scaleType="fitXY"
-                app:layout_collapseMode="parallax"
-                android:fitsSystemWindows="true"/>
+                app:layout_collapseMode="parallax"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -45,6 +47,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -61,7 +64,7 @@
                             android:text="问题描述"
                             android:textAlignment="center"
                             android:textColor="#cccccc"
-                            android:textSize="16sp"/>
+                            android:textSize="18dp"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -78,7 +81,7 @@
                             android:text="原因分析"
                             android:textAlignment="center"
                             android:textColor="#cccccc"
-                            android:textSize="16sp"/>
+                            android:textSize="18dp"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -95,7 +98,7 @@
                             android:text="处理方案"
                             android:textAlignment="center"
                             android:textColor="#cccccc"
-                            android:textSize="16sp"/>
+                            android:textSize="18dp"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -112,14 +115,13 @@
                             android:text="处理结果"
                             android:textAlignment="center"
                             android:textColor="#cccccc"
-                            android:textSize="16sp"/>
+                            android:textSize="18dp"/>
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="#cccccc"
                     android:orientation="horizontal"
                     android:paddingEnd="8dp"
                     android:paddingStart="8dp">
@@ -166,15 +168,17 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:fillViewport="true"
-        android:id="@+id/nested_scroll_view">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <android.support.v4.view.ViewPager
                 android:id="@+id/problem_info_viewpager"
                 android:layout_width="match_parent"

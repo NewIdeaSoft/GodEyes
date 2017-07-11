@@ -27,10 +27,13 @@ public abstract class RecodeFragment extends Fragment {
 
 
     protected abstract void init();
+
     public abstract void updateData();
-//    public abstract void updateView();
+
+    //    public abstract void updateView();
     protected abstract View initView(LayoutInflater inflater, @Nullable ViewGroup container);
-//
+
+    //
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,23 +52,24 @@ public abstract class RecodeFragment extends Fragment {
         super.onPause();
     }
 
-    protected void startEditTextActivity(int requestCode,String initText) {
+    protected void startEditTextActivity(int requestCode, String initText) {
         Intent intent = new Intent(getActivity(), EditTextActivity.class);
-        intent .putExtra("initText",initText);
-        startActivityForResult(intent,requestCode);
-    }
-    protected void showDatePickerDialog(Fragment targetFragment,int requestCode,Date date){
-        FragmentManager fm = getFragmentManager();
-        DatePickerDialog dialog = DatePickerDialog.newInstance(-1,date);
-        dialog.setTargetFragment(targetFragment,requestCode);
-        dialog.show(fm,"date");
+        intent.putExtra("initText", initText);
+        startActivityForResult(intent, requestCode);
     }
 
-    protected void showContactsDialog(int requestCode){
+    protected void showDatePickerDialog(Fragment targetFragment, int requestCode, Date date) {
+        FragmentManager fm = getFragmentManager();
+        DatePickerDialog dialog = DatePickerDialog.newInstance(-1, date);
+        dialog.setTargetFragment(targetFragment, requestCode);
+        dialog.show(fm, "date");
+    }
+
+    protected void showContactsDialog(int requestCode) {
         FragmentManager fm = getFragmentManager();
         ChooseAuthorDialog dialog = new ChooseAuthorDialog();
-        dialog.setTargetFragment(this,requestCode);
-        dialog.show(fm,"date");
+        dialog.setTargetFragment(this, requestCode);
+        dialog.show(fm, "date");
     }
 
 }

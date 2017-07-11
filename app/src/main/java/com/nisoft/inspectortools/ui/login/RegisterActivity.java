@@ -55,7 +55,6 @@ public class RegisterActivity extends AppCompatActivity {
     private SharedPreferences.Editor mEditorUser;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void getCompaniesFromServer() {
-        DialogUtil.showProgressDialog(this,mDialog,"正在从服务器加载组织信息...");
+        DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载组织信息...");
         HttpUtil.sendGetRequest(HttpUtil.SERVLET_LOGIN, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -94,11 +93,11 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                Log.e("result",result);
+                Log.e("result", result);
                 Gson gson = GsonUtil.getDateFormatGson();
                 mAllCompanies = gson.fromJson(result, RegisterDataPackage.class).getCompanies();
-                Log.e("mAllCompanies",mAllCompanies.size()+"");
-                Log.e("FirstName:",mAllCompanies.get(0).getOrgName());
+                Log.e("mAllCompanies", mAllCompanies.size() + "");
+                Log.e("FirstName:", mAllCompanies.get(0).getOrgName());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -112,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void initView() {
         mPhoneEditText = (EditText) findViewById(R.id.et_phone);
-        if (initPhone!=null){
+        if (initPhone != null) {
             mPhoneEditText.setText(initPhone);
         }
         mPasswordEditText = (EditText) findViewById(R.id.et_password);
@@ -126,41 +125,41 @@ public class RegisterActivity extends AppCompatActivity {
                 String userPhone = mPhoneEditText.getText().toString();
                 String password = mPasswordEditText.getText().toString();
                 String checkedPassword = mCheckedPasswordEditText.getText().toString();
-                if (!CheckUserInfoUtil.checkPhoneFormat(userPhone)){
+                if (!CheckUserInfoUtil.checkPhoneFormat(userPhone)) {
                     Toast.makeText(RegisterActivity.this, "您输入的不是手机号，请重新输入！", Toast.LENGTH_SHORT).show();
                     mPhoneEditText.setText("");
                     mPhoneEditText.setSelection(0);
                     return;
                 }
-                if (!CheckUserInfoUtil.checkPasswordFormat(password)){
+                if (!CheckUserInfoUtil.checkPasswordFormat(password)) {
                     Toast.makeText(RegisterActivity.this, "您输入的密码长度不在6-20位之间，请重新输入！", Toast.LENGTH_SHORT).show();
                     mPasswordEditText.setText("");
                     mPasswordEditText.setSelection(0);
                     return;
                 }
-                if (!checkedPassword.equals(password)){
+                if (!checkedPassword.equals(password)) {
                     Toast.makeText(RegisterActivity.this, "两次输入的密码不一致！", Toast.LENGTH_SHORT).show();
                     mCheckedPasswordEditText.setText("");
                     mCheckedPasswordEditText.setSelection(0);
                     return;
                 }
-                userRegister(userPhone,password);
+                userRegister(userPhone, password);
             }
         });
     }
 
-    private void userRegister(final String phone,final String password) {
+    private void userRegister(final String phone, final String password) {
         final Company company = mAllCompanies.get(mSpinner.getSelectedItemPosition());
         final String companyId = company.getOrgCode();
 
         final String json = GsonUtil.getDateFormatGson().toJson(company);
         RequestBody body = new FormBody.Builder()
-                .add("username",phone)
-                .add("password",password)
-                .add("org_code",companyId)
-                .add("intent","register")
+                .add("username", phone)
+                .add("password", password)
+                .add("org_code", companyId)
+                .add("intent", "register")
                 .build();
-        DialogUtil.showProgressDialog(this,mDialog,"正在连接服务器");
+        DialogUtil.showProgressDialog(this, mDialog, "正在连接服务器");
         HttpUtil.sendPostRequest(HttpUtil.SERVLET_LOGIN, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -176,15 +175,15 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-                if (responseText.equals("true")){
-                    mEditorCompany.putString("phone",phone);
-                    mEditorCompany.putString("company_name",company.getOrgName());
-                    mEditorCompany.putString("company_code",company.getOrgCode());
-                    mEditorCompany.putString("company_structure",company.getOrgStructure().toString());
+                if (responseText.equals("true")) {
+                    mEditorCompany.putString("phone", phone);
+                    mEditorCompany.putString("company_name", company.getOrgName());
+                    mEditorCompany.putString("company_code", company.getOrgCode());
+                    mEditorCompany.putString("company_structure", company.getOrgStructure().toString());
                     mEditorCompany.commit();
 
-                    mEditorUser.putString("phone",phone);
-                    mEditorUser.putString("password",password);
+                    mEditorUser.putString("phone", phone);
+                    mEditorUser.putString("password", password);
                     mEditorUser.commit();
 
                     runOnUiThread(new Runnable() {
@@ -192,8 +191,8 @@ public class RegisterActivity extends AppCompatActivity {
                         public void run() {
                             mDialog.dismiss();
                             Intent intent = new Intent(RegisterActivity.this, MoreUserInfoActivity.class);
-                            intent.putExtra(LoginActivity.PHONE,phone);
-                            intent.putExtra("company_json",json);
+                            intent.putExtra(LoginActivity.PHONE, phone);
+                            intent.putExtra("company_json", json);
                             startActivity(intent);
                             finish();
                         }
@@ -211,7 +210,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-    class CompanySpinnerAdapter extends BaseAdapter{
+
+    class CompanySpinnerAdapter extends BaseAdapter {
         @Override
         public int getCount() {
             return mAllCompanies.size();
@@ -229,7 +229,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            convertView = View.inflate(RegisterActivity.this,android.R.layout.simple_spinner_item,null);
+            convertView = View.inflate(RegisterActivity.this, android.R.layout.simple_spinner_item, null);
             TextView textView = (TextView) convertView;
             textView.setText(mAllCompanies.get(position).getOrgName());
             return convertView;

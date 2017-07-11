@@ -14,24 +14,24 @@ public class UserLab {
     private Employee mEmployee;
     private Context mContext;
 
-    private UserLab(Context context){
+    private UserLab(Context context) {
         mContext = context.getApplicationContext();
     }
 
-    public static UserLab getUserLab(Context context){
-        if (sUserLab==null){
+    public static UserLab getUserLab(Context context) {
+        if (sUserLab == null) {
             sUserLab = new UserLab(context);
         }
         return sUserLab;
     }
 
-    public Employee getEmployee(){
-        if (mEmployee==null){
-            SharedPreferences sp = mContext.getSharedPreferences("user",Context.MODE_PRIVATE);
-            String json = sp.getString("employee","");
-            if (!json.equals("")){
+    public Employee getEmployee() {
+        if (mEmployee == null) {
+            SharedPreferences sp = mContext.getSharedPreferences("user", Context.MODE_PRIVATE);
+            String json = sp.getString("employee", "");
+            if (!json.equals("")) {
                 Gson gson = new Gson();
-                mEmployee = gson.fromJson(json,Employee.class);
+                mEmployee = gson.fromJson(json, Employee.class);
             }
         }
         return mEmployee;

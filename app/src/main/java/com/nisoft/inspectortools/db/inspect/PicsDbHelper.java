@@ -20,7 +20,7 @@ public class PicsDbHelper extends SQLiteOpenHelper {
             + PicTable.Cols.TYPE + ","
             + PicTable.Cols.INSPECTOR_ID + ","
             + PicTable.Cols.DESCRIPTION + ","
-            + PicTable.Cols.UPDATE_TIME+")";
+            + PicTable.Cols.UPDATE_TIME + ")";
 
     public PicsDbHelper(Context context, int version) {
         super(context, NAME, null, version);

@@ -21,8 +21,8 @@ import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.Company;
 import com.nisoft.inspectortools.bean.org.Employee;
-import com.nisoft.inspectortools.gson.EmployeeDataPackage;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
+import com.nisoft.inspectortools.gson.EmployeeDataPackage;
 import com.nisoft.inspectortools.gson.OrgListPackage;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.GsonUtil;
@@ -67,8 +67,8 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private void init() {
         phone = getIntent().getStringExtra("phone");
         String json = getIntent().getStringExtra("company_json");
-        Log.e("MoreUserInfoActivity", json+"");
-        if (json != null){
+        Log.e("MoreUserInfoActivity", json + "");
+        if (json != null) {
             Gson gson = GsonUtil.getDateFormatGson();
             mCompany = gson.fromJson(json, Company.class);
         }
@@ -85,11 +85,11 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         mOrgListView = (ListView) findViewById(R.id.lv_org_info_item);
         mStationListView = (ListView) findViewById(R.id.lv_position_info);
         mDoneButton = (Button) findViewById(R.id.btn_info_upload);
-        if (mCompany==null||mCompany.getOrgName().equals("")){
+        if (mCompany == null || mCompany.getOrgName().equals("")) {
             getCompanyFromServer();
-        }else {
+        } else {
             mCompanyNameTextView.setText(mCompany.getOrgName());
-            Log.e("MoreUserInfoActivity","mCompany!=null "+mCompany.getOrgCode());
+            Log.e("MoreUserInfoActivity", "mCompany!=null " + mCompany.getOrgCode());
             downLoadInfo();
         }
 
@@ -135,14 +135,14 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                             Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
                         } else {
                             Gson gson = GsonUtil.getDateFormatGson();
-                            mCompany = gson.fromJson(result,Company.class);
-                            if (mCompany!=null){
-                                SharedPreferences sp = getSharedPreferences("company",MODE_PRIVATE);
+                            mCompany = gson.fromJson(result, Company.class);
+                            if (mCompany != null) {
+                                SharedPreferences sp = getSharedPreferences("company", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sp.edit();
-                                editor.putString("phone",phone);
-                                editor.putString("company_name",mCompany.getOrgName());
-                                editor.putString("company_code",mCompany.getOrgCode());
-                                editor.putString("company_structure",mCompany.getOrgStructure().toString());
+                                editor.putString("phone", phone);
+                                editor.putString("company_name", mCompany.getOrgName());
+                                editor.putString("company_code", mCompany.getOrgCode());
+                                editor.putString("company_structure", mCompany.getOrgStructure().toString());
                                 editor.apply();
                                 mCompanyNameTextView.setText(mCompany.getOrgName());
                                 downLoadInfo();
@@ -156,7 +156,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     }
 
     private boolean checkInfo() {
-        if (mNameEditText.getText().toString().equals("")){
+        if (mNameEditText.getText().toString().equals("")) {
             return false;
         }
         return true;
@@ -199,14 +199,14 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                             mEmployee = dataPackage.getEmployee();
                             mOrgInfo = dataPackage.getOrgInfo();
                             mOrgsForChoose = dataPackage.getOrgsInfoForSelect();
-                            if (mEmployee!=null){
+                            if (mEmployee != null) {
                                 if (mEmployee.getName() != null) {
                                     mNameEditText.setText(mEmployee.getName());
                                 }
                                 if (mEmployee.getWorkNum() != null) {
                                     mEmployeeNumEditText.setText(mEmployee.getWorkNum());
                                 }
-                            }else{
+                            } else {
                                 mEmployee = new Employee();
                             }
                             mOrgInfoAdapter.notifyDataSetChanged();
@@ -225,10 +225,10 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         mEmployee.setPhone(phone);
         mEmployee.setWorkNum(mEmployeeNumEditText.getText().toString());
         mEmployee.setCompanyId(mCompany.getOrgCode());
-        for(OrgInfo info:mOrgInfo){
-            if (info!=null){
+        for (OrgInfo info : mOrgInfo) {
+            if (info != null) {
                 mEmployee.setOrgId(info.getOrgId());
-            }else{
+            } else {
                 break;
             }
         }
@@ -278,70 +278,6 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         });
     }
 
-    class OrgInfoAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return mOrgsForChoose.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mOrgsForChoose.get(position);
-        }
-
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(final int itemPosition, View convertView, ViewGroup parent) {
-            convertView = View.inflate(MoreUserInfoActivity.this, R.layout.list_tem_org_item, null);
-            final Spinner spinner = (Spinner) convertView.findViewById(R.id.spinner_org_item);
-            ArrayList<OrgInfo> orgInfos = mOrgsForChoose.get(itemPosition);
-            OrgSpinnerAdapter adapter = new OrgSpinnerAdapter(orgInfos);
-            spinner.setAdapter(adapter);
-            if (mOrgInfo.size() > itemPosition) {
-                OrgInfo selectedOrg = mOrgInfo.get(itemPosition);
-                if (selectedOrg != null && selectedOrg.getOrgLevel()!=0&&orgInfos != null) {
-                    int selected = getSelectedOrgPosition(selectedOrg,orgInfos);
-                    Log.e("TAG", ""+selected);
-                    if (selected != -1) {
-                        spinner.setSelection(selected + 1);
-                    }
-                }
-            }
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position > 0) {
-                        mOrgInfo.set(itemPosition, mOrgsForChoose.get(itemPosition).get(position - 1));
-                        if (itemPosition < mOrgsForChoose.size() - 1) {
-                            ArrayList<OrgInfo> secondaryOrgs = mOrgsForChoose.get(itemPosition + 1);
-                            OrgInfo parentOrg = mOrgInfo.get(itemPosition);
-                            if (secondaryOrgs == null
-                                    || (secondaryOrgs.size() != 0
-                                    && !secondaryOrgs.get(0).getParentOrgId().equals(parentOrg.getOrgId()))) {
-                                Log.e("parent:", mOrgInfo.get(itemPosition).getOrgId());
-                                getSecondaryOrgs(parentOrg.getOrgId(), itemPosition);
-                            }
-
-                        }
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-            return convertView;
-        }
-
-    }
-
     private void getSecondaryOrgs(String parentId, final int parentLevel) {
         DialogUtil.showProgressDialog(this, mDialog, "正在加载单位列表...");
         RequestBody body = new FormBody.Builder()
@@ -381,6 +317,80 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                     }
 
                 });
+    }
+
+    private int getSelectedOrgPosition(OrgInfo selectedOrg, ArrayList<OrgInfo> Orgs) {
+        for (int i = 0; i < Orgs.size(); i++) {
+            OrgInfo org = Orgs.get(i);
+            if (org.getOrgId().equals(selectedOrg.getOrgId())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    class OrgInfoAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return mOrgsForChoose.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mOrgsForChoose.get(position);
+        }
+
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int itemPosition, View convertView, ViewGroup parent) {
+            convertView = View.inflate(MoreUserInfoActivity.this, R.layout.list_tem_org_item, null);
+            final Spinner spinner = (Spinner) convertView.findViewById(R.id.spinner_org_item);
+            ArrayList<OrgInfo> orgInfos = mOrgsForChoose.get(itemPosition);
+            OrgSpinnerAdapter adapter = new OrgSpinnerAdapter(orgInfos);
+            spinner.setAdapter(adapter);
+            if (mOrgInfo.size() > itemPosition) {
+                OrgInfo selectedOrg = mOrgInfo.get(itemPosition);
+                if (selectedOrg != null && selectedOrg.getOrgLevel() != 0 && orgInfos != null) {
+                    int selected = getSelectedOrgPosition(selectedOrg, orgInfos);
+                    Log.e("TAG", "" + selected);
+                    if (selected != -1) {
+                        spinner.setSelection(selected + 1);
+                    }
+                }
+            }
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position > 0) {
+                        mOrgInfo.set(itemPosition, mOrgsForChoose.get(itemPosition).get(position - 1));
+                        if (itemPosition < mOrgsForChoose.size() - 1) {
+                            ArrayList<OrgInfo> secondaryOrgs = mOrgsForChoose.get(itemPosition + 1);
+                            OrgInfo parentOrg = mOrgInfo.get(itemPosition);
+                            if (secondaryOrgs == null
+                                    || (secondaryOrgs.size() != 0
+                                    && !secondaryOrgs.get(0).getParentOrgId().equals(parentOrg.getOrgId()))) {
+                                Log.e("parent:", mOrgInfo.get(itemPosition).getOrgId());
+                                getSecondaryOrgs(parentOrg.getOrgId(), itemPosition);
+                            }
+
+                        }
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            return convertView;
+        }
+
     }
 
     class OrgSpinnerAdapter extends BaseAdapter {
@@ -423,15 +433,5 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             }
             return convertView;
         }
-    }
-
-    private int getSelectedOrgPosition(OrgInfo selectedOrg,ArrayList<OrgInfo> Orgs){
-        for(int i=0;i<Orgs.size();i++){
-            OrgInfo org = Orgs.get(i);
-            if(org.getOrgId().equals(selectedOrg.getOrgId())) {
-                return i;
-            }
-        }
-        return -1;
     }
 }

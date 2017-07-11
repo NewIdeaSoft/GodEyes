@@ -17,13 +17,14 @@ public class ProblemDataPackage {
     public ProblemDataPackage() {
     }
 
-    public ProblemDataPackage(String problemId){
+    public ProblemDataPackage(String problemId) {
         mProblem = new ProblemRecode(problemId);
         mAnalysis = new Recode(problemId);
         mProgram = new Recode(problemId);
         mResultRecode = new ImageRecode(problemId);
     }
-    public ProblemDataPackage(String problemId, String problemImagesDirPath, String resultImagesDirPath){
+
+    public ProblemDataPackage(String problemId, String problemImagesDirPath, String resultImagesDirPath) {
         mProblem = new ProblemRecode(problemId);
         ArrayList<String> problemImagesName = FileUtil.getAllImagesName(problemImagesDirPath);
         mProblem.setImagesNameOnserver(problemImagesName);

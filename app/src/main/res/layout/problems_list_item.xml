@@ -46,7 +46,8 @@
             android:layout_weight="0"
             android:layout_gravity="end"
             android:layout_margin="4dp"
-            android:src="@drawable/icon"/>
+            android:src="@drawable/icon"
+            android:scaleType="fitXY"/>
 
     </LinearLayout>
 

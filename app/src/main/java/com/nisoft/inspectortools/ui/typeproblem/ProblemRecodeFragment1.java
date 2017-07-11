@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
@@ -59,9 +58,9 @@ public class ProblemRecodeFragment1 extends Fragment {
 
     public static final String TAG = "ProblemRecodeFragment1:";
     public static final String BING_IMAGE_URL = "http://cn.bing.com/az/hprichbg/rb/WesternGhats_ROW14519592458_1920x1080.jpg";
-    private String mProblemId;
-
     private static ProblemDataPackage sProblemData;
+    private static String sProblemFolderPath;
+    private String mProblemId;
     private ViewPager problemViewPager;
     private ArrayList<RecodeFragment> problemFragmentList;
     private LinearLayout tab_problem_info;
@@ -76,11 +75,9 @@ public class ProblemRecodeFragment1 extends Fragment {
     private TextView text_problem_reason;
     private TextView text_problem_program;
     private TextView text_problem_result;
-
+    private CollapsingToolbarLayout mCollapsingToolbar;
     private NestedScrollView mScrollView;
-
     private FragmentStatePagerAdapter mPagerAdapter;
-    private static String sProblemFolderPath;
     private ProgressDialog mDialog;
     private boolean mEditable = true;
 
@@ -90,6 +87,26 @@ public class ProblemRecodeFragment1 extends Fragment {
         ProblemRecodeFragment1 fragment = new ProblemRecodeFragment1();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static ProblemDataPackage getProblem() {
+        if (sProblemData == null) {
+            sProblemData = new ProblemDataPackage();
+        }
+        return sProblemData;
+    }
+
+    public static void setProblemData(ProblemDataPackage problemData) {
+        sProblemData = problemData;
+    }
+
+    public static String getProblemFolderPath() {
+        return sProblemFolderPath;
+    }
+
+    public static void setProblemFolderPath() {
+        sProblemFolderPath = FilePath.PROBLEM_DATA_PATH + sProblemData.getProblem().getTitle() +
+                "(" + sProblemData.getProblem().getRecodeId() + ")/";
     }
 
     @Override
@@ -108,22 +125,11 @@ public class ProblemRecodeFragment1 extends Fragment {
         View view = inflater.inflate(R.layout.fragment_problem_recode1, container, false);
         setHasOptionsMenu(true);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-//        if (sProblemData.getProblem().getTitle() != null) {
-//            toolbar.setTitle(sProblemData.getProblem().getTitle());
-//        } else {
-//            toolbar.setTitle("新增记录");
-//        }
-        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if (actionBar!=null){
+        mCollapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        String title = sProblemData.getProblem().getTitle();
-        if (title != null) {
-            collapsingToolbar.setTitle(title);
-        } else {
-            collapsingToolbar.setTitle("新增记录");
         }
         ImageView imageView = (ImageView) view.findViewById(R.id.iv_bing);
         Glide.with(getActivity()).load(BING_IMAGE_URL).into(imageView);
@@ -140,9 +146,9 @@ public class ProblemRecodeFragment1 extends Fragment {
         line_problem_program = (LinearLayout) view.findViewById(R.id.line_problem_program);
         line_problem_result = (LinearLayout) view.findViewById(R.id.line_problem_result);
         text_problem_info = (TextView) view.findViewById(R.id.text_problem_info);
-        text_problem_reason= (TextView) view.findViewById(R.id.text_problem_reason);
-        text_problem_program= (TextView) view.findViewById(R.id.text_problem_program);
-        text_problem_result= (TextView) view.findViewById(R.id.text_problem_result);
+        text_problem_reason = (TextView) view.findViewById(R.id.text_problem_reason);
+        text_problem_program = (TextView) view.findViewById(R.id.text_problem_program);
+        text_problem_result = (TextView) view.findViewById(R.id.text_problem_result);
 
         tab_problem_info.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,12 +190,21 @@ public class ProblemRecodeFragment1 extends Fragment {
         return view;
     }
 
+    private void updateTitle(String title) {
+
+        if (title == null || title.equals("")) {
+            mCollapsingToolbar.setTitle("新增记录");
+        } else {
+            mCollapsingToolbar.setTitle(title);
+        }
+    }
+
     private void initVariables() {
         problemFragmentList = new ArrayList<>();
         mProblemId = getArguments().getString(RecodeTable.Cols.PROBLEM_ID);
         Log.e(TAG, mProblemId);
         sProblemData = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(mProblemId);
-//        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm").create();
+//        Gson gson = GsonUtil.getDateFormatGson();
 //        Log.e(TAG,gson.toJson(sProblemData));
         setProblemFolderPath();
     }
@@ -214,7 +229,6 @@ public class ProblemRecodeFragment1 extends Fragment {
     public void onPause() {
         super.onPause();
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -256,7 +270,7 @@ public class ProblemRecodeFragment1 extends Fragment {
      * 同步服务器与本地记录
      */
     private void synchronizeRecode() {
-        ArrayList<String> urls = ((ProblemInfoFragment)problemFragmentList.get(0)).getAdapter().getPath();
+        ArrayList<String> urls = ((ProblemInfoFragment) problemFragmentList.get(0)).getAdapter().getPath();
         ArrayList<String> downloadUrls = new ArrayList<>();
         for (int i = 0; i < urls.size(); i++) {
             String url = urls.get(i);
@@ -264,7 +278,7 @@ public class ProblemRecodeFragment1 extends Fragment {
                 downloadUrls.add(url);
             }
         }
-        new VolumeImageDownLoad(downloadUrls, sProblemFolderPath+"问题描述/"
+        new VolumeImageDownLoad(downloadUrls, sProblemFolderPath + "问题描述/"
                 , new VolumeImageDownLoad.DownloadStateListener() {
             @Override
             public void onStart() {
@@ -299,7 +313,7 @@ public class ProblemRecodeFragment1 extends Fragment {
         ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(sProblemData);
         Gson gson = GsonUtil.getDateFormatGson();
         String jobJson = gson.toJson(sProblemData);
-        Log.e("sProblemData",jobJson);
+        Log.e("sProblemData", jobJson);
         RequestBody body = new FormBody.Builder()
                 .add("intent", "update")
                 .add("job_json", jobJson)
@@ -328,14 +342,14 @@ public class ProblemRecodeFragment1 extends Fragment {
                         if (result.equals("OK")) {
                             Toast.makeText(getActivity(), "数据上传完成，开始上传照片！", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), FileUploadService.class);
-                            intent.putExtra("folder_path", sProblemFolderPath+"/problem/");
+                            intent.putExtra("folder_path", sProblemFolderPath + "/problem/");
                             intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
-                            intent.putExtra("recode_type","problem");
-                            intent.putExtra("folder_name", sProblemData.getProblem().getRecodeId()+"/problem");
+                            intent.putExtra("recode_type", "problem");
+                            intent.putExtra("folder_name", sProblemData.getProblem().getRecodeId() + "/problem");
                             getActivity().startService(intent);
                         } else {
                             Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
-                            Log.e("uploadProblem",result);
+                            Log.e("uploadProblem", result);
                         }
                     }
                 });
@@ -344,15 +358,6 @@ public class ProblemRecodeFragment1 extends Fragment {
         });
     }
 
-    public static ProblemDataPackage getProblem() {
-        if (sProblemData == null) {
-            sProblemData = new ProblemDataPackage();
-        }
-        return sProblemData;
-    }
-    public static void setProblemData(ProblemDataPackage problemData){
-        sProblemData = problemData;
-    }
     private void downloadRecode() {
         ProblemDataPackage localRecode = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(mProblemId);
         downloadRecodeFromServer(localRecode);
@@ -400,13 +405,14 @@ public class ProblemRecodeFragment1 extends Fragment {
                     }
                 });
     }
+
     private ProblemDataPackage findLaterRecode(ProblemDataPackage localProblemData
             , ProblemDataPackage serviceRecode) {
         if (localProblemData.getProblem().getUpdateTime() > serviceRecode.getProblem().getUpdateTime()) {
             ProblemRecode problemRecode = localProblemData.getProblem();
             ImageRecode resultRecode = localProblemData.getResultRecode();
             ArrayList<String> problemImagesName = serviceRecode.getProblem().getImagesNameOnServer();
-            Log.e("localProblemData:",problemImagesName.toString());
+            Log.e("localProblemData:", problemImagesName.toString());
             ArrayList<String> resultImagesName = serviceRecode.getResultRecode().getImagesNameOnServer();
             problemRecode.setImagesNameOnserver(problemImagesName);
             resultRecode.setImagesNameOnserver(resultImagesName);
@@ -414,11 +420,17 @@ public class ProblemRecodeFragment1 extends Fragment {
             localProblemData.setResultRecode(resultRecode);
             return localProblemData;
         }
-        Log.e("serviceRecode:",serviceRecode.getProblem().getImagesNameOnServer().toString());
+        Log.e("serviceRecode:", serviceRecode.getProblem().getImagesNameOnServer().toString());
         return serviceRecode;
     }
-    private void setProblemFragmentList(){
-        problemFragmentList.add(new ProblemInfoFragment());
+
+    private void setProblemFragmentList() {
+        problemFragmentList.add(new ProblemInfoFragment() {
+            @Override
+            public void onTitleChanged(String title) {
+                updateTitle(title);
+            }
+        });
         problemFragmentList.add(new ProblemAnalysisFragment());
         problemFragmentList.add(new ProblemProgramFragment());
         problemFragmentList.add(new ProblemResultFragment());
@@ -435,7 +447,8 @@ public class ProblemRecodeFragment1 extends Fragment {
             }
         };
         problemViewPager.setAdapter(mPagerAdapter);
-
+        line_problem_info.setBackgroundResource(R.color.colorTabSelect);
+        text_problem_info.setTextColor(getResources().getColor(R.color.colorTabSelect));
         problemViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -472,15 +485,8 @@ public class ProblemRecodeFragment1 extends Fragment {
 
             }
         });
-    }
-
-    public static String getProblemFolderPath() {
-        return sProblemFolderPath;
-    }
-
-    public static void setProblemFolderPath() {
-        sProblemFolderPath  = FilePath.PROBLEM_DATA_PATH + sProblemData.getProblem().getTitle() +
-                "(" + sProblemData.getProblem().getRecodeId() + ")/";
+        String title = sProblemData.getProblem().getTitle();
+        updateTitle(title);
     }
 
 }

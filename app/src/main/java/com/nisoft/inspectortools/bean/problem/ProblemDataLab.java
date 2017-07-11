@@ -19,8 +19,8 @@ import java.util.Date;
  */
 
 public class ProblemDataLab {
-    private Context mContext;
     private static ProblemDataLab sProblemDataLab;
+    private Context mContext;
     private ProblemDataPackage mProblemDataPackage;
     private SQLiteDatabase mDatabase;
 
@@ -36,14 +36,6 @@ public class ProblemDataLab {
         return sProblemDataLab;
     }
 
-    public ProblemDataPackage getProblemDataPackage() {
-        return mProblemDataPackage;
-    }
-
-    public void setProblemDataPackage(ProblemDataPackage problemDataPackage) {
-        mProblemDataPackage = problemDataPackage;
-    }
-
     //    private static ContentValues getImageValues(ImageRecode recode){
 //        ContentValues values = getRecodeValues(recode);
 //        String folderPath = recode.getImagesFolderPath();
@@ -52,7 +44,7 @@ public class ProblemDataLab {
 //        }
 //        return values;
 //    }
-    private static ContentValues getRecodeValues(Recode recode ,String table) {
+    private static ContentValues getRecodeValues(Recode recode, String table) {
         ContentValues values = new ContentValues();
         String problemId = recode.getRecodeId();
         String type = recode.getType();
@@ -76,18 +68,18 @@ public class ProblemDataLab {
             description = StringFormatUtil.correctString(description);
             values.put(RecodeTable.Cols.DESCRIPTION_TEXT, description);
         }
-        if(authorId!=null) {
+        if (authorId != null) {
             authorId = StringFormatUtil.correctString(authorId);
-            values.put(RecodeTable.Cols.AUTHOR,authorId);
+            values.put(RecodeTable.Cols.AUTHOR, authorId);
         }
         values.put(RecodeTable.Cols.DATE, dateTime);
         values.put(RecodeTable.Cols.UPDATE_TIME, updateTime);
-        if (table.equals(RecodeTable.RESULT_NAME)||table.equals(RecodeTable.PROBLEM_NAME)) {
+        if (table.equals(RecodeTable.RESULT_NAME) || table.equals(RecodeTable.PROBLEM_NAME)) {
             ArrayList<String> folderPath = ((ImageRecode) recode).getImagesNameOnServer();
             if (folderPath != null) {
                 values.put(RecodeTable.Cols.IMAGES_NAME, folderPath.toString());
             }
-            if (table.equals(RecodeTable.PROBLEM_NAME)){
+            if (table.equals(RecodeTable.PROBLEM_NAME)) {
                 if (((ProblemRecode) recode).getSuspects() != null) {
                     String suspects = ((ProblemRecode) recode).getSuspects().toString();
                     values.put(RecodeTable.Cols.SUSPECTS, suspects);
@@ -106,6 +98,14 @@ public class ProblemDataLab {
             }
         }
         return values;
+    }
+
+    public ProblemDataPackage getProblemDataPackage() {
+        return mProblemDataPackage;
+    }
+
+    public void setProblemDataPackage(ProblemDataPackage problemDataPackage) {
+        mProblemDataPackage = problemDataPackage;
     }
 
     //    private ContentValues getValues(ProblemRecode recode){
@@ -140,7 +140,7 @@ public class ProblemDataLab {
         cursor.moveToFirst();
         RecodeCursorWrapper cursorWrapper = new RecodeCursorWrapper(cursor);
         Recode recode = null;
-        if (cursorWrapper.getCount()>0){
+        if (cursorWrapper.getCount() > 0) {
             switch (table) {
                 case RecodeTable.PROBLEM_NAME:
                     recode = cursorWrapper.getProblemRecode();
@@ -204,7 +204,7 @@ public class ProblemDataLab {
     }
 
     public void updateRecode(String table, Recode recode) {
-        ContentValues contentValues = getRecodeValues(recode,table);
+        ContentValues contentValues = getRecodeValues(recode, table);
         if (contentValues.size() > 0) {
             if (recode.getRecodeId() == null) {
                 return;
@@ -216,7 +216,7 @@ public class ProblemDataLab {
                 mDatabase.update(table, contentValues,
                         RecodeTable.Cols.PROBLEM_ID + "=?",
                         new String[]{recode.getRecodeId()});
-                Log.e("TAG", "update "+table+":" + recode.getRecodeId());
+                Log.e("TAG", "update " + table + ":" + recode.getRecodeId());
             } else {
                 mDatabase.insert(table, null, contentValues);
                 Log.e("TAG", "insert:" + recode.getRecodeId());
@@ -226,15 +226,16 @@ public class ProblemDataLab {
     }
 
     public void updateProblem(ProblemDataPackage problem) {
-        if (problem.getProblem()!=null){
+        if (problem.getProblem() != null) {
             updateRecode(RecodeTable.PROBLEM_NAME, problem.getProblem());
         }
-        if (problem.getAnalysis()!=null){
-        updateRecode(RecodeTable.ANALYSIS_NAME, problem.getAnalysis());}
-        if (problem.getProgram()!=null){
+        if (problem.getAnalysis() != null) {
+            updateRecode(RecodeTable.ANALYSIS_NAME, problem.getAnalysis());
+        }
+        if (problem.getProgram() != null) {
             updateRecode(RecodeTable.PROGRAM_NAME, problem.getProgram());
         }
-        if (problem.getResultRecode()!=null){
+        if (problem.getResultRecode() != null) {
             updateRecode(RecodeTable.RESULT_NAME, problem.getResultRecode());
         }
 

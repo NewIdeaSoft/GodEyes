@@ -43,8 +43,8 @@ public class UpdateDataService extends Service {
 
     private void downloadEmployeesData(String company_id) {
         RequestBody body = new FormBody.Builder()
-                .add("company_id",company_id)
-                .add("intent","employees")
+                .add("company_id", company_id)
+                .add("intent", "employees")
                 .build();
         HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
             @Override
@@ -55,18 +55,19 @@ public class UpdateDataService extends Service {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                Log.e("UpdateDataService",result);
+                Log.e("UpdateDataService", result);
                 Gson gson = GsonUtil.getDateFormatGson();
-                EmployeeListPackage listPackage = gson.fromJson(result,EmployeeListPackage.class);
+                EmployeeListPackage listPackage = gson.fromJson(result, EmployeeListPackage.class);
                 ArrayList<Employee> employees = listPackage.getEmployees();
                 OrgLab.getOrgLab(UpdateDataService.this).updateEmployee(employees);
             }
         });
     }
-    private void downloadOrgData(String company_id){
+
+    private void downloadOrgData(String company_id) {
         RequestBody body = new FormBody.Builder()
-                .add("company_id",company_id)
-                .add("intent","orgs")
+                .add("company_id", company_id)
+                .add("intent", "orgs")
                 .build();
         HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
             @Override
@@ -77,9 +78,9 @@ public class UpdateDataService extends Service {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                Log.e("UpdateDataService",result);
+                Log.e("UpdateDataService", result);
                 Gson gson = GsonUtil.getDateFormatGson();
-                OrgListPackage listPackage = gson.fromJson(result,OrgListPackage.class);
+                OrgListPackage listPackage = gson.fromJson(result, OrgListPackage.class);
                 ArrayList<OrgInfo> orgInfos = listPackage.getOrgInfos();
                 OrgLab.getOrgLab(UpdateDataService.this).updateOrgs(orgInfos);
             }

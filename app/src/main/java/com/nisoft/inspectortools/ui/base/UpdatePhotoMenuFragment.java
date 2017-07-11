@@ -37,24 +37,22 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
     public static String IMAGE_POSITION = "image_position";
     public static String IMAGE_ROOTPATH = "image_rootpath";
     public static String DELETE_BUTTON_VARIABLE = "delete_button_variable";
-
-
-    public static UpdatePhotoMenuFragment newInstance(int position,String rootPath,boolean deleteButtonVariable) {
-        Bundle args = new Bundle();
-        args.putInt(IMAGE_POSITION, position);
-        args.putString(IMAGE_ROOTPATH,rootPath);
-        args.putBoolean(DELETE_BUTTON_VARIABLE,deleteButtonVariable);
-        UpdatePhotoMenuFragment fragment = new UpdatePhotoMenuFragment();
-        fragment.setArguments(args);
-        fragment.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-        return fragment;
-    }
-
     private Button mMakePhoto;
     private Button mChoosePhoto;
     private Button mDeleteButton;
     private String path;
     private int position;
+
+    public static UpdatePhotoMenuFragment newInstance(int position, String rootPath, boolean deleteButtonVariable) {
+        Bundle args = new Bundle();
+        args.putInt(IMAGE_POSITION, position);
+        args.putString(IMAGE_ROOTPATH, rootPath);
+        args.putBoolean(DELETE_BUTTON_VARIABLE, deleteButtonVariable);
+        UpdatePhotoMenuFragment fragment = new UpdatePhotoMenuFragment();
+        fragment.setArguments(args);
+        fragment.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -65,12 +63,12 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
         boolean canDelete = getArguments().getBoolean(DELETE_BUTTON_VARIABLE);
         mMakePhoto = (Button) view.findViewById(R.id.make_picture);
         mChoosePhoto = (Button) view.findViewById(R.id.choose_picture);
-        if (canDelete){
+        if (canDelete) {
             mDeleteButton = new Button(getActivity());
             mDeleteButton.setText("删除照片");
             mDeleteButton.setLayoutParams(
-                            new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT));
+                    new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT));
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -78,7 +76,7 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
                     UpdatePhotoMenuFragment.this.dismiss();
                 }
             });
-            ((LinearLayout)view).addView(mDeleteButton);
+            ((LinearLayout) view).addView(mDeleteButton);
         }
         mMakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,8 +96,8 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
     }
 
     private void deletePicture() {
-        if (getTargetFragment()instanceof WorkingFragment){
-            ((WorkingFragment)getTargetFragment()).removeSelectedPic(position);
+        if (getTargetFragment() instanceof WorkingFragment) {
+            ((WorkingFragment) getTargetFragment()).removeSelectedPic(position);
         }
     }
 
@@ -111,7 +109,7 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        File outputImage = new File(dir, UUID.randomUUID().toString()+".jpg");
+        File outputImage = new File(dir, UUID.randomUUID().toString() + ".jpg");
         path = null;
         if (outputImage.exists()) {
             outputImage.delete();
@@ -184,12 +182,12 @@ public class UpdatePhotoMenuFragment extends DialogFragment {
                 photoPath = targetPhotoPath;
         }
         Intent i = new Intent();
-        if (new File(targetPhotoPath).exists()){
+        if (new File(targetPhotoPath).exists()) {
             i.putExtra("PhotoPath", targetPhotoPath);
-            i.putExtra("resourcePhotoPath",photoPath);
+            i.putExtra("resourcePhotoPath", photoPath);
         }
 
-        i.putExtra("position",position);
+        i.putExtra("position", position);
 
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
         this.dismiss();

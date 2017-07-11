@@ -53,8 +53,8 @@ public class ImageFilter {
         int height = src.getHeight();
 
         // scan through every single pixel
-        for(int x = 0; x < width; ++x) {
-            for(int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
                 // get one pixel color
                 pixel = src.getPixel(x, y);
                 // retrieve color of all channels
@@ -63,7 +63,7 @@ public class ImageFilter {
                 G = Color.green(pixel);
                 B = Color.blue(pixel);
                 // take conversion up to one single value
-                R = G = B = (int)(GS_RED * R + GS_GREEN * G + GS_BLUE * B);
+                R = G = B = (int) (GS_RED * R + GS_GREEN * G + GS_BLUE * B);
                 // set new pixel color to output bitmap
                 bmOut.setPixel(x, y, Color.argb(A, R, G, B));
             }
@@ -187,7 +187,7 @@ public class ImageFilter {
      */
     public static Bitmap sharpenImageAmeliorate(Bitmap bmp) {
         // 拉普拉斯矩阵
-        int[] laplacian = new int[] { -1, -1, -1, -1, 9, -1, -1, -1, -1 };
+        int[] laplacian = new int[]{-1, -1, -1, -1, 9, -1, -1, -1, -1};
         int width = bmp.getWidth();
         int height = bmp.getHeight();
         Bitmap bitmap = Bitmap.createBitmap(width, height,

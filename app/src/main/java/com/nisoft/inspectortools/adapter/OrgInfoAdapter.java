@@ -21,6 +21,7 @@ public class OrgInfoAdapter extends BaseAdapter {
     private int mMaxCount;
     private ArrayList<OrgInfo> mSelectedOrgInfos;
     private Context mContext;
+
     @Override
     public int getCount() {
         return mSelectedOrgInfos.size();
@@ -38,14 +39,14 @@ public class OrgInfoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = View.inflate(mContext, R.layout.list_tem_org_item,null);
+        convertView = View.inflate(mContext, R.layout.list_tem_org_item, null);
         Spinner spinner = (Spinner) convertView.findViewById(R.id.spinner_org_item);
-        if (mMaxCount>getCount()){
-            if (position == getCount()+1){
+        if (mMaxCount > getCount()) {
+            if (position == getCount() + 1) {
                 TextView textView = new TextView(mContext);
                 textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 textView.setText("点击选择下级单位名称");
-                ((LinearLayout)convertView).removeAllViews();
+                ((LinearLayout) convertView).removeAllViews();
                 ((LinearLayout) convertView).addView(textView);
             }
         }

@@ -26,18 +26,11 @@ public class VolumeImageDownLoad {
         mListener = listener;
     }
 
-    public interface DownloadStateListener {
-        void onStart();
-        void onFailed();
-
-        void onFinish();
-    }
-
     public void startDownload() {
         mListener.onStart();
-        if(mImageUrlList.size()==0) {
+        if (mImageUrlList.size() == 0) {
             mListener.onFinish();
-        }else{
+        } else {
             for (String url : mImageUrlList) {
                 downloadImage(url);
             }
@@ -82,7 +75,7 @@ public class VolumeImageDownLoad {
                             mListener.onFinish();
                         }
                     }
-                }else{
+                } else {
                     count++;
                 }
             }
@@ -97,5 +90,13 @@ public class VolumeImageDownLoad {
     private String getImageName(String url) {
         String[] strings = url.split("/");
         return strings[strings.length - 1];
+    }
+
+    public interface DownloadStateListener {
+        void onStart();
+
+        void onFailed();
+
+        void onFinish();
     }
 }

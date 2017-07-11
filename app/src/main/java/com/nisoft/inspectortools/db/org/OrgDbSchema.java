@@ -5,9 +5,10 @@ package com.nisoft.inspectortools.db.org;
  */
 
 public class OrgDbSchema {
-    public static class EmployeeTable{
-        public static final String NAME="employee";
-        public static class Cols{
+    public static class EmployeeTable {
+        public static final String NAME = "employee";
+
+        public static class Cols {
             public static final String PHONE = "phone";
             public static final String NAME = "name";
             public static final String WORK_NUM = "work_num";
@@ -16,9 +17,11 @@ public class OrgDbSchema {
             public static final String COMPANY_ID = "company_id";
         }
     }
-    public static class OrgTable{
-        public static final String NAME ="org";
-        public static class Cols{
+
+    public static class OrgTable {
+        public static final String NAME = "org";
+
+        public static class Cols {
             public static final String ORG_CODE = "org_code";
             public static final String ORG_NAME = "org_name";
             public static final String PARENT_CODE = "parent_code";

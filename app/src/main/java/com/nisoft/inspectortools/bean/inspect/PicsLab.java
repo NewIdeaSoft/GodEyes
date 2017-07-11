@@ -33,6 +33,27 @@ public class PicsLab {
         return sPicsLab;
     }
 
+    public static ContentValues getPicsContentValues(MaterialInspectRecode pics) {
+        ContentValues contentValues = new ContentValues();
+        if (pics.getJobNum() != null) {
+            contentValues.put(PicTable.Cols.JOB_ID, pics.getJobNum());
+        }
+        if (pics.getDate() != null) {
+            contentValues.put(PicTable.Cols.JOB_DATE, pics.getDate().getTime());
+        }
+        if (pics.getType() != null) {
+            contentValues.put(PicTable.Cols.TYPE, pics.getType());
+        }
+        if (pics.getInspectorId() != null) {
+            contentValues.put(PicTable.Cols.INSPECTOR_ID, pics.getInspectorId());
+        }
+        if (pics.getDescription() != null) {
+            contentValues.put(PicTable.Cols.DESCRIPTION, pics.getDescription());
+        }
+        contentValues.put(PicTable.Cols.UPDATE_TIME, pics.getLatestUpdateTime());
+        return contentValues;
+    }
+
     public PicsCursorWrapper queryPics(String whereClause, String[] selectionArgs) {
         Cursor cursor = mDatabase.query(PicTable.NAME, null, whereClause, selectionArgs, null, null, PicTable.Cols.JOB_ID);
 //        if (cursor==null){return null;}
@@ -68,27 +89,6 @@ public class PicsLab {
         }
 
         return pics;
-    }
-
-    public static ContentValues getPicsContentValues(MaterialInspectRecode pics) {
-        ContentValues contentValues = new ContentValues();
-        if (pics.getJobNum() != null) {
-            contentValues.put(PicTable.Cols.JOB_ID, pics.getJobNum());
-        }
-        if (pics.getDate() != null) {
-            contentValues.put(PicTable.Cols.JOB_DATE, pics.getDate().getTime());
-        }
-        if (pics.getType() != null) {
-            contentValues.put(PicTable.Cols.TYPE, pics.getType());
-        }
-        if (pics.getInspectorId()!=null){
-            contentValues.put(PicTable.Cols.INSPECTOR_ID,pics.getInspectorId());
-        }
-        if (pics.getDescription() != null) {
-            contentValues.put(PicTable.Cols.DESCRIPTION, pics.getDescription());
-        }
-        contentValues.put(PicTable.Cols.UPDATE_TIME, pics.getLatestUpdateTime());
-        return contentValues;
     }
 
     public void updatePics(MaterialInspectRecode pics, String oldJobNum) {

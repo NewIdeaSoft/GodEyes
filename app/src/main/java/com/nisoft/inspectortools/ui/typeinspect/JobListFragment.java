@@ -27,7 +27,6 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 import com.nisoft.inspectortools.bean.inspect.PicsLab;
 import com.nisoft.inspectortools.db.inspect.PicsCursorWrapper;
-import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
@@ -146,44 +145,6 @@ public class JobListFragment extends Fragment {
         });
         getAllRecodeFromServer();
         return view;
-    }
-
-    public class JobListAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return mJobNumList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mJobNumList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            if (convertView == null) {
-                convertView = View.inflate(getActivity(), R.layout.job_list_item, null);
-                holder = new ViewHolder();
-                holder.mJobNumText = (TextView) convertView.findViewById(R.id.job_num_text);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            holder.mJobNumText.setText(mJobNumList.get(position));
-
-            return convertView;
-        }
-
-        class ViewHolder {
-            TextView mJobNumText;
-        }
     }
 
     @Override
@@ -359,6 +320,44 @@ public class JobListFragment extends Fragment {
 
             }
         });
+    }
+
+    public class JobListAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return mJobNumList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mJobNumList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = View.inflate(getActivity(), R.layout.job_list_item, null);
+                holder = new ViewHolder();
+                holder.mJobNumText = (TextView) convertView.findViewById(R.id.job_num_text);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.mJobNumText.setText(mJobNumList.get(position));
+
+            return convertView;
+        }
+
+        class ViewHolder {
+            TextView mJobNumText;
+        }
     }
 
 }

@@ -1,13 +1,9 @@
 package com.nisoft.inspectortools.ui.typeinspect;
 
 import android.app.Fragment;
-import android.support.design.widget.Snackbar;
 import android.view.KeyEvent;
-import android.view.View;
 
-import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.base.SingleFragmentActivity;
-import com.nisoft.inspectortools.ui.choosetype.ChooseRecodeTypeFragment;
 
 import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.KEY_SELECTED_TYPE;
 
@@ -22,7 +18,7 @@ public class WorkingActivity extends SingleFragmentActivity {
     protected Fragment createFragment() {
         mJobNum = getIntent().getStringExtra("job_num");
         boolean isNewJob = getIntent().getBooleanExtra("isNewJob", false);
-        int whichType = getIntent().getIntExtra(KEY_SELECTED_TYPE,-1);
+        int whichType = getIntent().getIntExtra(KEY_SELECTED_TYPE, -1);
         return WorkingFragment.newInstance(mJobNum, whichType, isNewJob);
     }
 

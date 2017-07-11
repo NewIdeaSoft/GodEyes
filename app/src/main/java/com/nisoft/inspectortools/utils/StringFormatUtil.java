@@ -11,7 +11,7 @@ import java.util.Date;
 public class StringFormatUtil {
     public static ArrayList<String> getStrings(String s) {
         ArrayList<String> strings = new ArrayList<>();
-        if (s != null&&!s.equals("[]")) {
+        if (s != null && !s.equals("[]")) {
             if (s.startsWith("[")) {
                 s = s.substring(1, s.length() - 1);
             }
@@ -24,9 +24,10 @@ public class StringFormatUtil {
         }
         return strings;
     }
+
     public static ArrayList<String> getJsonStrings(String s) {
         ArrayList<String> strings = new ArrayList<>();
-        if (s != null&&!s.equals("[]")) {
+        if (s != null && !s.equals("[]")) {
             if (s.startsWith("[")) {
                 s = s.substring(1, s.length() - 1);
             }
@@ -34,8 +35,8 @@ public class StringFormatUtil {
             String split = "}";
             String[] ss = s.split(split);
             for (String s1 : ss) {
-                if(!s1.endsWith("}")) {
-                    s1 = s1+"}";
+                if (!s1.endsWith("}")) {
+                    s1 = s1 + "}";
                 }
                 strings.add(s1);
             }
@@ -58,9 +59,9 @@ public class StringFormatUtil {
         return dateString;
     }
 
-    public static String correctString(String s){
-        if (s.equals("null")){
-            s="";
+    public static String correctString(String s) {
+        if (s.equals("null")) {
+            s = "";
         }
         return s;
     }

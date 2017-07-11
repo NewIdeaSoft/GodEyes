@@ -22,7 +22,7 @@ public class PicsCursorWrapper extends CursorWrapper {
         super(cursor);
     }
 
-    public MaterialInspectRecode getPics(){
+    public MaterialInspectRecode getPics() {
         MaterialInspectRecode pics = new MaterialInspectRecode();
         pics.setJobNum(getString(getColumnIndex(PicTable.Cols.JOB_ID)));
         pics.setDate(new Date(getLong(getColumnIndex(PicTable.Cols.JOB_DATE))));

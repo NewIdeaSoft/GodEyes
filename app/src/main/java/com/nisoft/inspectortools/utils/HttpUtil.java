@@ -39,6 +39,7 @@ public class HttpUtil {
                 .build();
         client.newCall(request).enqueue(callback);
     }
+
     public static void sendPostRequest(String address, RequestBody body, OkHttpCallBack callback) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(address).post(body).build();

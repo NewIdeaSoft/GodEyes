@@ -18,6 +18,6 @@ public class RecodeTypesStrings {
             "problem"
     };
     public static final String[] PROBLEM_TYPE_CHI = {
-            "质量","安全","管理","其他"
+            "质量", "安全", "管理", "其他"
     };
 }

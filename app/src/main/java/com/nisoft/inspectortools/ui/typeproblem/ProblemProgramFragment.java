@@ -51,10 +51,10 @@ public class ProblemProgramFragment extends RecodeFragment {
 
     @Override
     protected View initView(LayoutInflater inflater, @Nullable ViewGroup container) {
-        View view = inflater.inflate(R.layout.fragment_problem_program,container,false);
+        View view = inflater.inflate(R.layout.fragment_problem_program, container, false);
         mAuthorTextView = (TextView) view.findViewById(R.id.tv_program_author);
-        mDateTextView=(TextView) view.findViewById(R.id.tv_program_design_time);
-        mDescriptionTextView=(TextView) view.findViewById(R.id.tv_problem_program_info);
+        mDateTextView = (TextView) view.findViewById(R.id.tv_program_design_time);
+        mDescriptionTextView = (TextView) view.findViewById(R.id.tv_problem_program_info);
         mAuthorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,16 +65,16 @@ public class ProblemProgramFragment extends RecodeFragment {
             @Override
             public void onClick(View v) {
                 Date date = mProgram.getDate();
-                if (date ==null){
+                if (date == null) {
                     date = new Date();
                 }
-                showDatePickerDialog(ProblemProgramFragment.this,REQUEST_PROGRAM_DATE,date);
+                showDatePickerDialog(ProblemProgramFragment.this, REQUEST_PROGRAM_DATE, date);
             }
         });
         mDescriptionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startEditTextActivity(REQUEST_PROGRAM_DESCRIPTION,mDescriptionTextView.getText().toString());
+                startEditTextActivity(REQUEST_PROGRAM_DESCRIPTION, mDescriptionTextView.getText().toString());
             }
         });
         updateView();
@@ -83,11 +83,11 @@ public class ProblemProgramFragment extends RecodeFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode!= Activity.RESULT_OK){
+        if (resultCode != Activity.RESULT_OK) {
             return;
         }
         mProgram.setUpdateTime(new Date().getTime());
-        switch(requestCode){
+        switch (requestCode) {
             case REQUEST_PROGRAM_AUTHOR:
                 String discoverId = data.getStringExtra("author_id");
                 mProgram.setAuthor(discoverId);
@@ -103,17 +103,18 @@ public class ProblemProgramFragment extends RecodeFragment {
         }
         updateView();
     }
-    private void updateView(){
-        if (mProgram.getAuthor()!=null){
+
+    private void updateView() {
+        if (mProgram.getAuthor() != null) {
             Employee discover = OrgLab.getOrgLab(getActivity()).findEmployeeById(mProgram.getAuthor());
-            if(discover!=null) {
+            if (discover != null) {
                 mAuthorTextView.setText(discover.getName());
             }
         }
-        if (mProgram.getDate()!=null){
+        if (mProgram.getDate() != null) {
             mDateTextView.setText(StringFormatUtil.dateFormat(mProgram.getDate()));
         }
-        if (mProgram.getDescription()!=null){
+        if (mProgram.getDescription() != null) {
             mDescriptionTextView.setText(mProgram.getDescription());
         }
     }

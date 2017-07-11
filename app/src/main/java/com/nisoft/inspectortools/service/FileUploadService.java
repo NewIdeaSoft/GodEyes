@@ -42,7 +42,7 @@ public class FileUploadService extends Service {
                 stopSelf();
             }
         });
-        uploadUtil.uploadFile(folder,companyId,recodeType,folderName);
+        uploadUtil.uploadFile(folder, companyId, recodeType, folderName);
         return super.onStartCommand(intent, flags, startId);
     }
 

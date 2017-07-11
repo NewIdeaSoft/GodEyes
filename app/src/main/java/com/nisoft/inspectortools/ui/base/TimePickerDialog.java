@@ -28,11 +28,11 @@ public class TimePickerDialog extends DialogFragment {
     private Date mDate;
     private Date mOldDate;
 
-    public static TimePickerDialog newInstance(Date date, Date oldDate,int position) {
+    public static TimePickerDialog newInstance(Date date, Date oldDate, int position) {
         TimePickerDialog timePickerDialog = new TimePickerDialog();
         Bundle args = new Bundle();
         args.putSerializable(DATE_VARIABLE, date);
-        args.putSerializable(DATE_OLD,oldDate);
+        args.putSerializable(DATE_OLD, oldDate);
         args.putInt(CLICK_POSITION, position);
         timePickerDialog.setArguments(args);
         return timePickerDialog;
@@ -66,9 +66,9 @@ public class TimePickerDialog extends DialogFragment {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (mDate.equals(mOldDate)){
+                        if (mDate.equals(mOldDate)) {
                             sendResult(Activity.RESULT_CANCELED);
-                        }else {
+                        } else {
                             sendResult(Activity.RESULT_OK);
                         }
                     }

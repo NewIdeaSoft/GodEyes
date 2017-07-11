@@ -85,27 +85,29 @@ public class ProblemAnalysisFragment extends RecodeFragment {
         updateView();
         return view;
     }
-    private void updateView(){
-        if (mProblem.getAuthor()!=null){
+
+    private void updateView() {
+        if (mProblem.getAuthor() != null) {
             Employee discover = OrgLab.getOrgLab(getActivity()).findEmployeeById(mProblem.getAuthor());
-            if(discover!=null) {
+            if (discover != null) {
                 mAnalyserTextView.setText(discover.getName());
             }
         }
-        if (mProblem.getDate()!=null){
+        if (mProblem.getDate() != null) {
             mAnalystDateTextView.setText(StringFormatUtil.dateFormat(mProblem.getDate()));
         }
-        if (mProblem.getDescription()!=null){
+        if (mProblem.getDescription() != null) {
             reasonText.setText(mProblem.getDescription());
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode!= Activity.RESULT_OK){
+        if (resultCode != Activity.RESULT_OK) {
             return;
         }
         mProblem.setUpdateTime(new Date().getTime());
-        switch(requestCode){
+        switch (requestCode) {
             case REQUEST_ANALYST:
                 String discoverId = data.getStringExtra("author_id");
                 mProblem.setAuthor(discoverId);

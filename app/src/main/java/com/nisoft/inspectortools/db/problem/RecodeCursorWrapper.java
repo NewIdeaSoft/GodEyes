@@ -18,13 +18,14 @@ import java.util.Date;
 public class RecodeCursorWrapper extends CursorWrapper {
     /**
      * Creates a cursor wrapper.
+     *
      * @param cursor The underlying cursor to wrap.
      */
     public RecodeCursorWrapper(Cursor cursor) {
         super(cursor);
     }
 
-    public Recode getRecode(){
+    public Recode getRecode() {
         String problemId = getString(getColumnIndex(RecodeTable.Cols.PROBLEM_ID));
         String author = getString(getColumnIndex(RecodeTable.Cols.AUTHOR));
         String type = getString(getColumnIndex(RecodeTable.Cols.TYPE));
@@ -40,7 +41,7 @@ public class RecodeCursorWrapper extends CursorWrapper {
         return recode;
     }
 
-    public ImageRecode getImageRecode(){
+    public ImageRecode getImageRecode() {
         String problemId = getString(getColumnIndex(RecodeTable.Cols.PROBLEM_ID));
         String author = getString(getColumnIndex(RecodeTable.Cols.AUTHOR));
         String type = getString(getColumnIndex(RecodeTable.Cols.TYPE));

@@ -19,10 +19,12 @@ public abstract class OkHttpCallBack implements Callback {
     private String mFailureInfo;
     private ProgressDialog mDialog;
     private Context mContext;
+
     public OkHttpCallBack(String failureInfo, Context context) {
         mFailureInfo = failureInfo;
         mContext = context;
     }
+
     public OkHttpCallBack(String failureInfo, ProgressDialog dialog, Context context) {
         mFailureInfo = failureInfo;
         mDialog = dialog;
@@ -31,10 +33,10 @@ public abstract class OkHttpCallBack implements Callback {
 
     @Override
     public void onFailure(Call call, IOException e) {
-        ((Activity)mContext).runOnUiThread(new Runnable() {
+        ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mDialog!=null){
+                if (mDialog != null) {
                     mDialog.dismiss();
                 }
                 Toast.makeText(mContext, mFailureInfo, Toast.LENGTH_SHORT).show();
@@ -46,16 +48,17 @@ public abstract class OkHttpCallBack implements Callback {
     @Override
     public void onResponse(Call call, Response response) throws IOException {
         final String result = response.body().string();
-        ((Activity)mContext).runOnUiThread(new Runnable() {
+        ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 handleResponse(result);
-                if (mDialog!=null){
+                if (mDialog != null) {
                     mDialog.dismiss();
                 }
             }
         });
 
     }
+
     protected abstract void handleResponse(String result);
 }

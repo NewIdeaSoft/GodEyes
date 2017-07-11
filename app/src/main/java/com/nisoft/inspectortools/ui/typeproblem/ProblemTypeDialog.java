@@ -24,8 +24,8 @@ public class ProblemTypeDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         String selectItem = RecodeTypesStrings.PROBLEM_TYPE_CHI[which];
                         Intent intent = new Intent();
-                        intent.putExtra("type",selectItem);
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,intent);
+                        intent.putExtra("type", selectItem);
+                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                     }
                 })
                 .create();
