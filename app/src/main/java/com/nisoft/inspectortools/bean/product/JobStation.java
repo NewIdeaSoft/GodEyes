@@ -4,7 +4,7 @@ package com.nisoft.inspectortools.bean.product;
  * Created by NewIdeaSoft on 2017/6/10.
  */
 
-public class PostionInfo {
+public class JobStation {
     private int mPositionCode;
     private String mPositionName;
     private int mLastPositionCode;

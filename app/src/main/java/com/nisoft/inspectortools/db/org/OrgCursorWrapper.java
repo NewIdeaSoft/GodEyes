@@ -5,8 +5,10 @@ import android.database.CursorWrapper;
 
 import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
+import com.nisoft.inspectortools.bean.org.Position;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.EmployeeTable;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.OrgTable;
+import com.nisoft.inspectortools.db.org.OrgDbSchema.PositionTable;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
 
 /**
@@ -30,9 +32,10 @@ public class OrgCursorWrapper extends CursorWrapper {
         employee.setWorkNum(StringFormatUtil.correctString(getString(getColumnIndex(EmployeeTable.Cols.WORK_NUM))));
         employee.setOrgId(StringFormatUtil.correctString(getString(getColumnIndex(EmployeeTable.Cols.ORG_CODE))));
         if (getString(getColumnIndex(EmployeeTable.Cols.STATION_CODE)) != null) {
-            employee.setPositionsId(StringFormatUtil.getStrings(getString(getColumnIndex(EmployeeTable.Cols.STATION_CODE))));
+            employee.setStationsId(StringFormatUtil.getStrings(getString(getColumnIndex(EmployeeTable.Cols.STATION_CODE))));
         }
         employee.setCompanyId(getString(getColumnIndex(EmployeeTable.Cols.COMPANY_ID)));
+        employee.setPostionId(getString(getColumnIndex(EmployeeTable.Cols.POSITION_ID)));
         return employee;
     }
 
@@ -44,5 +47,14 @@ public class OrgCursorWrapper extends CursorWrapper {
         orgInfo.setParentOrgId(getString(getColumnIndex(OrgTable.Cols.PARENT_CODE)));
         orgInfo.setCompanyId(getString(getColumnIndex(OrgTable.Cols.COMPANY_ID)));
         return orgInfo;
+    }
+
+    public Position getResultPosition(){
+        Position position = new Position();
+        position.setPositionId(getString(getColumnIndex(PositionTable.Cols.POSITION_ID)));
+        position.setPositionName(getString(getColumnIndex(PositionTable.Cols.POSITION_NAME)));
+        position.setManageLevel(getInt(getColumnIndex(PositionTable.Cols.MANAGE_LEVEL)));
+        position.setCompanyId(getString(getColumnIndex(PositionTable.Cols.COMPANY_ID)));
+        return position;
     }
 }

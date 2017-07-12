@@ -9,6 +9,7 @@ import com.nisoft.inspectortools.db.org.OrgCursorWrapper;
 import com.nisoft.inspectortools.db.org.OrgDbHelper;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.EmployeeTable;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.OrgTable;
+import com.nisoft.inspectortools.db.org.OrgDbSchema.PositionTable;
 
 import java.util.ArrayList;
 
@@ -51,17 +52,30 @@ public class OrgLab {
         cursor.close();
         return employees;
     }
-
+    public ArrayList<Employee> getEmployeesByOrg(String orgId) {
+        OrgCursorWrapper cursor = query(EmployeeTable.NAME, EmployeeTable.Cols.ORG_CODE+"=?", new String[]{orgId}, EmployeeTable.Cols.ORG_CODE);
+        ArrayList<Employee> employees = new ArrayList<>();
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                employees.add(cursor.getEmployee());
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return employees;
+    }
     public ContentValues getContentValues(Employee employee) {
         ContentValues values = new ContentValues();
         values.put(EmployeeTable.Cols.PHONE, employee.getPhone());
         values.put(EmployeeTable.Cols.NAME, employee.getName());
         values.put(EmployeeTable.Cols.WORK_NUM, employee.getWorkNum());
         values.put(EmployeeTable.Cols.ORG_CODE, employee.getOrgId());
-        if (employee.getPositionsId() != null) {
-            values.put(EmployeeTable.Cols.STATION_CODE, employee.getPositionsId().toString());
+        if (employee.getStationsId() != null) {
+            values.put(EmployeeTable.Cols.STATION_CODE, employee.getStationsId().toString());
         }
         values.put(EmployeeTable.Cols.COMPANY_ID, employee.getCompanyId());
+        values.put(EmployeeTable.Cols.POSITION_ID,employee.getPostionId());
         return values;
     }
 
@@ -73,6 +87,28 @@ public class OrgLab {
         values.put(OrgTable.Cols.PARENT_CODE, orgInfo.getParentOrgId());
         values.put(OrgTable.Cols.COMPANY_ID, orgInfo.getCompanyId());
         return values;
+    }
+    public ContentValues getContentValues(Position position) {
+        ContentValues values = new ContentValues();
+        values.put(PositionTable.Cols.POSITION_ID, position.getPositionId());
+        values.put(PositionTable.Cols.POSITION_NAME, position.getPositionName());
+        values.put(PositionTable.Cols.MANAGE_LEVEL, position.getManageLevel());
+        values.put(PositionTable.Cols.COMPANY_ID, position.getCompanyId());
+        return values;
+    }
+    public void updatePositionInfo(Position position) {
+        ContentValues values = getContentValues(position);
+        if (values.size() > 0) {
+            OrgCursorWrapper cursor = query(PositionTable.NAME,
+                    PositionTable.Cols.POSITION_ID + "=?", new String[]{position.getPositionId()}, null);
+            if (cursor.getCount() > 0) {
+                int i = mDataBase.update(PositionTable.NAME, values,
+                        PositionTable.Cols.POSITION_ID + "=?", new String[]{position.getPositionId()});
+            } else {
+                long j = mDataBase.insert(PositionTable.NAME, null, values);
+            }
+            cursor.close();
+        }
     }
 
     public void updateEmployee(Employee employee) {
@@ -122,7 +158,24 @@ public class OrgLab {
             updateOrgInfo(org);
         }
     }
-
+    public void updatePositons(ArrayList<Position> positions) {
+        if (positions == null || positions.size() == 0) {
+            return;
+        }
+        for (Position p : positions) {
+            updatePositionInfo(p);
+        }
+    }
+    public Position findPositionById(String positionId){
+        OrgCursorWrapper cursor = query(PositionTable.NAME, PositionTable.Cols.POSITION_ID + "=?", new String[]{positionId}, null);
+        Position position = null;
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            position = cursor.getResultPosition();
+        }
+        cursor.close();
+        return position;
+    }
     public Employee findEmployeeById(String phone) {
         OrgCursorWrapper cursor = query(EmployeeTable.NAME, EmployeeTable.Cols.PHONE + "=?", new String[]{phone}, null);
         Employee employee = null;
