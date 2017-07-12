@@ -3,7 +3,9 @@ package com.nisoft.inspectortools.ui.typeproblem;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -39,13 +41,13 @@ import com.nisoft.inspectortools.ui.strings.FilePath;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
+import com.nisoft.inspectortools.utils.UploadData;
 import com.nisoft.inspectortools.utils.VolumeImageDownLoad;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -57,7 +59,7 @@ import okhttp3.Response;
 public class ProblemRecodeFragment1 extends Fragment {
 
     public static final String TAG = "ProblemRecodeFragment1:";
-    public static final String BING_IMAGE_URL = "http://cn.bing.com/az/hprichbg/rb/WesternGhats_ROW14519592458_1920x1080.jpg";
+
     private static ProblemDataPackage sProblemData;
     private static String sProblemFolderPath;
     private String mProblemId;
@@ -80,6 +82,7 @@ public class ProblemRecodeFragment1 extends Fragment {
     private FragmentStatePagerAdapter mPagerAdapter;
     private ProgressDialog mDialog;
     private boolean mEditable = true;
+    private static boolean isDataChanged = false;
 
     public static ProblemRecodeFragment1 newInstance(String problemId) {
         Bundle args = new Bundle();
@@ -132,7 +135,11 @@ public class ProblemRecodeFragment1 extends Fragment {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         ImageView imageView = (ImageView) view.findViewById(R.id.iv_bing);
-        Glide.with(getActivity()).load(BING_IMAGE_URL).into(imageView);
+        SharedPreferences sp = getActivity().getSharedPreferences("bing_pic",Context.MODE_PRIVATE);
+        String bingPicUrl = sp.getString("bingPicUrl","");
+        if (!bingPicUrl.equals("")){
+            Glide.with(getActivity()).load(bingPicUrl).into(imageView);
+        }
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
         mDialog = new ProgressDialog(getActivity());
         problemViewPager = (ViewPager) view.findViewById(R.id.problem_info_viewpager);
@@ -240,7 +247,7 @@ public class ProblemRecodeFragment1 extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().finish();
+                onKeyBackDown();
                 break;
             case R.id.data_push:
                 //将实体 格式化为字符串
@@ -310,7 +317,6 @@ public class ProblemRecodeFragment1 extends Fragment {
     }
 
     private void uploadProblem() {
-        ProblemDataLab.getProblemDataLab(getActivity()).updateProblem(sProblemData);
         Gson gson = GsonUtil.getDateFormatGson();
         String jobJson = gson.toJson(sProblemData);
         Log.e("sProblemData", jobJson);
@@ -318,46 +324,40 @@ public class ProblemRecodeFragment1 extends Fragment {
                 .add("intent", "update")
                 .add("job_json", jobJson)
                 .build();
-
-        DialogUtil.showProgressDialog(getActivity(), mDialog, "正在上传数据...");
-        HttpUtil.sendPostRequest(HttpUtil.SERVLET_PROBLEM_RECODE, body, new Callback() {
+        new UploadData(getActivity(), HttpUtil.SERVLET_PROBLEM_RECODE, body, new UploadData.UploadStateListener() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDialog.dismiss();
-                        Toast.makeText(getActivity(), "获取网络连接失败！", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            public void onStart() {
+                DialogUtil.showProgressDialog(getActivity(), mDialog, "正在上传数据...");
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String result = response.body().string();
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDialog.dismiss();
-                        if (result.equals("OK")) {
-                            Toast.makeText(getActivity(), "数据上传完成，开始上传照片！", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(), FileUploadService.class);
-                            intent.putExtra("folder_path", sProblemFolderPath + "/problem/");
-                            intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
-                            intent.putExtra("recode_type", "problem");
-                            intent.putExtra("folder_name", sProblemData.getProblem().getRecodeId() + "/problem");
-                            getActivity().startService(intent);
-                        } else {
-                            Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
-                            Log.e("uploadProblem", result);
-                        }
-                    }
-                });
-
+            public void onFailed() {
+                mDialog.dismiss();
+                Toast.makeText(getActivity(), "获取网络连接失败！", Toast.LENGTH_SHORT).show();
             }
-        });
+
+            @Override
+            public void onFinish(String result) {
+                mDialog.dismiss();
+                if (result.equals("OK")) {
+                    isDataChanged = false;
+                    Toast.makeText(getActivity(), "数据上传完成！", Toast.LENGTH_SHORT).show();
+                    uploadImages();
+                } else {
+                    Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+                    Log.e("uploadProblem", result);
+                }
+            }
+        }).upload();
     }
-
+    private void uploadImages(){
+        Intent intent = new Intent(getActivity(), FileUploadService.class);
+        intent.putExtra("folder_path", sProblemFolderPath + "/problem/");
+        intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
+        intent.putExtra("recode_type", "problem");
+        intent.putExtra("folder_name", sProblemData.getProblem().getRecodeId() + "/problem");
+        getActivity().startService(intent);
+    }
     private void downloadRecode() {
         ProblemDataPackage localRecode = ProblemDataLab.getProblemDataLab(getActivity()).getProblemById(mProblemId);
         downloadRecodeFromServer(localRecode);
@@ -427,13 +427,33 @@ public class ProblemRecodeFragment1 extends Fragment {
     private void setProblemFragmentList() {
         problemFragmentList.add(new ProblemInfoFragment() {
             @Override
+            protected void onDataChanged() {
+                isDataChanged = true;
+            }
+
+            @Override
             public void onTitleChanged(String title) {
                 updateTitle(title);
             }
         });
-        problemFragmentList.add(new ProblemAnalysisFragment());
-        problemFragmentList.add(new ProblemProgramFragment());
-        problemFragmentList.add(new ProblemResultFragment());
+        problemFragmentList.add(new ProblemAnalysisFragment() {
+            @Override
+            protected void onDataChanged() {
+                isDataChanged = true;
+            }
+        });
+        problemFragmentList.add(new ProblemProgramFragment() {
+            @Override
+            protected void onDataChanged() {
+                isDataChanged = true;
+            }
+        });
+        problemFragmentList.add(new ProblemResultFragment() {
+            @Override
+            protected void onDataChanged() {
+                isDataChanged = true;
+            }
+        });
         FragmentManager fm = getFragmentManager();
         mPagerAdapter = new FragmentStatePagerAdapter(fm) {
             @Override
@@ -489,4 +509,40 @@ public class ProblemRecodeFragment1 extends Fragment {
         updateTitle(title);
     }
 
+    public void onKeyBackDown() {
+        Log.e("isDataChanged",isDataChanged+"");
+        if (isDataChanged){
+            Gson gson = GsonUtil.getDateFormatGson();
+            String jobJson = gson.toJson(sProblemData);
+            RequestBody body = new FormBody.Builder()
+                    .add("intent", "update")
+                    .add("job_json", jobJson)
+                    .build();
+            new UploadData(getActivity(), HttpUtil.SERVLET_PROBLEM_RECODE, body, new UploadData.UploadStateListener() {
+                @Override
+                public void onStart() {
+                    DialogUtil.showProgressDialog(getActivity(), mDialog, "正在保存数据，完成后退出，请稍后...");
+                }
+
+                @Override
+                public void onFailed() {
+                    mDialog.dismiss();
+                    Toast.makeText(getActivity(), "获取网络连接失败！请重试！", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFinish(String result) {
+                    mDialog.dismiss();
+                    if (result.equals("OK")) {
+                        isDataChanged = false;
+                        getActivity().finish();
+                    } else {
+                        Toast.makeText(getActivity(), "数据上传失败！请重试！", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).upload();
+        }else {
+            getActivity().finish();
+        }
+    }
 }

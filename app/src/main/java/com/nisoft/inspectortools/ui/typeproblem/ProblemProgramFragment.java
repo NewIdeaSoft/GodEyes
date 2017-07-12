@@ -21,7 +21,7 @@ import java.util.Date;
  * Created by NewIdeaSoft on 2017/7/2.
  */
 
-public class ProblemProgramFragment extends RecodeFragment {
+public abstract class ProblemProgramFragment extends RecodeFragment {
     public static final int REQUEST_PROGRAM_AUTHOR = 301;
     public static final int REQUEST_PROGRAM_DATE = 302;
     public static final int REQUEST_PROGRAM_DESCRIPTION = 303;
@@ -86,19 +86,31 @@ public class ProblemProgramFragment extends RecodeFragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        mProgram.setUpdateTime(new Date().getTime());
+
         switch (requestCode) {
             case REQUEST_PROGRAM_AUTHOR:
-                String discoverId = data.getStringExtra("author_id");
-                mProgram.setAuthor(discoverId);
+                String authorId = data.getStringExtra("author_id");
+                if (!authorId.equals(mProgram.getAuthor())){
+                    mProgram.setAuthor(authorId);
+                    mProgram.setUpdateTime(new Date().getTime());
+                    onDataChanged();
+                }
+
                 break;
             case REQUEST_PROGRAM_DATE:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
-                mProgram.setDate(date);
+                if (!date.equals(mProgram.getDate())){
+                    mProgram.setDate(date);
+                    mProgram.setUpdateTime(new Date().getTime());
+                    onDataChanged();
+                }
+
                 break;
             case REQUEST_PROGRAM_DESCRIPTION:
                 String description = data.getStringExtra("content_edit");
                 mProgram.setDescription(description);
+                mProgram.setUpdateTime(new Date().getTime());
+                onDataChanged();
                 break;
         }
         updateView();

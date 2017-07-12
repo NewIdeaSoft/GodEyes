@@ -35,14 +35,14 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
     private Context mContext;
     private ProblemRecode mProblem;
     private String mFolderPath;
-    private String mImageFolderOnserver;
+    private String mImageFolderOnServer;
 
     public SwipeLeftDeleteAdapter(Context context, ProblemRecode problem) {
         mContext = context;
         mProblem = problem;
         mFolderPath = FilePath.PROBLEM_DATA_PATH + mProblem.getTitle() +
                 "(" + mProblem.getRecodeId() + ")/问题描述/";
-        mImageFolderOnserver = RECODE_FOLDER_ADDRESS +UserLab.getUserLab(mContext).getEmployee().getCompanyId() +"/problem/" + mProblem.getRecodeId() + "/problem/";
+        mImageFolderOnServer = RECODE_FOLDER_ADDRESS +UserLab.getUserLab(mContext).getEmployee().getCompanyId() +"/problem/" + mProblem.getRecodeId() + "/problem/";
     }
 
     @Override
@@ -59,7 +59,7 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
             if (imagePathList != null && imagePathList.size() > 0) {
                 Glide.with(mContext).load(imagePathList.get(0)).into(holder.mProblemImageView);
             } else if (mProblem.getImagesNameOnServer() != null && mProblem.getImagesNameOnServer().size() > 0) {
-                String imageUrl = mImageFolderOnserver +
+                String imageUrl = mImageFolderOnServer +
                         mProblem.getImagesNameOnServer().get(0);
                 Log.e("SwipeLeftDeleteAdapter",imageUrl);
                 Glide.with(mContext)

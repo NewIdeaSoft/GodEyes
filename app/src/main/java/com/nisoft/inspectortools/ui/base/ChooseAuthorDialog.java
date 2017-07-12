@@ -27,7 +27,6 @@ import java.util.ArrayList;
  */
 
 public class ChooseAuthorDialog extends DialogFragment {
-    private static final int REQUEST_CONTACT = 1000;
     private ArrayList<Employee> mEmployees;
     private RecyclerView mContactsRecyclerView;
     private ContactAdapter mAdapter;

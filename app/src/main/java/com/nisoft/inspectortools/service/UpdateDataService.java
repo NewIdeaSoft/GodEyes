@@ -2,6 +2,7 @@ package com.nisoft.inspectortools.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -38,6 +39,7 @@ public class UpdateDataService extends Service {
         String company_id = intent.getStringExtra("company_id");
         downloadEmployeesData(company_id);
         downloadOrgData(company_id);
+        getBingPicUrl();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -83,6 +85,24 @@ public class UpdateDataService extends Service {
                 OrgListPackage listPackage = gson.fromJson(result, OrgListPackage.class);
                 ArrayList<OrgInfo> orgInfos = listPackage.getOrgInfos();
                 OrgLab.getOrgLab(UpdateDataService.this).updateOrgs(orgInfos);
+            }
+        });
+    }
+
+    private void getBingPicUrl(){
+        HttpUtil.sendGetRequest("http://guolin.tech/api/bing_pic", new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String bingPicUrl = response.body().string();
+                SharedPreferences preferences = getSharedPreferences("bing_pic",MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("bingPicUrl",bingPicUrl);
+                editor.apply();
             }
         });
     }

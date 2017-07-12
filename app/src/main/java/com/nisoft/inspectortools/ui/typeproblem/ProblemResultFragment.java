@@ -26,7 +26,7 @@ import java.util.Date;
  * Created by NewIdeaSoft on 2017/4/26.
  */
 
-public class ProblemResultFragment extends RecodeFragment {
+public abstract class ProblemResultFragment extends RecodeFragment {
     public static final int REQUEST_EXECUTOR = 401;
     public static final int REQUEST_EXECUTE_DATE = 402;
     public static final int REQUEST_EXECUTE_DESCRIPTION = 403;
@@ -128,23 +128,33 @@ public class ProblemResultFragment extends RecodeFragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        mProblem.setUpdateTime(new Date().getTime());
         switch (requestCode) {
             case 1:
                 mAdapter.resetPath();
                 mAdapter.notifyDataSetChanged();
+                mProblem.setUpdateTime(new Date().getTime());
                 break;
             case REQUEST_EXECUTOR:
                 String discoverId = data.getStringExtra("author_id");
-                mProblem.setAuthor(discoverId);
+                if (!discoverId.equals(mProblem.getAuthor())){
+                    mProblem.setAuthor(discoverId);
+                    mProblem.setUpdateTime(new Date().getTime());
+                    onDataChanged();
+                }
                 break;
             case REQUEST_EXECUTE_DATE:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
-                mProblem.setDate(date);
+                if (!date.equals(mProblem.getDate())){
+                    mProblem.setDate(date);
+                    mProblem.setUpdateTime(new Date().getTime());
+                    onDataChanged();
+                }
                 break;
             case REQUEST_EXECUTE_DESCRIPTION:
                 String description = data.getStringExtra("content_edit");
                 mProblem.setDescription(description);
+                mProblem.setUpdateTime(new Date().getTime());
+                onDataChanged();
                 break;
         }
         updateView();

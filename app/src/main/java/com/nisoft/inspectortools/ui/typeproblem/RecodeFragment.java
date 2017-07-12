@@ -71,5 +71,5 @@ public abstract class RecodeFragment extends Fragment {
         dialog.setTargetFragment(this, requestCode);
         dialog.show(fm, "date");
     }
-
+    protected abstract void onDataChanged();
 }

@@ -69,8 +69,8 @@ public class ProblemListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_problems_list, container, false);
         setHasOptionsMenu(true);
         ActionBar actionBar =
-        ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (actionBar!=null){
+                ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("问题记录");
         }
@@ -203,10 +203,7 @@ public class ProblemListFragment extends Fragment {
         if (mSearchAutoComplete != null && mSearchAutoComplete.isShown()) {
             mSearchAutoComplete.setText("");
         }
-        if(mAdapter == null) {
-            mAdapter = new AnotherListAdapter(getActivity(),mProblems);
-            mProblemsRecyclerView.setAdapter(mAdapter);
-        }else{
+        if (mAdapter != null) {
             ArrayList<ProblemRecode> problems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
             mAdapter.setProblems(problems);
             mAdapter.notifyDataSetChanged();

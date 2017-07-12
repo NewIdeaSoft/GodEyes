@@ -88,38 +88,51 @@ public abstract class ProblemInfoFragment extends RecodeFragment {
             return;
         }
         Date updateDate = new Date();
-        long updateTime = updateDate.getTime();
-        mProblem.setUpdateTime(updateTime);
+        final long updateTime = updateDate.getTime();
         switch (requestCode) {
             case 1:
                 mAdapter.resetPath();
                 mAdapter.notifyDataSetChanged();
+                mProblem.setUpdateTime(updateTime);
                 break;
             case REQUEST_DISCOVER:
                 String discover = data.getStringExtra("author_name");
                 String discoverId = data.getStringExtra("author_id");
+                if (discoverId.equals(mProblem.getAuthor()))return;
                 mProblem.setAuthor(discoverId);
                 mDiscover.setText(discover);
+                mProblem.setUpdateTime(updateTime);
+                onDataChanged();
                 break;
             case REQUEST_DISCOVER_ADDRESS:
                 String address = data.getStringExtra("content_edit");
                 mProblem.setAddress(address);
                 mDiscoveredPosition.setText(address);
+                mProblem.setUpdateTime(updateTime);
+                onDataChanged();
                 break;
             case REQUEST_DISCOVER_DATE:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
+                if (date.equals(mProblem.getDate()))return;
                 mProblem.setDate(date);
                 mDiscoveredDate.setText(StringFormatUtil.dateFormat(date));
+                mProblem.setUpdateTime(updateTime);
+                onDataChanged();
                 break;
             case REQUEST_DISCOVER_DESCRIPTION:
                 String description = data.getStringExtra("content_edit");
                 mProblem.setDescription(description);
                 mDescriptionTextView.setText(description);
+                mProblem.setUpdateTime(updateTime);
+                onDataChanged();
                 break;
             case REQUEST_TYPE:
                 String type = data.getStringExtra("type");
+                if (type.equals(mProblem.getType()))return;
                 mProblem.setType(type);
                 mTypeTextView.setText(type);
+                mProblem.setUpdateTime(updateTime);
+                onDataChanged();
                 break;
             case REQUEST_TITLE:
                 final String title = data.getStringExtra("content_edit");
@@ -161,6 +174,8 @@ public abstract class ProblemInfoFragment extends RecodeFragment {
                             mAdapter.notifyDataSetChanged();
                             mProblem.setTitle(title);
                             mTitle.setText(title);
+                            mProblem.setUpdateTime(updateTime);
+                            onDataChanged();
                             onTitleChanged(title);
                             updateData();
                         }

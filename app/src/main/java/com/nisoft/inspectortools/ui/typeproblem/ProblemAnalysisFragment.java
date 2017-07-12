@@ -22,7 +22,7 @@ import java.util.Date;
  * Created by NewIdeaSoft on 2017/4/26.
  */
 
-public class ProblemAnalysisFragment extends RecodeFragment {
+public abstract class ProblemAnalysisFragment extends RecodeFragment {
     public static final int REQUEST_ANALYST = 201;
     public static final int REQUEST_ANALYSIS_DATE = 202;
     public static final int REQUEST_ANALYSIS_DESCRIPTION = 203;
@@ -106,19 +106,29 @@ public class ProblemAnalysisFragment extends RecodeFragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        mProblem.setUpdateTime(new Date().getTime());
         switch (requestCode) {
             case REQUEST_ANALYST:
-                String discoverId = data.getStringExtra("author_id");
-                mProblem.setAuthor(discoverId);
+                String authorId = data.getStringExtra("author_id");
+                if(!authorId.equals(mProblem.getAuthor())){
+                    mProblem.setAuthor(authorId);
+                    mProblem.setUpdateTime(new Date().getTime());
+                    onDataChanged();
+                }
                 break;
             case REQUEST_ANALYSIS_DATE:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
-                mProblem.setDate(date);
+                if(!date.equals(mProblem.getDate())){
+                    mProblem.setDate(date);
+                    mProblem.setUpdateTime(new Date().getTime());
+                    onDataChanged();
+                }
+
                 break;
             case REQUEST_ANALYSIS_DESCRIPTION:
                 String description = data.getStringExtra("content_edit");
                 mProblem.setDescription(description);
+                mProblem.setUpdateTime(new Date().getTime());
+                onDataChanged();
                 break;
         }
         updateView();
