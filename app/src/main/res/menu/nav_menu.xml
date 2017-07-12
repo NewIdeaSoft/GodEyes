@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/self_recode"
+            android:title="我创建的记录"
+            android:icon="@drawable/ic_menu_self_recode">
+        </item>
+        <item
+            android:id="@+id/update_info"
+            android:title="更新数据"
+            android:icon="@drawable/ic_menu_upload">
+        </item>
+        <item
+            android:id="@+id/contacts"
+            android:title="企业联系人"
+            android:icon="@drawable/ic_menu_contacts">
+        </item>
+        <item
+            android:id="@+id/self_info_settings"
+            android:title="个人信息设置"
+            android:icon="@drawable/ic_menu_self_info">
+        </item>
+        <item
+            android:id="@+id/member_info_settings"
+            android:title="团队成员管理"
+            android:icon="@drawable/ic_menu_group_member">
+        </item>
+        <item
+            android:id="@+id/company_info_settings"
+            android:title="组织信息管理"
+            android:icon="@drawable/ic_menu_company">
+        </item>
+    </group>
+</menu>

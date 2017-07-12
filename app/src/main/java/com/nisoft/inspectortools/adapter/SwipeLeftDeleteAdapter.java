@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.bean.problem.ProblemDataLab;
 import com.nisoft.inspectortools.bean.problem.ProblemRecode;
 import com.nisoft.inspectortools.db.problem.RecodeDbSchema;
@@ -29,15 +31,18 @@ import java.util.ArrayList;
  */
 
 public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDeleteAdapter.SwipeLeftViewHolder> {
+    public static final String RECODE_FOLDER_ADDRESS = "http://47.93.191.62:8080/InspectorToolsServer/recode/";
     private Context mContext;
     private ProblemRecode mProblem;
     private String mFolderPath;
+    private String mImageFolderOnserver;
 
     public SwipeLeftDeleteAdapter(Context context, ProblemRecode problem) {
         mContext = context;
         mProblem = problem;
         mFolderPath = FilePath.PROBLEM_DATA_PATH + mProblem.getTitle() +
                 "(" + mProblem.getRecodeId() + ")/问题描述/";
+        mImageFolderOnserver = RECODE_FOLDER_ADDRESS +UserLab.getUserLab(mContext).getEmployee().getCompanyId() +"/problem/" + mProblem.getRecodeId() + "/problem/";
     }
 
     @Override
@@ -53,6 +58,13 @@ public class SwipeLeftDeleteAdapter extends RecyclerView.Adapter<SwipeLeftDelete
             ArrayList<String> imagePathList = FileUtil.getImagesPath(mFolderPath);
             if (imagePathList != null && imagePathList.size() > 0) {
                 Glide.with(mContext).load(imagePathList.get(0)).into(holder.mProblemImageView);
+            } else if (mProblem.getImagesNameOnServer() != null && mProblem.getImagesNameOnServer().size() > 0) {
+                String imageUrl = mImageFolderOnserver +
+                        mProblem.getImagesNameOnServer().get(0);
+                Log.e("SwipeLeftDeleteAdapter",imageUrl);
+                Glide.with(mContext)
+                        .load(imageUrl)
+                        .into(holder.mProblemImageView);
             }
             if (mProblem.getTitle() != null) {
                 holder.mProblemTitle.setText(mProblem.getTitle());
