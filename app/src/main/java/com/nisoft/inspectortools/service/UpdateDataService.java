@@ -65,7 +65,7 @@ public class UpdateDataService extends Service {
                 ArrayList<PositionInfo> positionList = listPackage.getPositionList();
                 OrgLab.getOrgLab(UpdateDataService.this).updateEmployee(employees);
                 OrgLab.getOrgLab(UpdateDataService.this).updateOrgs(orgInfoList);
-                OrgLab.getOrgLab(UpdateDataService.this).updatePositons(positionList);
+                OrgLab.getOrgLab(UpdateDataService.this).updatePositions(positionList);
             }
         });
     }

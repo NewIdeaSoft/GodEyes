@@ -30,6 +30,8 @@ public class ContactsFragment extends Fragment {
     private ListView mOrgListView;
     private Button mBackButton;
     private TextView mTitleTextView;
+    private TextView mContactTitleTextView;
+    private TextView mOrgTitleTextView;
     private ArrayList<Employee> mEmployeeList;
     private ArrayList<OrgInfo> mOrgList;
     private ContactAdapter mContactAdapter;
@@ -69,6 +71,21 @@ public class ContactsFragment extends Fragment {
         mOrgListView = (ListView) view.findViewById(R.id.lv_org);
         mBackButton = (Button) view.findViewById(R.id.back_to_last);
         mTitleTextView = (TextView) view.findViewById(R.id.org_title);
+        mContactTitleTextView = (TextView) view.findViewById(R.id.tv_contacts_title);
+        mOrgTitleTextView = (TextView) view.findViewById(R.id.tv_org_title);
+        OrgInfo org = OrgLab.getOrgLab(getActivity()).findOrgInfoById(mParentId);
+        String orgName = org.getOrgName();
+        mTitleTextView.setText(orgName);
+        if(mEmployeeList.size()==0) {
+            mContactTitleTextView.setVisibility(View.GONE);
+        }else {
+            mContactTitleTextView.setVisibility(View.VISIBLE);
+        }
+        if(mOrgList.size()==0) {
+            mOrgTitleTextView.setVisibility(View.GONE);
+        }else {
+            mOrgTitleTextView.setVisibility(View.VISIBLE);
+        }
         mContactListView.setAdapter(mContactAdapter);
         mOrgListView.setAdapter(mOrgAdapter);
         mContactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -95,9 +112,6 @@ public class ContactsFragment extends Fragment {
                 refreshView();
             }
         });
-        OrgInfo org = OrgLab.getOrgLab(getActivity()).findOrgInfoById(mParentId);
-        String orgName = org.getOrgName();
-        mTitleTextView.setText(orgName);
         return view;
     }
     private void refreshView(){
@@ -115,6 +129,16 @@ public class ContactsFragment extends Fragment {
             mOrgList = new ArrayList<>();
         }
         mTitleTextView.setText(orgName);
+        if(mEmployeeList.size()==0) {
+            mContactTitleTextView.setVisibility(View.GONE);
+        }else {
+            mContactTitleTextView.setVisibility(View.VISIBLE);
+        }
+        if(mOrgList.size()==0) {
+            mOrgTitleTextView.setVisibility(View.GONE);
+        }else {
+            mOrgTitleTextView.setVisibility(View.VISIBLE);
+        }
         mContactAdapter.notifyDataSetChanged();
         mOrgAdapter.notifyDataSetChanged();
     }
@@ -145,6 +169,7 @@ public class ContactsFragment extends Fragment {
             String orgId = employee.getOrgId();
             OrgInfo org = OrgLab.getOrgLab(getActivity()).findOrgInfoById(orgId);
             String positionId = employee.getPositionId();
+            Log.e("ContactsFragment",positionId);
             PositionInfo position1 = OrgLab.getOrgLab(getActivity()).findPositionById(positionId);
             textView.setText(employee.getName()+"   "+org.getOrgName()+"    "+position1.getPositionName());
             return convertView;

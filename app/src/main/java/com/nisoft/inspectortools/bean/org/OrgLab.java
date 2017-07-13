@@ -158,7 +158,7 @@ public class OrgLab {
             updateOrgInfo(org);
         }
     }
-    public void updatePositons(ArrayList<PositionInfo> positionInfos) {
+    public void updatePositions(ArrayList<PositionInfo> positionInfos) {
         if (positionInfos == null || positionInfos.size() == 0) {
             return;
         }
