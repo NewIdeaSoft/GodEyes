@@ -2,16 +2,15 @@ package com.nisoft.inspectortools.ui.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -19,14 +18,13 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
-import com.nisoft.inspectortools.bean.org.Company;
 import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.bean.org.OrgLab;
 import com.nisoft.inspectortools.bean.org.PositionInfo;
-import com.nisoft.inspectortools.gson.EmployeeDataPackage;
 import com.nisoft.inspectortools.gson.EmployeeListPackage;
 import com.nisoft.inspectortools.gson.OrgListPackage;
+import com.nisoft.inspectortools.ui.base.EditTextActivity;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
@@ -41,8 +39,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MoreUserInfoActivity extends AppCompatActivity {
-    private EditText mNameEditText;
-    private EditText mEmployeeNumEditText;
+    private static final int REQUEST_NAME = 1001;
+    private static final int REQUEST_NUM = 1002;
+    private TextView mNameTextView;
+    private TextView mEmployeeNumTextView;
     private TextView mCompanyNameTextView;
     private TextView mPositionTextView;
     private ListView mOrgListView;
@@ -57,6 +57,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private ArrayList<OrgInfo> mOrgInfo;
     private ArrayList<String> mStationsInfo;
     private OrgInfoAdapter mOrgInfoAdapter;
+    private String mCallMode;
 
     private ArrayList<ArrayList<OrgInfo>> mOrgsForChoose;
 
@@ -69,10 +70,37 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         initView();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode != RESULT_OK) {
+            return;
+        }
+        String resultText = data.getStringExtra("edit_content");
+        switch (requestCode) {
+            case REQUEST_NAME :
+                mNameTextView.setText(resultText);
+                mEmployee.setName(resultText);
+                break;
+            case REQUEST_NUM:
+                mEmployeeNumTextView.setText(resultText);
+                mEmployee.setWorkNum(resultText);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0) {
+            uploadMoreInfo();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     private void init() {
         phone = getIntent().getStringExtra("phone");
         mCompanyId = getIntent().getStringExtra("company_id");
         mCompanyName = getIntent().getStringExtra("company_name");
+        mCallMode = getIntent().getStringExtra("call_mode");
         mOrgsForChoose = new ArrayList<>();
         mOrgInfoAdapter = new OrgInfoAdapter();
     }
@@ -80,8 +108,20 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void initView() {
         mDialog = new ProgressDialog(this);
-        mNameEditText = (EditText) findViewById(R.id.et_name);
-        mEmployeeNumEditText = (EditText) findViewById(R.id.et_member_num);
+        mNameTextView = (TextView) findViewById(R.id.tv_name);
+        mNameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startEditActivity(mNameTextView.getText().toString(),REQUEST_NAME);
+            }
+        });
+        mEmployeeNumTextView = (TextView) findViewById(R.id.tv_member_num);
+        mEmployeeNumTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startEditActivity(mEmployeeNumTextView.getText().toString(),REQUEST_NUM);
+            }
+        });
         mCompanyNameTextView = (TextView) findViewById(R.id.tv_company_name);
         mPositionTextView = (TextView) findViewById(R.id.tv_member_position);
         mOrgListView = (ListView) findViewById(R.id.lv_org_info_item);
@@ -154,7 +194,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 //    }
 
     private boolean checkInfo() {
-        if (mNameEditText.getText().toString().equals("")) {
+        if (mNameTextView.getText().toString().equals("")) {
             return false;
         }
         return true;
@@ -166,13 +206,12 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         }else{
             OrgInfo org = OrgLab.getOrgLab(this).findOrgInfoById(mEmployee.getOrgId());
             mOrgInfo = new ArrayList<>();
-            mOrgInfo.add(0,org);
             Log.e("downLoadDataFromLocal",org.getOrgName());
             mOrgsForChoose.add(0,OrgLab.getOrgLab(this).findOrgsByParent(org.getParentOrgId()));
             while(!org.getParentOrgId().contains("NONE")){
+                mOrgInfo.add(0,org);
                 OrgInfo parentOrg = OrgLab.getOrgLab(this).findOrgInfoById(org.getParentOrgId());
                 mOrgsForChoose.add(0,OrgLab.getOrgLab(this).findOrgsByParent(org.getParentOrgId()));
-                mOrgInfo.add(0,parentOrg);
                 org = parentOrg;
             }
 
@@ -270,10 +309,10 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 //    }
     private void refreshView(){
         if (mEmployee.getName() != null) {
-            mNameEditText.setText(mEmployee.getName());
+            mNameTextView.setText(mEmployee.getName());
         }
         if (mEmployee.getWorkNum() != null) {
-            mEmployeeNumEditText.setText(mEmployee.getWorkNum());
+            mEmployeeNumTextView.setText(mEmployee.getWorkNum());
         }
         if (mEmployee.getPositionId()!=null){
             String positionName = OrgLab.getOrgLab(MoreUserInfoActivity.this)
@@ -285,9 +324,9 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     }
     private void uploadMoreInfo() {
         DialogUtil.showProgressDialog(this, mDialog, "正在上传用户信息...");
-        mEmployee.setName(mNameEditText.getText().toString());
+        mEmployee.setName(mNameTextView.getText().toString());
         mEmployee.setPhone(phone);
-        mEmployee.setWorkNum(mEmployeeNumEditText.getText().toString());
+        mEmployee.setWorkNum(mEmployeeNumTextView.getText().toString());
         mEmployee.setCompanyId(mCompanyId);
         for (OrgInfo info : mOrgInfo) {
             if (info != null) {
@@ -323,8 +362,11 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                         public void run() {
                             Toast.makeText(MoreUserInfoActivity.this, "用户信息提交成功！", Toast.LENGTH_SHORT).show();
                             mDialog.dismiss();
-                            Intent intent = new Intent(MoreUserInfoActivity.this, LoginActivity.class);
-                            startActivity(intent);
+                            OrgLab.getOrgLab(MoreUserInfoActivity.this).updateEmployee(mEmployee);
+                            if(mCallMode.equals("login")) {
+                                Intent intent = new Intent(MoreUserInfoActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                            }
                             finish();
                         }
 
@@ -395,6 +437,12 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             }
         }
         return -1;
+    }
+
+    private void startEditActivity(String initText,int requestCode){
+        Intent intent = new Intent(this, EditTextActivity.class);
+        intent.putExtra("initText",initText);
+        startActivityForResult(intent,requestCode);
     }
 
     class OrgInfoAdapter extends BaseAdapter {

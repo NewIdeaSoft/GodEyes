@@ -11,44 +11,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="姓名"
             android:textColor="#000000"
-            android:layout_marginBottom="8dp"
-            android:textSize="20sp"
-            android:layout_gravity="bottom"/>
-        <EditText
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"/>
+        <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:id="@+id/et_name"
+            android:id="@+id/tv_name"
+            android:textSize="16sp"
             android:textColor="#000000"
-            android:layout_marginBottom="8dp"/>
+            android:layout_gravity="center_vertical"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="工号"
-            android:layout_marginBottom="8dp"
             android:textColor="#000000"
-            android:textSize="20sp"
-            android:layout_gravity="bottom"/>
-        <EditText
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"/>
+        <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:id="@+id/et_member_num"
-            android:layout_marginBottom="8dp"
-            android:textColor="#000000"/>
+            android:id="@+id/tv_member_num"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"/>
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
@@ -56,16 +58,16 @@
         android:text="单位信息"
         android:layout_marginBottom="8dp"
         android:textColor="#000000"
-        android:textSize="20sp"
-        android:layout_gravity="bottom"/>
+        android:textSize="16sp"
+        android:layout_gravity="center_vertical"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_company_name"
         android:layout_marginBottom="8dp"
         android:textColor="#000000"
-        android:textSize="20sp"
-        android:layout_gravity="bottom"/>
+        android:textSize="16sp"
+        android:layout_gravity="center_vertical"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -76,9 +78,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="岗位信息"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:textColor="#000000"
-        android:textSize="20sp"/>
+        android:textSize="16sp"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,24 +90,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="职务"
-            android:layout_marginBottom="8dp"
             android:textColor="#000000"
-            android:textSize="20sp"
-            android:layout_gravity="bottom"/>
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"/>
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:id="@+id/tv_member_position"
             android:hint="@string/text_choose_hint"
-            android:layout_marginBottom="8dp"
-            android:textColor="#000000"/>
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"/>
     </LinearLayout>
     <Button
         android:layout_width="match_parent"
@@ -112,5 +117,6 @@
         android:text="提交"
         android:textColor="#ffffff"
         android:background="@color/colorPrimary"
-        android:id="@+id/btn_info_upload"/>
+        android:id="@+id/btn_info_upload"
+        android:textSize="16sp"/>
 </LinearLayout>

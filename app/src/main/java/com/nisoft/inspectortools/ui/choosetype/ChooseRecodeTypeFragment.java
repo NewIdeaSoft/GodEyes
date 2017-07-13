@@ -3,10 +3,8 @@ package com.nisoft.inspectortools.ui.choosetype;
 import android.Manifest;
 import android.app.Fragment;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -16,8 +14,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +23,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.bean.org.OrgLab;
@@ -37,10 +32,7 @@ import com.nisoft.inspectortools.ui.login.MoreUserInfoActivity;
 import com.nisoft.inspectortools.ui.settings.ContactsActivity;
 import com.nisoft.inspectortools.ui.typeinspect.JobListActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemListActivity;
-import com.nisoft.inspectortools.utils.GsonUtil;
-import com.nisoft.inspectortools.utils.StringFormatUtil;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.KEY_SELECTED_TYPE;
 import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.RECODE_TYPE_CHI;
 
@@ -90,6 +82,7 @@ public class ChooseRecodeTypeFragment extends Fragment {
                                 intent1.putExtra("company_name", companyName);
                                 intent1.putExtra("company_id", companyId);
                                 intent1.putExtra("phone", phone);
+                                intent1.putExtra("call_mode","setting");
                                 startActivity(intent1);
                                 break;
                             case R.id.member_info_settings:

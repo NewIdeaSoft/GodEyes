@@ -205,8 +205,13 @@ public class ProblemListFragment extends Fragment {
         }
         if (mAdapter != null) {
             ArrayList<ProblemRecode> problems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
+            Log.e("ProblemList",problems.size()+"");
             mAdapter.setProblems(problems);
             mAdapter.notifyDataSetChanged();
+        }else {
+            mProblems = ProblemDataLab.getProblemDataLab(getActivity()).getAllProblem();
+            mAdapter = new AnotherListAdapter(getActivity(), mProblems);
+            mProblemsRecyclerView.setAdapter(mAdapter);
         }
     }
 

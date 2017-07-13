@@ -150,6 +150,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
 
                             intent.putExtra("phone", phone);
+                            intent.putExtra("call_mode","login");
                             startActivity(intent);
                             finish();
                         } else if (responseText.equals("error:1")) {
