@@ -13,7 +13,7 @@ public class Employee {
     private String mOrgId;
     private String mCompanyId;
     private ArrayList<String> mStationsId;
-    private String mPostionId;
+    private String mPositionId;
 
     public String getName() {
         return mName;
@@ -63,11 +63,11 @@ public class Employee {
         mStationsId = stationsId;
     }
 
-    public String getPostionId() {
-        return mPostionId;
+    public String getPositionId() {
+        return mPositionId;
     }
 
-    public void setPostionId(String postionId) {
-        mPostionId = postionId;
+    public void setPositionId(String positionId) {
+        mPositionId = positionId;
     }
 }

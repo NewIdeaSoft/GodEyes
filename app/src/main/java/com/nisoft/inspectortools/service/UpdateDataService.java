@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.bean.org.OrgLab;
-import com.nisoft.inspectortools.bean.org.Position;
+import com.nisoft.inspectortools.bean.org.PositionInfo;
 import com.nisoft.inspectortools.gson.EmployeeListPackage;
 import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
@@ -61,12 +61,11 @@ public class UpdateDataService extends Service {
                 Gson gson = GsonUtil.getDateFormatGson();
                 EmployeeListPackage listPackage = gson.fromJson(result, EmployeeListPackage.class);
                 ArrayList<Employee> employees = listPackage.getEmployees();
-                ArrayList<OrgInfo> orgInfoList = listPackage.getOrgInfoList();
-                ArrayList<Position> positions = listPackage.getPositions();
-                OrgLab orgLab = OrgLab.getOrgLab(UpdateDataService.this);
-                orgLab.updateEmployee(employees);
-                orgLab.updateOrgs(orgInfoList);
-                orgLab.updatePositons(positions);
+                ArrayList<OrgInfo> orgInfoList = listPackage.getOrgList();
+                ArrayList<PositionInfo> positionList = listPackage.getPositionList();
+                OrgLab.getOrgLab(UpdateDataService.this).updateEmployee(employees);
+                OrgLab.getOrgLab(UpdateDataService.this).updateOrgs(orgInfoList);
+                OrgLab.getOrgLab(UpdateDataService.this).updatePositons(positionList);
             }
         });
     }

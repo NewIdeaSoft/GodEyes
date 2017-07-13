@@ -2,7 +2,7 @@ package com.nisoft.inspectortools.gson;
 
 import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
-import com.nisoft.inspectortools.bean.org.Position;
+import com.nisoft.inspectortools.bean.org.PositionInfo;
 
 import java.util.ArrayList;
 
@@ -12,30 +12,29 @@ import java.util.ArrayList;
 
 public class EmployeeListPackage {
     private ArrayList<Employee> mEmployees;
-    private ArrayList<Position> mPositions;
-    private ArrayList<OrgInfo> mOrgInfoList;
-
-    public ArrayList<Position> getPositions() {
-        return mPositions;
-    }
-
-    public void setPositions(ArrayList<Position> positions) {
-        mPositions = positions;
-    }
-
-    public ArrayList<OrgInfo> getOrgInfoList() {
-        return mOrgInfoList;
-    }
-
-    public void setOrgInfoList(ArrayList<OrgInfo> orgInfoList) {
-        mOrgInfoList = orgInfoList;
-    }
-
+    private ArrayList<OrgInfo> mOrgList;
+    private ArrayList<PositionInfo> mPositionList;
     public ArrayList<Employee> getEmployees() {
         return mEmployees;
     }
 
     public void setEmployees(ArrayList<Employee> employees) {
         mEmployees = employees;
+    }
+
+    public ArrayList<OrgInfo> getOrgList() {
+        return mOrgList;
+    }
+
+    public void setOrgList(ArrayList<OrgInfo> orgList) {
+        mOrgList = orgList;
+    }
+
+    public ArrayList<PositionInfo> getPositionList() {
+        return mPositionList;
+    }
+
+    public void setPositionList(ArrayList<PositionInfo> positionList) {
+        mPositionList = positionList;
     }
 }

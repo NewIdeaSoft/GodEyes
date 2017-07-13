@@ -5,7 +5,7 @@ import android.database.CursorWrapper;
 
 import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
-import com.nisoft.inspectortools.bean.org.Position;
+import com.nisoft.inspectortools.bean.org.PositionInfo;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.EmployeeTable;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.OrgTable;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.PositionTable;
@@ -35,7 +35,7 @@ public class OrgCursorWrapper extends CursorWrapper {
             employee.setStationsId(StringFormatUtil.getStrings(getString(getColumnIndex(EmployeeTable.Cols.STATION_CODE))));
         }
         employee.setCompanyId(getString(getColumnIndex(EmployeeTable.Cols.COMPANY_ID)));
-        employee.setPostionId(getString(getColumnIndex(EmployeeTable.Cols.POSITION_ID)));
+        employee.setPositionId(getString(getColumnIndex(EmployeeTable.Cols.POSITION_ID)));
         return employee;
     }
 
@@ -49,12 +49,12 @@ public class OrgCursorWrapper extends CursorWrapper {
         return orgInfo;
     }
 
-    public Position getResultPosition(){
-        Position position = new Position();
-        position.setPositionId(getString(getColumnIndex(PositionTable.Cols.POSITION_ID)));
-        position.setPositionName(getString(getColumnIndex(PositionTable.Cols.POSITION_NAME)));
-        position.setManageLevel(getInt(getColumnIndex(PositionTable.Cols.MANAGE_LEVEL)));
-        position.setCompanyId(getString(getColumnIndex(PositionTable.Cols.COMPANY_ID)));
-        return position;
+    public PositionInfo getResultPosition(){
+        PositionInfo positionInfo = new PositionInfo();
+        positionInfo.setPositionId(getString(getColumnIndex(PositionTable.Cols.POSITION_ID)));
+        positionInfo.setPositionName(getString(getColumnIndex(PositionTable.Cols.POSITION_NAME)));
+        positionInfo.setManageLevel(getInt(getColumnIndex(PositionTable.Cols.MANAGE_LEVEL)));
+        positionInfo.setCompanyId(getString(getColumnIndex(PositionTable.Cols.COMPANY_ID)));
+        return positionInfo;
     }
 }

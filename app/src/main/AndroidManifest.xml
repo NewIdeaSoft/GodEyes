@@ -48,6 +48,9 @@
         </activity>
         <activity android:name=".ui.login.MoreUserInfoActivity">
         </activity>
+        <activity android:name=".ui.settings.ContactsActivity"
+                  android:theme = "@style/NoActionBarTheme">
+        </activity>
 
         <service
             android:name=".service.FileUploadService"

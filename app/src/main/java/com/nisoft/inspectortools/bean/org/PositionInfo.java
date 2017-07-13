@@ -4,7 +4,7 @@ package com.nisoft.inspectortools.bean.org;
  * Created by NewIdeaSoft on 2017/7/12.
  */
 
-public class Position {
+public class PositionInfo {
     private String mPositionId;
     private String mPositionName;
     private int mManageLevel;

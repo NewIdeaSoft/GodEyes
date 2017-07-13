@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -28,6 +29,7 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.service.UpdateDataService;
 import com.nisoft.inspectortools.ui.login.MoreUserInfoActivity;
+import com.nisoft.inspectortools.ui.settings.ContactsActivity;
 import com.nisoft.inspectortools.ui.typeinspect.JobListActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemListActivity;
 
@@ -67,6 +69,9 @@ public class ChooseRecodeTypeFragment extends Fragment {
                             case R.id.update_info:
                                 break;
                             case R.id.contacts:
+                                Intent intent = new Intent(getActivity(), ContactsActivity.class);
+                                intent.putExtra("company_id",UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
+                                startActivity(intent);
                                 break;
                             case R.id.self_info_settings:
 //                                Intent intent = new Intent(getActivity(), MoreUserInfoActivity.class);

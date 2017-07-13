@@ -75,7 +75,7 @@ public class OrgLab {
             values.put(EmployeeTable.Cols.STATION_CODE, employee.getStationsId().toString());
         }
         values.put(EmployeeTable.Cols.COMPANY_ID, employee.getCompanyId());
-        values.put(EmployeeTable.Cols.POSITION_ID,employee.getPostionId());
+        values.put(EmployeeTable.Cols.POSITION_ID,employee.getPositionId());
         return values;
     }
 
@@ -88,22 +88,22 @@ public class OrgLab {
         values.put(OrgTable.Cols.COMPANY_ID, orgInfo.getCompanyId());
         return values;
     }
-    public ContentValues getContentValues(Position position) {
+    public ContentValues getContentValues(PositionInfo positionInfo) {
         ContentValues values = new ContentValues();
-        values.put(PositionTable.Cols.POSITION_ID, position.getPositionId());
-        values.put(PositionTable.Cols.POSITION_NAME, position.getPositionName());
-        values.put(PositionTable.Cols.MANAGE_LEVEL, position.getManageLevel());
-        values.put(PositionTable.Cols.COMPANY_ID, position.getCompanyId());
+        values.put(PositionTable.Cols.POSITION_ID, positionInfo.getPositionId());
+        values.put(PositionTable.Cols.POSITION_NAME, positionInfo.getPositionName());
+        values.put(PositionTable.Cols.MANAGE_LEVEL, positionInfo.getManageLevel());
+        values.put(PositionTable.Cols.COMPANY_ID, positionInfo.getCompanyId());
         return values;
     }
-    public void updatePositionInfo(Position position) {
-        ContentValues values = getContentValues(position);
+    public void updatePositionInfo(PositionInfo positionInfo) {
+        ContentValues values = getContentValues(positionInfo);
         if (values.size() > 0) {
             OrgCursorWrapper cursor = query(PositionTable.NAME,
-                    PositionTable.Cols.POSITION_ID + "=?", new String[]{position.getPositionId()}, null);
+                    PositionTable.Cols.POSITION_ID + "=?", new String[]{positionInfo.getPositionId()}, null);
             if (cursor.getCount() > 0) {
                 int i = mDataBase.update(PositionTable.NAME, values,
-                        PositionTable.Cols.POSITION_ID + "=?", new String[]{position.getPositionId()});
+                        PositionTable.Cols.POSITION_ID + "=?", new String[]{positionInfo.getPositionId()});
             } else {
                 long j = mDataBase.insert(PositionTable.NAME, null, values);
             }
@@ -158,23 +158,23 @@ public class OrgLab {
             updateOrgInfo(org);
         }
     }
-    public void updatePositons(ArrayList<Position> positions) {
-        if (positions == null || positions.size() == 0) {
+    public void updatePositons(ArrayList<PositionInfo> positionInfos) {
+        if (positionInfos == null || positionInfos.size() == 0) {
             return;
         }
-        for (Position p : positions) {
+        for (PositionInfo p : positionInfos) {
             updatePositionInfo(p);
         }
     }
-    public Position findPositionById(String positionId){
+    public PositionInfo findPositionById(String positionId){
         OrgCursorWrapper cursor = query(PositionTable.NAME, PositionTable.Cols.POSITION_ID + "=?", new String[]{positionId}, null);
-        Position position = null;
+        PositionInfo positionInfo = null;
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
-            position = cursor.getResultPosition();
+            positionInfo = cursor.getResultPosition();
         }
         cursor.close();
-        return position;
+        return positionInfo;
     }
     public Employee findEmployeeById(String phone) {
         OrgCursorWrapper cursor = query(EmployeeTable.NAME, EmployeeTable.Cols.PHONE + "=?", new String[]{phone}, null);
