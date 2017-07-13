@@ -22,7 +22,10 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.bean.org.Company;
 import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
+import com.nisoft.inspectortools.bean.org.OrgLab;
+import com.nisoft.inspectortools.bean.org.PositionInfo;
 import com.nisoft.inspectortools.gson.EmployeeDataPackage;
+import com.nisoft.inspectortools.gson.EmployeeListPackage;
 import com.nisoft.inspectortools.gson.OrgListPackage;
 import com.nisoft.inspectortools.utils.DialogUtil;
 import com.nisoft.inspectortools.utils.GsonUtil;
@@ -41,6 +44,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
     private EditText mNameEditText;
     private EditText mEmployeeNumEditText;
     private TextView mCompanyNameTextView;
+    private TextView mPositionTextView;
     private ListView mOrgListView;
     private ListView mStationListView;
     private Button mDoneButton;
@@ -48,7 +52,8 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private String phone;
     private Employee mEmployee;
-    private Company mCompany;
+    private String mCompanyId;
+    private String mCompanyName;
     private ArrayList<OrgInfo> mOrgInfo;
     private ArrayList<String> mStationsInfo;
     private OrgInfoAdapter mOrgInfoAdapter;
@@ -66,12 +71,8 @@ public class MoreUserInfoActivity extends AppCompatActivity {
 
     private void init() {
         phone = getIntent().getStringExtra("phone");
-        String json = getIntent().getStringExtra("company_json");
-        Log.e("MoreUserInfoActivity", json + "");
-        if (json != null) {
-            Gson gson = GsonUtil.getDateFormatGson();
-            mCompany = gson.fromJson(json, Company.class);
-        }
+        mCompanyId = getIntent().getStringExtra("company_id");
+        mCompanyName = getIntent().getStringExtra("company_name");
         mOrgsForChoose = new ArrayList<>();
         mOrgInfoAdapter = new OrgInfoAdapter();
     }
@@ -82,17 +83,14 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         mNameEditText = (EditText) findViewById(R.id.et_name);
         mEmployeeNumEditText = (EditText) findViewById(R.id.et_member_num);
         mCompanyNameTextView = (TextView) findViewById(R.id.tv_company_name);
+        mPositionTextView = (TextView) findViewById(R.id.tv_member_position);
         mOrgListView = (ListView) findViewById(R.id.lv_org_info_item);
         mStationListView = (ListView) findViewById(R.id.lv_position_info);
         mDoneButton = (Button) findViewById(R.id.btn_info_upload);
-        if (mCompany == null || mCompany.getOrgName().equals("")) {
-            getCompanyFromServer();
-        } else {
-            mCompanyNameTextView.setText(mCompany.getOrgName());
-            Log.e("MoreUserInfoActivity", "mCompany!=null " + mCompany.getOrgCode());
-            downLoadInfo();
+        if (mCompanyId != null && !mCompanyId.equals("")) {
+            mCompanyNameTextView.setText(mCompanyName);
+            downLoadDataFromLocal();
         }
-
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,56 +102,56 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         mOrgListView.setAdapter(mOrgInfoAdapter);
     }
 
-    private void getCompanyFromServer() {
-        RequestBody body = new FormBody.Builder()
-                .add("phone", phone)
-                .add("intent", "query_company")
-                .build();
-        DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载公司信息...");
-        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDialog.dismiss();
-                        Toast.makeText(MoreUserInfoActivity.this, "网络连接失败！", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String result = response.body().string();
-                Log.e("result", result);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDialog.dismiss();
-                        if (result.equals("error!")) {
-                            Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Gson gson = GsonUtil.getDateFormatGson();
-                            mCompany = gson.fromJson(result, Company.class);
-                            if (mCompany != null) {
-                                SharedPreferences sp = getSharedPreferences("company", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sp.edit();
-                                editor.putString("phone", phone);
-                                editor.putString("company_name", mCompany.getOrgName());
-                                editor.putString("company_code", mCompany.getOrgCode());
-                                editor.putString("company_structure", mCompany.getOrgStructure().toString());
-                                editor.apply();
-                                mCompanyNameTextView.setText(mCompany.getOrgName());
-                                downLoadInfo();
-                            }
-                        }
-                    }
-                });
-            }
-        });
-
-    }
+//    private void getCompanyFromServer() {
+//        RequestBody body = new FormBody.Builder()
+//                .add("phone", phone)
+//                .add("intent", "query_company")
+//                .build();
+//        DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载公司信息...");
+//        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mDialog.dismiss();
+//                        Toast.makeText(MoreUserInfoActivity.this, "网络连接失败！", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                final String result = response.body().string();
+//                Log.e("result", result);
+//
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mDialog.dismiss();
+//                        if (result.equals("error!")) {
+//                            Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            Gson gson = GsonUtil.getDateFormatGson();
+//                            mCompany = gson.fromJson(result, Company.class);
+//                            if (mCompany != null) {
+//                                SharedPreferences sp = getSharedPreferences("company", MODE_PRIVATE);
+//                                SharedPreferences.Editor editor = sp.edit();
+//                                editor.putString("phone", phone);
+//                                editor.putString("company_name", mCompany.getOrgName());
+//                                editor.putString("company_code", mCompany.getOrgCode());
+//                                editor.putString("company_structure", mCompany.getOrgStructure().toString());
+//                                editor.apply();
+//                                mCompanyNameTextView.setText(mCompany.getOrgName());
+//                                downLoadInfoFromServer();
+//                            }
+//                        }
+//                    }
+//                });
+//            }
+//        });
+//
+//    }
 
     private boolean checkInfo() {
         if (mNameEditText.getText().toString().equals("")) {
@@ -161,70 +159,136 @@ public class MoreUserInfoActivity extends AppCompatActivity {
         }
         return true;
     }
+    private void downLoadDataFromLocal(){
+        mEmployee = OrgLab.getOrgLab(this).findEmployeeById(phone);
+        if (mEmployee == null){
+            downLoadDataFromServer();
+        }else{
+            OrgInfo org = OrgLab.getOrgLab(this).findOrgInfoById(mEmployee.getOrgId());
+            mOrgInfo = new ArrayList<>();
+            mOrgInfo.add(0,org);
+            Log.e("downLoadDataFromLocal",org.getOrgName());
+            mOrgsForChoose.add(0,OrgLab.getOrgLab(this).findOrgsByParent(org.getParentOrgId()));
+            while(!org.getParentOrgId().contains("NONE")){
+                OrgInfo parentOrg = OrgLab.getOrgLab(this).findOrgInfoById(org.getParentOrgId());
+                mOrgsForChoose.add(0,OrgLab.getOrgLab(this).findOrgsByParent(org.getParentOrgId()));
+                mOrgInfo.add(0,parentOrg);
+                org = parentOrg;
+            }
 
-    private void downLoadInfo() {
-
+            refreshView();
+        }
+    }
+    private void downLoadDataFromServer(){
         RequestBody body = new FormBody.Builder()
-                .add("phone", phone)
-                .add("intent", "query")
-                .add("structure_levels", mCompany.getOrgStructure().size() - 1 + "")
-                .add("company_id", mCompany.getOrgCode())
+                .add("company_id", mCompanyId)
+                .add("intent", "employees")
                 .build();
-        DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载用户信息...");
         HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDialog.dismiss();
-                        Toast.makeText(MoreUserInfoActivity.this, "网络连接失败！", Toast.LENGTH_SHORT).show();
-                    }
-                });
+
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                final String result = response.body().string();
-                Log.e("result", result);
-
+                String result = response.body().string();
+                Log.e("UpdateDataService", result);
+                Gson gson = GsonUtil.getDateFormatGson();
+                EmployeeListPackage listPackage = gson.fromJson(result, EmployeeListPackage.class);
+                ArrayList<Employee> employees = listPackage.getEmployees();
+                ArrayList<OrgInfo> orgInfoList = listPackage.getOrgList();
+                OrgLab orgLab = OrgLab.getOrgLab(MoreUserInfoActivity.this);
+                ArrayList<PositionInfo> positionList = listPackage.getPositionList();
+                orgLab.updateEmployee(employees);
+                orgLab.updateOrgs(orgInfoList);
+                orgLab.updatePositions(positionList);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (result.equals("false")) {
-                            Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Gson gson = GsonUtil.getDateFormatGson();
-                            EmployeeDataPackage dataPackage = gson.fromJson(result, EmployeeDataPackage.class);
-                            mEmployee = dataPackage.getEmployee();
-                            mOrgInfo = dataPackage.getOrgInfo();
-                            mOrgsForChoose = dataPackage.getOrgsInfoForSelect();
-                            if (mEmployee != null) {
-                                if (mEmployee.getName() != null) {
-                                    mNameEditText.setText(mEmployee.getName());
-                                }
-                                if (mEmployee.getWorkNum() != null) {
-                                    mEmployeeNumEditText.setText(mEmployee.getWorkNum());
-                                }
-                            } else {
-                                mEmployee = new Employee();
-                            }
-                            mOrgInfoAdapter.notifyDataSetChanged();
+                        if(OrgLab.getOrgLab(MoreUserInfoActivity.this).findEmployeeById(phone)==null){
+                            Toast.makeText(MoreUserInfoActivity.this, "请联系管理员加入公司！", Toast.LENGTH_LONG).show();
+                        }else{
+                            downLoadDataFromLocal();
                         }
-                        mDialog.dismiss();
                     }
                 });
+
 
             }
         });
     }
-
+//    private void downLoadInfoFromServer() {
+//
+//        RequestBody body = new FormBody.Builder()
+//                .add("phone", phone)
+//                .add("intent", "query")
+//                .add("structure_levels", mCompany.getOrgStructure().size() - 1 + "")
+//                .add("company_id", mCompany.getOrgCode())
+//                .build();
+//        DialogUtil.showProgressDialog(this, mDialog, "正在从服务器加载用户信息...");
+//        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mDialog.dismiss();
+//                        Toast.makeText(MoreUserInfoActivity.this, "网络连接失败！", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                final String result = response.body().string();
+//                Log.e("result", result);
+//
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (result.equals("false")) {
+//                            Toast.makeText(MoreUserInfoActivity.this, "加载用户信息失败", Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            Gson gson = GsonUtil.getDateFormatGson();
+//                            EmployeeDataPackage dataPackage = gson.fromJson(result, EmployeeDataPackage.class);
+//                            mEmployee = dataPackage.getEmployee();
+//                            mOrgInfo = dataPackage.getOrgInfo();
+//                            mOrgsForChoose = dataPackage.getOrgsInfoForSelect();
+//                            if (mEmployee != null) {
+//                                refreshView();
+//                            } else {
+//                                mEmployee = new Employee();
+//                            }
+//                        }
+//                        mDialog.dismiss();
+//                    }
+//                });
+//
+//            }
+//        });
+//    }
+    private void refreshView(){
+        if (mEmployee.getName() != null) {
+            mNameEditText.setText(mEmployee.getName());
+        }
+        if (mEmployee.getWorkNum() != null) {
+            mEmployeeNumEditText.setText(mEmployee.getWorkNum());
+        }
+        if (mEmployee.getPositionId()!=null){
+            String positionName = OrgLab.getOrgLab(MoreUserInfoActivity.this)
+                    .findPositionById(mEmployee.getPositionId())
+                    .getPositionName();
+            mPositionTextView.setText(positionName);
+        }
+        mOrgInfoAdapter.notifyDataSetChanged();
+    }
     private void uploadMoreInfo() {
         DialogUtil.showProgressDialog(this, mDialog, "正在上传用户信息...");
         mEmployee.setName(mNameEditText.getText().toString());
         mEmployee.setPhone(phone);
         mEmployee.setWorkNum(mEmployeeNumEditText.getText().toString());
-        mEmployee.setCompanyId(mCompany.getOrgCode());
+        mEmployee.setCompanyId(mCompanyId);
         for (OrgInfo info : mOrgInfo) {
             if (info != null) {
                 mEmployee.setOrgId(info.getOrgId());
@@ -277,8 +341,12 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void getSecondaryOrgs(String parentId, final int parentLevel) {
+    private void getSecondaryOrgsFromLocal(String parentId, final int parentLevel){
+        ArrayList<OrgInfo> orgList = OrgLab.getOrgLab(this).findOrgsByParent(parentId);
+        mOrgsForChoose.set(parentLevel + 1,orgList);
+        mOrgInfoAdapter.notifyDataSetChanged();
+    }
+    private void getSecondaryOrgsFromServer(String parentId, final int parentLevel) {
         DialogUtil.showProgressDialog(this, mDialog, "正在加载单位列表...");
         RequestBody body = new FormBody.Builder()
                 .add("parent_id", parentId)
@@ -376,7 +444,7 @@ public class MoreUserInfoActivity extends AppCompatActivity {
                                     || (secondaryOrgs.size() != 0
                                     && !secondaryOrgs.get(0).getParentOrgId().equals(parentOrg.getOrgId()))) {
                                 Log.e("parent:", mOrgInfo.get(itemPosition).getOrgId());
-                                getSecondaryOrgs(parentOrg.getOrgId(), itemPosition);
+                                getSecondaryOrgsFromLocal(parentOrg.getOrgId(), itemPosition);
                             }
 
                         }
@@ -434,4 +502,5 @@ public class MoreUserInfoActivity extends AppCompatActivity {
             return convertView;
         }
     }
+
 }

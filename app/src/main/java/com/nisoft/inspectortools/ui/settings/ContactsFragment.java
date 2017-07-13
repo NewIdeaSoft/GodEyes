@@ -1,6 +1,8 @@
 package com.nisoft.inspectortools.ui.settings;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -18,6 +20,8 @@ import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.bean.org.OrgLab;
 import com.nisoft.inspectortools.bean.org.PositionInfo;
+import com.nisoft.inspectortools.ui.base.ChooseMemberDialog;
+import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeActivity;
 
 import java.util.ArrayList;
 
@@ -91,7 +95,16 @@ public class ContactsFragment extends Fragment {
         mContactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Employee employee = mEmployeeList.get(position);
+                if (getActivity() instanceof ProblemRecodeActivity){
+                    Intent intent = new Intent();
+                    intent.putExtra("author_name", employee.getName());
+                    intent.putExtra("author_id", employee.getPhone());
+                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                    ((ChooseMemberDialog)getParentFragment()).dismiss();
+                }else if(getActivity() instanceof ContactsActivity){
 
+                }
             }
         });
         mOrgListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -105,11 +118,15 @@ public class ContactsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 OrgInfo orgInfo = OrgLab.getOrgLab(getActivity()).findOrgInfoById(mParentId);
+                if (orgInfo==null)return;
                 mParentId = orgInfo.getParentOrgId();
                 if (mParentId.equals("NONE")){
-                    getActivity().finish();
+                    if (getActivity() instanceof ContactsActivity) {
+                        getActivity().finish();
+                    }
+                }else {
+                    refreshView();
                 }
-                refreshView();
             }
         });
         return view;
@@ -162,16 +179,20 @@ public class ContactsFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if(convertView==null) {
-                convertView = View.inflate(getActivity(),android.R.layout.simple_list_item_1,null);
+                convertView = View.inflate(getActivity(),R.layout.contacts_item,null);
             }
-            TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
+            TextView nameTextView = (TextView) convertView.findViewById(R.id.tv_contact_name);
+            TextView orgTextView = (TextView) convertView.findViewById(R.id.tv_contact_phone);
+            TextView positionTextView = (TextView) convertView.findViewById(R.id.tv_contact_position);
             Employee employee = mEmployeeList.get(position);
+            nameTextView.setText(employee.getName());
             String orgId = employee.getOrgId();
             OrgInfo org = OrgLab.getOrgLab(getActivity()).findOrgInfoById(orgId);
+            orgTextView.setText(org.getOrgName());
             String positionId = employee.getPositionId();
             Log.e("ContactsFragment",positionId);
             PositionInfo position1 = OrgLab.getOrgLab(getActivity()).findPositionById(positionId);
-            textView.setText(employee.getName()+"   "+org.getOrgName()+"    "+position1.getPositionName());
+            positionTextView.setText(position1.getPositionName());
             return convertView;
         }
     }

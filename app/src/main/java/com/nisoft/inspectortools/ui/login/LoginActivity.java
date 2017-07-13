@@ -145,7 +145,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Gson gson = GsonUtil.getDateFormatGson();
                                 String json = gson.toJson(company);
                                 Log.e("LoginActivity", json);
-                                intent.putExtra("company_json", json);
+                                intent.putExtra("company_id",companyId);
+                                intent.putExtra("company_name", companyName);
                             }
 
                             intent.putExtra("phone", phone);
