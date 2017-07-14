@@ -675,7 +675,7 @@ public class WorkingFragment extends Fragment {
             Gson gson = GsonUtil.getDateFormatGson();
             String jobJson = gson.toJson(sRecodePics);
             RequestBody body = new FormBody.Builder()
-                    .add("intent", "update")
+                    .add("intent", "upload")
                     .add("job_json", jobJson)
                     .build();
             new UploadData(getActivity(), HttpUtil.SERVLET_MATERIAL_RECODE, body, new UploadData.UploadStateListener() {
