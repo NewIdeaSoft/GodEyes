@@ -1,34 +1,17 @@
 package com.nisoft.inspectortools.bean.org;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.nisoft.inspectortools.db.org.OrgCursorWrapper;
 import com.nisoft.inspectortools.db.org.OrgDbHelper;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.EmployeeTable;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.OrgTable;
 import com.nisoft.inspectortools.db.org.OrgDbSchema.PositionTable;
-import com.nisoft.inspectortools.gson.EmployeeListPackage;
-import com.nisoft.inspectortools.ui.login.MoreUserInfoActivity;
-import com.nisoft.inspectortools.utils.GsonUtil;
-import com.nisoft.inspectortools.utils.HttpUtil;
-import com.nisoft.inspectortools.utils.OkHttpCallBack;
 
-import java.io.IOException;
 import java.util.ArrayList;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by NewIdeaSoft on 2017/7/9.

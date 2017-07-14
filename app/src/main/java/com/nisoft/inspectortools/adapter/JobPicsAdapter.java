@@ -151,11 +151,6 @@ public class JobPicsAdapter extends RecyclerView.Adapter<JobPicsAdapter.ViewHold
                     fragment.show(manager, "update_menu");
                 } else if (position != getItemCount() - 1) {
                     //查看大图，仿朋友圈查看大图
-//                    FragmentManager manager = ((Activity) mContext).getFragmentManager();
-//                    LargePhotoFragment imageFragment = LargePhotoFragment.newInstance(position,mPicsPath);
-//                    imageFragment.setTargetFragment(((Activity) mContext).getFragmentManager().findFragmentById(R.id.fragment_content), 2);
-//                    imageFragment.show(manager, "image");
-//                    FileUtil.openImageFile(mPicsPath.get(position),mContext);
                     if (isHttpUrl(mPicsPath.get(position))) {
                         if (mProgressDialog == null) {
                             mProgressDialog = new ProgressDialog(mContext);

@@ -6,6 +6,7 @@
         android:icon="@drawable/ic_menu_sync"
         android:title="同步记录"
         app:showAsAction="ifRoom"/>
+    <!--
     <item
         android:id="@+id/data_push"
         android:icon="@drawable/ic_menu_upload"
@@ -18,4 +19,5 @@
         android:title="分享"
         app:showAsAction="collapseActionView">
     </item>
+    -->
 </menu>

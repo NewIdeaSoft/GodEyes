@@ -86,7 +86,6 @@ public abstract class ProblemProgramFragment extends RecodeFragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
         switch (requestCode) {
             case REQUEST_PROGRAM_AUTHOR:
                 String authorId = data.getStringExtra("author_id");
@@ -95,7 +94,6 @@ public abstract class ProblemProgramFragment extends RecodeFragment {
                     mProgram.setUpdateTime(new Date().getTime());
                     onDataChanged();
                 }
-
                 break;
             case REQUEST_PROGRAM_DATE:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);

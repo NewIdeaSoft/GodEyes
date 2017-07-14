@@ -249,7 +249,7 @@ public class ProblemRecodeFragment1 extends Fragment {
             case android.R.id.home:
                 onKeyBackDown();
                 break;
-            case R.id.data_push:
+//            case R.id.data_push:
                 //将实体 格式化为字符串
 //                String data = m.toString();
 //                //在分线程写入字符串到指定目录的文件下
@@ -259,13 +259,13 @@ public class ProblemRecodeFragment1 extends Fragment {
 //                }
 //                FileUtil.writeStringToFile(data, mFolderPath + sRecodePics.getJobNum() + ".txt");
 //                Toast.makeText(getActivity(), "导出数据完成！", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.data_share:
+//                break;
+//            case R.id.data_share:
 //                Intent i = new Intent(Intent.ACTION_SEND);
 //                i.setType("text/plain");
 //                i.putExtra(Intent.EXTRA_TEXT, sRecodePics.toString());
 //                startActivity(i);
-                break;
+//                break;
             case R.id.data_upload:
                 synchronizeRecode();
                 break;

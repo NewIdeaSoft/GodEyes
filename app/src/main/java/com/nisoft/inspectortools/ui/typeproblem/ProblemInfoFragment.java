@@ -263,10 +263,10 @@ public abstract class ProblemInfoFragment extends RecodeFragment {
         });
         mImagesRecyclerView = (RecyclerView) view.findViewById(R.id.problem_images_recycler_view);
         updateView();
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         mImagesRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new JobPicsAdapter(ProblemInfoFragment.this,
-                R.layout.inspect_image_item,
+                R.layout.problem_image_item,
                 mProblem.getImagesNameOnServer(),
                 "problem/" + mProblem.getRecodeId() + "/problem/",
                 mFolderPath);

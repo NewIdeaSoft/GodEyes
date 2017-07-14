@@ -5,6 +5,7 @@
               android:focusable="true"
               android:focusableInTouchMode="true"
               android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,6 +14,7 @@
         android:orientation="horizontal"
         android:paddingLeft="8dp"
         android:paddingRight="8dp">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -20,16 +22,36 @@
             android:text="@string/problem_type"
             android:textColor="#000000"
             android:textSize="16sp"/>
+
         <TextView
             android:id="@+id/tv_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_weight="2"
+            android:layout_weight="1"
+            android:hint="@string/text_choose_hint"
+            android:textColor="#000000"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/problem_discovered_people"
+            android:textColor="#000000"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tv_discover"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
             android:hint="@string/text_choose_hint"
             android:textColor="#000000"
             android:textSize="16sp"/>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,6 +59,7 @@
         android:orientation="horizontal"
         android:paddingLeft="8dp"
         android:paddingRight="8dp">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -44,12 +67,13 @@
             android:text="@string/problem_title"
             android:textColor="#000000"
             android:textSize="16sp"/>
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:hint="@string/text_edit_hint"
             android:textColor="#000000"
             android:textSize="16sp"/>
@@ -62,6 +86,7 @@
         android:orientation="horizontal"
         android:paddingLeft="8dp"
         android:paddingRight="8dp">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -75,7 +100,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:hint="@string/text_date_hint"
             android:textColor="#000000"
             android:textSize="16sp"/>
@@ -102,32 +127,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_weight="2"
-            android:hint="@string/text_edit_hint"
-            android:textColor="#000000"
-            android:textSize="16sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:orientation="horizontal"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/problem_discovered_people"
-            android:textColor="#000000"
-            android:textSize="16sp"/>
-        <TextView
-            android:id="@+id/tv_discover"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:hint="@string/text_edit_hint"
             android:textColor="#000000"
             android:textSize="16sp"/>
@@ -139,6 +139,25 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:text="照片(点击查看原图，长按编辑本地照片)"
+        android:textColor="#000000"
+        android:textSize="16sp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/problem_images_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="问题描述"
         android:textColor="#000000"
         android:textSize="16sp"/>
@@ -151,14 +170,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:hint="@string/text_edit_hint"
+        android:lineSpacingExtra="8sp"
         android:textColor="#000000"
         android:textSize="16sp"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/problem_images_recycler_view"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
 </LinearLayout>
