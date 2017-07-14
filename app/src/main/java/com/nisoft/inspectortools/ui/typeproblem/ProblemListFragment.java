@@ -164,25 +164,11 @@ public class ProblemListFragment extends Fragment {
                 if (!result.equals("zero")) {
                     Gson gson = GsonUtil.getDateFormatGson();
                     ProblemListDataPackage recodeData = gson.fromJson(result, ProblemListDataPackage.class);
-                    ArrayList<ProblemRecode> recodes = recodeData.getProblemRecodes();
-                    for (ProblemRecode recode1 : recodes) {
-                        for (ProblemRecode recode2 : mProblems) {
-                            if (recode1.getRecodeId().equals(recode2.getRecodeId())) {
-                                if (recode1.getUpdateTime() > recode2.getUpdateTime()) {
-                                    ProblemDataLab.getProblemDataLab(getActivity())
-                                            .updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
-                                } else {
-                                    recodes.set(recodes.indexOf(recode1), recode2);
-                                }
-                                break;
-                            }
-                            if (mProblems.indexOf(recode2) == mProblems.size() - 1) {
-                                ProblemDataLab.getProblemDataLab(getActivity())
-                                        .updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, recode1);
-                            }
-                        }
+                    mProblems = recodeData.getProblemRecodes();
+                    for (ProblemRecode problem:mProblems){
+                        ProblemDataLab.getProblemDataLab(getActivity())
+                                        .updateRecode(RecodeDbSchema.RecodeTable.PROBLEM_NAME, problem);
                     }
-                    mProblems = recodes;
                 }
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

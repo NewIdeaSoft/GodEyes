@@ -48,10 +48,11 @@ public abstract class OkHttpCallBack implements Callback {
     @Override
     public void onResponse(Call call, Response response) throws IOException {
         final String result = response.body().string();
+        handleResponseBackThread(result);
         ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                handleResponse(result);
+                handleResponseUIThread(result);
                 if (mDialog != null) {
                     mDialog.dismiss();
                 }
@@ -60,5 +61,6 @@ public abstract class OkHttpCallBack implements Callback {
 
     }
 
-    protected abstract void handleResponse(String result);
+    protected abstract void handleResponseUIThread(String result);
+    protected abstract void handleResponseBackThread(String result);
 }

@@ -1,8 +1,10 @@
 package com.nisoft.inspectortools.ui.typeinspect;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.view.KeyEvent;
 
+import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.ui.base.SingleFragmentActivity;
 
 import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.KEY_SELECTED_TYPE;
@@ -24,16 +26,11 @@ public class WorkingActivity extends SingleFragmentActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-//            String jobNum = WorkingFragment.getsRecodePics().getJobNum();
-//            Snackbar.make(findViewById(R.id.fragment_content), "数据未上传，确定退出吗？", Snackbar.LENGTH_LONG)
-//                    .setAction("确定", new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            finish();
-//                        }
-//                    }).show();
-//        }
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            FragmentManager fm = getFragmentManager();
+            WorkingFragment fragment = (WorkingFragment) fm.findFragmentById(R.id.fragment_content);
+            fragment.onKeyBackDown();
+        }
         return super.onKeyDown(keyCode, event);
     }
 }

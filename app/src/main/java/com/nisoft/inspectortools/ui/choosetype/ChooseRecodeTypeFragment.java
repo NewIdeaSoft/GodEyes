@@ -14,6 +14,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,15 +24,30 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.nisoft.inspectortools.R;
+import com.nisoft.inspectortools.bean.org.Employee;
 import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.bean.org.OrgLab;
+import com.nisoft.inspectortools.bean.org.PositionInfo;
 import com.nisoft.inspectortools.bean.org.UserLab;
+import com.nisoft.inspectortools.gson.EmployeeListPackage;
 import com.nisoft.inspectortools.service.UpdateDataService;
 import com.nisoft.inspectortools.ui.login.MoreUserInfoActivity;
 import com.nisoft.inspectortools.ui.settings.ContactsActivity;
 import com.nisoft.inspectortools.ui.typeinspect.JobListActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemListActivity;
+import com.nisoft.inspectortools.utils.GsonUtil;
+import com.nisoft.inspectortools.utils.HttpUtil;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.KEY_SELECTED_TYPE;
 import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.RECODE_TYPE_CHI;
@@ -63,10 +79,14 @@ public class ChooseRecodeTypeFragment extends Fragment {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        Employee employee = UserLab.getUserLab(getActivity()).getEmployee();
+                        String phone = employee.getPhone();
+                        String companyId = employee.getCompanyId();
                         switch (item.getItemId()) {
                             case R.id.self_recode:
                                 break;
                             case R.id.update_info:
+                                downLoadDataFromServer(companyId,phone);
                                 break;
                             case R.id.contacts:
                                 Intent intent = new Intent(getActivity(), ContactsActivity.class);
@@ -75,8 +95,6 @@ public class ChooseRecodeTypeFragment extends Fragment {
                                 break;
                             case R.id.self_info_settings:
                                 Intent intent1 = new Intent(getActivity(), MoreUserInfoActivity.class);
-                                String phone = UserLab.getUserLab(getActivity()).getEmployee().getPhone();
-                                String companyId = UserLab.getUserLab(getActivity()).getEmployee().getCompanyId();
                                 OrgInfo company = OrgLab.getOrgLab(getActivity()).findOrgInfoById(companyId);
                                 String companyName = company.getOrgName();
                                 intent1.putExtra("company_name", companyName);
@@ -86,8 +104,10 @@ public class ChooseRecodeTypeFragment extends Fragment {
                                 startActivity(intent1);
                                 break;
                             case R.id.member_info_settings:
+                                Toast.makeText(getActivity(), "没有权限！", Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.company_info_settings:
+                                Toast.makeText(getActivity(), "没有权限！", Toast.LENGTH_SHORT).show();
                                 break;
                         }
                         mDrawerLayout.closeDrawers();
@@ -116,7 +136,6 @@ public class ChooseRecodeTypeFragment extends Fragment {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 11);
         }
-        updateEmployeeData();
         return view;
     }
 
@@ -133,18 +152,9 @@ public class ChooseRecodeTypeFragment extends Fragment {
                 break;
         }
     }
-
-    private void updateEmployeeData() {
-        Intent intent = new Intent(getActivity(), UpdateDataService.class);
-        intent.putExtra("company_id", UserLab.getUserLab(getActivity()).getEmployee().getCompanyId());
-        getActivity().startService(intent);
-    }
-
     @Override
     public void onStop() {
         super.onStop();
-        Intent intent = new Intent(getActivity(), UpdateDataService.class);
-        getActivity().stopService(intent);
     }
 
     @Override
@@ -159,5 +169,42 @@ public class ChooseRecodeTypeFragment extends Fragment {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void downLoadDataFromServer(String companyId,final String phone){
+        RequestBody body = new FormBody.Builder()
+                .add("company_id", companyId)
+                .add("intent", "employees")
+                .build();
+        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                Log.e("UpdateDataService", result);
+                Gson gson = GsonUtil.getDateFormatGson();
+                EmployeeListPackage listPackage = gson.fromJson(result, EmployeeListPackage.class);
+                ArrayList<Employee> employees = listPackage.getEmployees();
+                ArrayList<OrgInfo> orgInfoList = listPackage.getOrgList();
+                OrgLab orgLab = OrgLab.getOrgLab(getActivity());
+                ArrayList<PositionInfo> positionList = listPackage.getPositionList();
+                orgLab.updateEmployee(employees);
+                orgLab.updateOrgs(orgInfoList);
+                orgLab.updatePositions(positionList);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(OrgLab.getOrgLab(getActivity()).findEmployeeById(phone)==null){
+                            Toast.makeText(getActivity(), "请联系管理员加入公司！", Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(getActivity(), "更新数据成功！", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
     }
 }

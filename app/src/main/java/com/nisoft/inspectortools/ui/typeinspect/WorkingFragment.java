@@ -27,10 +27,12 @@ import com.nisoft.inspectortools.R;
 import com.nisoft.inspectortools.adapter.JobPicsAdapter;
 import com.nisoft.inspectortools.bean.inspect.MaterialInspectRecode;
 import com.nisoft.inspectortools.bean.inspect.PicsLab;
+import com.nisoft.inspectortools.bean.org.OrgLab;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.db.inspect.PicsDbSchema;
 import com.nisoft.inspectortools.gson.RecodeDataPackage;
 import com.nisoft.inspectortools.service.FileUploadService;
+import com.nisoft.inspectortools.ui.base.ChooseMemberDialog;
 import com.nisoft.inspectortools.ui.base.DatePickerDialog;
 import com.nisoft.inspectortools.ui.base.EditTextActivity;
 import com.nisoft.inspectortools.utils.DialogUtil;
@@ -38,6 +40,7 @@ import com.nisoft.inspectortools.utils.FileUtil;
 import com.nisoft.inspectortools.utils.GsonUtil;
 import com.nisoft.inspectortools.utils.HttpUtil;
 import com.nisoft.inspectortools.utils.StringFormatUtil;
+import com.nisoft.inspectortools.utils.UploadData;
 import com.nisoft.inspectortools.utils.VolumeImageDownLoad;
 
 import java.io.File;
@@ -61,6 +64,7 @@ import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.RECODE_TYP
 
 public class WorkingFragment extends Fragment {
     private static final String PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/工作相册/";
+    private static final int REQUEST_INSPECTOR = 4;
     private static MaterialInspectRecode sRecodePics;
     private TextView mDatePickerButton;
     private TextView mJobNumberTextView;
@@ -76,6 +80,7 @@ public class WorkingFragment extends Fragment {
     private String mJobNum;
     private String mFolderPath;
     private boolean mEditable = false;
+    private boolean isDataChanged = false;
 
     public static WorkingFragment newInstance(String jobNum, int whichType, boolean isNew) {
         WorkingFragment fragment = new WorkingFragment();
@@ -138,6 +143,12 @@ public class WorkingFragment extends Fragment {
             mPicsView.setLayoutManager(mManager);
             mPicsView.setAdapter(mAdapter);
         }
+        mInspectorTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showContactsDialog(REQUEST_INSPECTOR);
+            }
+        });
         mJobNumberTextView.setText(mJobNum);
         if (!isNewJob) {
             mJobNumberTextView.setClickable(false);
@@ -233,6 +244,7 @@ public class WorkingFragment extends Fragment {
                                         sRecodePics.setJobNum(newJobNum);
                                         sRecodePics.setLatestUpdateTime(new Date().getTime());
                                         mJobNumberTextView.setText(newJobNum);
+                                        isDataChanged = true;
                                     }
                                     mDialog.dismiss();
                                 }
@@ -356,7 +368,6 @@ public class WorkingFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics, sRecodePics.getJobNum());
     }
 
     @Override
@@ -368,8 +379,10 @@ public class WorkingFragment extends Fragment {
         switch (requestCode) {
             case 0:
                 Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_INITIALIZE);
+                if (date.equals(sRecodePics.getDate()))return;
                 sRecodePics.setDate(date);
                 sRecodePics.setLatestUpdateTime(new Date().getTime());
+                isDataChanged = true;
                 mDatePickerButton.setText(StringFormatUtil.dateFormat(sRecodePics.getDate()));
                 break;
             case 1:
@@ -400,6 +413,7 @@ public class WorkingFragment extends Fragment {
                 String text = data.getStringExtra("content_edit");
                 sRecodePics.setDescription(text);
                 sRecodePics.setLatestUpdateTime(new Date().getTime());
+                isDataChanged = true;
                 mDescriptionText.setText(text);
                 break;
             case 3:
@@ -409,7 +423,17 @@ public class WorkingFragment extends Fragment {
                 } else {
                     isExitOnServer(jobNum);
                 }
-
+                break;
+            case REQUEST_INSPECTOR:
+                String authorId = data.getStringExtra("author_id");
+                String authorName = data.getStringExtra("author_name");
+                if (!authorId.equals(sRecodePics.getInspectorId())){
+                    sRecodePics.setInspectorId(authorId);
+                    mInspectorTextView.setText(authorName);
+                    sRecodePics.setLatestUpdateTime(new Date().getTime());
+                    isDataChanged = true;
+                }
+                break;
 
         }
     }
@@ -469,7 +493,6 @@ public class WorkingFragment extends Fragment {
                         Gson gson = GsonUtil.getDateFormatGson();
                         RecodeDataPackage dataPackage = gson.fromJson(result, RecodeDataPackage.class);
                         MaterialInspectRecode serviceRecode = dataPackage.getRecode();
-                        final String inspector = dataPackage.getName();
                         sRecodePics = findLaterRecode(localRecode, serviceRecode);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -487,6 +510,8 @@ public class WorkingFragment extends Fragment {
                                 } else {
                                     mEditable = true;
                                 }
+                                String inspector = OrgLab.getOrgLab(getActivity())
+                                        .findEmployeeById(sRecodePics.getInspectorId()).getName();
                                 mInspectorTextView.setText(inspector);
                                 mPicsView.setLayoutManager(mManager);
                                 mPicsView.setAdapter(mAdapter);
@@ -642,6 +667,52 @@ public class WorkingFragment extends Fragment {
 
             }
         }).startDownload();
+    }
+
+    public void onKeyBackDown() {
+        Log.e("isDataChanged", isDataChanged + "");
+        if (isDataChanged) {
+            Gson gson = GsonUtil.getDateFormatGson();
+            String jobJson = gson.toJson(sRecodePics);
+            RequestBody body = new FormBody.Builder()
+                    .add("intent", "update")
+                    .add("job_json", jobJson)
+                    .build();
+            new UploadData(getActivity(), HttpUtil.SERVLET_MATERIAL_RECODE, body, new UploadData.UploadStateListener() {
+                @Override
+                public void onStart() {
+                    DialogUtil.showProgressDialog(getActivity(), mDialog, "正在保存数据，完成后退出，请稍后...");
+                }
+
+                @Override
+                public void onFailed() {
+                    mDialog.dismiss();
+                    Toast.makeText(getActivity(), "获取网络连接失败！请重试！", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFinish(String result) {
+                    mDialog.dismiss();
+                    if (result.equals("OK")) {
+                        PicsLab.getPicsLab(getActivity()).updatePics(sRecodePics, sRecodePics.getJobNum());
+                        isDataChanged = false;
+                        getActivity().finish();
+                    } else {
+                        Toast.makeText(getActivity(), "数据上传失败！请重试！", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).upload();
+        } else {
+            getActivity().finish();
+        }
+    }
+
+    protected void showContactsDialog(int requestCode) {
+        String parentId = UserLab.getUserLab(getActivity()).getEmployee().getOrgId();
+        FragmentManager fm = getFragmentManager();
+        ChooseMemberDialog dialog = ChooseMemberDialog.newInstance(parentId);
+        dialog.setTargetFragment(this, requestCode);
+        dialog.show(fm, "date");
     }
 }
 

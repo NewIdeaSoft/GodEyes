@@ -70,29 +70,6 @@ public class UpdateDataService extends Service {
         });
     }
 
-//    private void downloadOrgData(String company_id) {
-//        RequestBody body = new FormBody.Builder()
-//                .add("company_id", company_id)
-//                .add("intent", "orgs")
-//                .build();
-//        HttpUtil.sendPostRequest(HttpUtil.SERVLET_MEMBER_INFO, body, new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                String result = response.body().string();
-//                Log.e("UpdateDataService", result);
-//                Gson gson = GsonUtil.getDateFormatGson();
-//                OrgListPackage listPackage = gson.fromJson(result, OrgListPackage.class);
-//                ArrayList<OrgInfo> orgInfos = listPackage.getOrgInfos();
-//                OrgLab.getOrgLab(UpdateDataService.this).updateOrgs(orgInfos);
-//            }
-//        });
-//    }
-
     private void getBingPicUrl(){
         HttpUtil.sendGetRequest("http://guolin.tech/api/bing_pic", new Callback() {
             @Override

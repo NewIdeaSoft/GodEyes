@@ -21,6 +21,7 @@ import com.nisoft.inspectortools.bean.org.OrgInfo;
 import com.nisoft.inspectortools.bean.org.OrgLab;
 import com.nisoft.inspectortools.bean.org.PositionInfo;
 import com.nisoft.inspectortools.ui.base.ChooseMemberDialog;
+import com.nisoft.inspectortools.ui.typeinspect.WorkingActivity;
 import com.nisoft.inspectortools.ui.typeproblem.ProblemRecodeActivity;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class ContactsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Employee employee = mEmployeeList.get(position);
-                if (getActivity() instanceof ProblemRecodeActivity){
+                if (getActivity() instanceof ProblemRecodeActivity||getActivity() instanceof WorkingActivity){
                     Intent intent = new Intent();
                     intent.putExtra("author_name", employee.getName());
                     intent.putExtra("author_id", employee.getPhone());
