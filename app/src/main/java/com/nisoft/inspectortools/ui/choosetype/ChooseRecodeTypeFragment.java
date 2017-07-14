@@ -32,7 +32,6 @@ import com.nisoft.inspectortools.bean.org.OrgLab;
 import com.nisoft.inspectortools.bean.org.PositionInfo;
 import com.nisoft.inspectortools.bean.org.UserLab;
 import com.nisoft.inspectortools.gson.EmployeeListPackage;
-import com.nisoft.inspectortools.service.UpdateDataService;
 import com.nisoft.inspectortools.ui.login.MoreUserInfoActivity;
 import com.nisoft.inspectortools.ui.settings.ContactsActivity;
 import com.nisoft.inspectortools.ui.typeinspect.JobListActivity;
@@ -74,7 +73,7 @@ public class ChooseRecodeTypeFragment extends Fragment {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
-        mNavView.setCheckedItem(R.id.self_recode);
+        mNavView.setCheckedItem(R.id.update_info);
         mNavView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -83,8 +82,8 @@ public class ChooseRecodeTypeFragment extends Fragment {
                         String phone = employee.getPhone();
                         String companyId = employee.getCompanyId();
                         switch (item.getItemId()) {
-                            case R.id.self_recode:
-                                break;
+//                            case R.id.self_recode:
+//                                break;
                             case R.id.update_info:
                                 downLoadDataFromServer(companyId,phone);
                                 break;

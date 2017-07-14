@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -54,6 +55,7 @@ import static com.nisoft.inspectortools.ui.strings.RecodeTypesStrings.RECODE_TYP
 
 public class JobListFragment extends Fragment {
     private ListView jobListView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private ArrayList<String> mJobNumList;
     private JobListAdapter mAdapter;
     private FloatingActionButton mFloatButton;
@@ -94,6 +96,13 @@ public class JobListFragment extends Fragment {
         }
         setHasOptionsMenu(true);
         jobListView = (ListView) view.findViewById(R.id.job_list);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllRecodeFromServer();
+            }
+        });
         jobListView.setAdapter(mAdapter);
         jobListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -256,6 +265,7 @@ public class JobListFragment extends Fragment {
                             }
                         });
                         mAdapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(getActivity(), "同步完成！", Toast.LENGTH_SHORT).show();
                     }
                 });

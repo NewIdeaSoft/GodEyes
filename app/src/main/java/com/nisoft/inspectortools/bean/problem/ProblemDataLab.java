@@ -107,17 +107,6 @@ public class ProblemDataLab {
     public void setProblemDataPackage(ProblemDataPackage problemDataPackage) {
         mProblemDataPackage = problemDataPackage;
     }
-
-    //    private ContentValues getValues(ProblemRecode recode){
-//        ContentValues values = getImageValues(recode);
-//        String suspects = recode.getSuspects().toString();
-//        String address = recode.getAddress();
-//        String title = recode.getTitle();
-//        values.put(RecodeTable.Cols.TITLE,title);
-//        values.put(RecodeTable.Cols.SUSPECTS,suspects);
-//        values.put(RecodeTable.Cols.ADDRESS,address);
-//        return values;
-//    }
     public RecodeCursorWrapper queryRecode(String table, String selection, String[] args) {
         Cursor cursor = mDatabase.query(table,
                 null,

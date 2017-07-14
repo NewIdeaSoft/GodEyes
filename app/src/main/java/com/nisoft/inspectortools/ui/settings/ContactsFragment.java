@@ -3,6 +3,7 @@ package com.nisoft.inspectortools.ui.settings;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -104,7 +105,9 @@ public class ContactsFragment extends Fragment {
                     getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                     ((ChooseMemberDialog)getParentFragment()).dismiss();
                 }else if(getActivity() instanceof ContactsActivity){
-
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:"+employee.getPhone()));
+                    startActivity(intent);
                 }
             }
         });

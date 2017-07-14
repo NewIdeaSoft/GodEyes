@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
+        <!--
         <item
             android:id="@+id/self_recode"
             android:title="我创建的记录"
             android:icon="@drawable/ic_menu_self_recode">
         </item>
+        -->
         <item
             android:id="@+id/update_info"
             android:title="更新数据"

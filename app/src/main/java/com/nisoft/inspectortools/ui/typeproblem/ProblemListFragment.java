@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -55,6 +56,7 @@ public class ProblemListFragment extends Fragment {
     private SearchView mSearchView;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
     private ProgressDialog mDialog;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class ProblemListFragment extends Fragment {
 
         mDialog = new ProgressDialog(getActivity());
         mProblemsRecyclerView = (RecyclerView) view.findViewById(R.id.problems_list_recyclerView);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh);
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         mProblemsRecyclerView.setLayoutManager(manager);
         mProblemsRecyclerView.setAdapter(mAdapter);
@@ -85,6 +88,12 @@ public class ProblemListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 createProblem();
+            }
+        });
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshFromServer();
             }
         });
         refreshFromServer();
@@ -176,6 +185,7 @@ public class ProblemListFragment extends Fragment {
                         mDialog.dismiss();
                         mAdapter.setProblems(mProblems);
                         mAdapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(getActivity(), "同步完成！", Toast.LENGTH_SHORT).show();
                     }
                 });
